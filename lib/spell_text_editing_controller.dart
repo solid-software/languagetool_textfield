@@ -121,11 +121,37 @@ class SpellTextEditingController extends TextEditingController {
               Text(mistake.message),
               Text(mistake.shortMessage),
               const Divider(),
-              ...mistake.replacements.map((m) => Text(m)),
+              ...mistake.replacements.map(
+                (replacement) => TextButton(
+                  child: Text(replacement),
+                  // Replacement button callback when pressed
+                  onPressed: () =>
+                      _replacementCallback(context, mistake, replacement),
+                ),
+              ),
             ],
           ),
         );
       },
+    );
+  }
+
+  void _replacementCallback(
+    BuildContext context,
+    WritingMistake mistake,
+    String replacement,
+  ) {
+    _doReplacement(mistake, replacement);
+    Navigator.of(context).pop();
+  }
+
+  void _doReplacement(WritingMistake mistake, String replacement) {
+    // Replace mistake and move cursor to and of replacement
+    text = text.substring(0, mistake.offset) +
+        replacement +
+        text.substring(mistake.offset + mistake.length);
+    selection = TextSelection.fromPosition(
+      TextPosition(offset: mistake.offset + replacement.length),
     );
   }
 }

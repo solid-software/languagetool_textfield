@@ -75,7 +75,7 @@ packages:
     source: hosted
     version: "2.1.1"
   languagetool_textfield:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       path: ".."
       relative: true
