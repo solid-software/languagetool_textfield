@@ -7,10 +7,12 @@ import 'package:throttling/throttling.dart';
 
 /// Test TextEditingController
 class SpellTextEditingController extends TextEditingController {
-  final LanguageTool _languageTool = LanguageTool();
+  // Language Tool free API gives us 20 calls per minute free of charge.
+  // This means we can call the API every 3 seconds and not hit the limit.
   final Debouncing _debounce = Debouncing(duration: const Duration(seconds: 3));
-  String _textTemp = '';
-  List<WritingMistake> _mistakes = [];
+  final LanguageTool _languageTool = LanguageTool();
+  String _textPreviousValue = '';
+  List<WritingMistake> _mistakeList = [];
 
   /// Creates a spell check controller for an editable text field.
   ///
@@ -26,14 +28,17 @@ class SpellTextEditingController extends TextEditingController {
   void notifyListeners() {
     super.notifyListeners();
     // Notify listeners to call buildTextSpan when need to show spell check
-    if (_textTemp != text) {
-      _textTemp = text;
-      _mistakes = [];
+    final hasTextChanged = _textPreviousValue != text;
+    if (hasTextChanged) {
+      _textPreviousValue = text;
+      _mistakeList.clear();
       _debounce.debounce(() async {
         try {
-          _mistakes = await _languageTool.check(_textTemp);
+          _mistakeList = await _languageTool.check(text);
           notifyListeners();
-        } catch (_) {}
+        } catch (_) {
+          // Empty exception handler (for now)
+        }
       });
     }
   }
@@ -50,64 +55,77 @@ class SpellTextEditingController extends TextEditingController {
     TextStyle? style,
     required bool withComposing,
   }) {
-    if (_mistakes.isEmpty) {
-      return TextSpan(text: text, style: style);
-    }
+    if (_mistakeList.isEmpty) return TextSpan(text: text, style: style);
     // Rebuild TextSpan based on mistakes
     final List<TextSpan> children = [];
     try {
-      const TextStyle errorStyle = TextStyle(
+      const TextStyle mistakeStyle = TextStyle(
         decoration: TextDecoration.underline,
         decorationStyle: TextDecorationStyle.wavy,
         decorationColor: Colors.red,
       );
-      for (int i = 0; i < _mistakes.length; i++) {
-        final String left = (i == 0)
-            ? text.substring(0, _mistakes[i].offset)
-            : text.substring(
-                _mistakes[i - 1].offset + _mistakes[i - 1].length,
-                _mistakes[i].offset,
-              );
-        if (left.isNotEmpty) children.add(TextSpan(text: left, style: style));
-        final String mid = text.substring(
-          _mistakes[i].offset,
-          _mistakes[i].offset + _mistakes[i].length,
+      for (int i = 0; i < _mistakeList.length; i++) {
+        final mistake = _mistakeList[i];
+        final String textLeading;
+        if (i == 0) {
+          // Find text before first mistake
+          textLeading = text.substring(0, mistake.offset);
+        } else {
+          // Find text between prev and current mistake
+          final mistakePrev = _mistakeList[i - 1];
+          textLeading = text.substring(
+            mistakePrev.offset + mistakePrev.length,
+            mistake.offset,
+          );
+        }
+        if (textLeading.isNotEmpty) {
+          children.add(TextSpan(text: textLeading, style: style));
+        }
+        // Find current mistake text
+        final String textMistake = text.substring(
+          mistake.offset,
+          mistake.offset + mistake.length,
         );
         children.add(
           TextSpan(
-            text: mid,
-            style: style?.merge(errorStyle) ?? errorStyle,
-            // TextSpan callback
+            text: textMistake,
+            style: style?.merge(mistakeStyle) ?? mistakeStyle,
+            // Mistake text callback when tapped
             recognizer: TapGestureRecognizer()
-              ..onTapUp = (TapUpDetails details) {
-                showDialog<Widget>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: Column(
-                        children: [
-                          Text(_mistakes[i].issueType),
-                          Text(_mistakes[i].issueDescription),
-                          Text(_mistakes[i].message),
-                          Text(_mistakes[i].shortMessage),
-                          const Divider(),
-                          ..._mistakes[i].replacements.map((m) => Text(m)),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
+              ..onTap = () => _mistakeCallback(context, mistake),
           ),
         );
       }
-      final String right =
-          text.substring(_mistakes.last.offset + _mistakes.last.length);
-      if (right.isNotEmpty) children.add(TextSpan(text: right, style: style));
+      // Find text after last mistake
+      final String textTrailing =
+          text.substring(_mistakeList.last.offset + _mistakeList.last.length);
+      if (textTrailing.isNotEmpty) {
+        children.add(TextSpan(text: textTrailing, style: style));
+      }
     } catch (_) {
       return TextSpan(text: text, style: style);
     }
 
     return TextSpan(children: children, style: style);
+  }
+
+  void _mistakeCallback(BuildContext context, WritingMistake mistake) {
+    showDialog<Widget>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            children: [
+              Text(mistake.issueType),
+              Text(mistake.issueDescription),
+              Text(mistake.message),
+              Text(mistake.shortMessage),
+              const Divider(),
+              ...mistake.replacements.map((m) => Text(m)),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
