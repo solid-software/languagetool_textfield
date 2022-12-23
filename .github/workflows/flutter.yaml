@@ -1,0 +1,42 @@
+name: Application ON Push & PR DO Code check
+on: [push, pull_request]
+
+jobs:
+  code-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run static code analysis
+        uses: invertase/github-action-dart-analyzer@v1
+        with:
+          fatal-infos: true
+
+      - name: Dart Code Metrics
+        uses: dart-code-checker/dart-code-metrics-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fatal_warnings: true
+          fatal_style: true
+
+      - name: Check formatting
+        run: dart format . --set-exit-if-changed
+
+      - name: Run tests
+        run: |
+          # run tests if `test` folder exists
+          if [ -d test ]
+          then
+              flutter test -r expanded
+          else
+              echo "Tests not found."
+          fi
