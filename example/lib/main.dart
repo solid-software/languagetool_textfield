@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/spell_text_editing_controller.dart';
 
-void main() => runApp(TestApp());
+void main() => runApp(MyApp());
 
-/// Testing app
-class TestApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   final SpellTextEditingController _controller = SpellTextEditingController();
 
   @override
