@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/languagetool_textfield.dart';
+import 'package:languagetool_textfield/spell_text_editing_controller.dart';
 
 void main() => runApp(TestApp());
 
