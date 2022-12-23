@@ -1,1 +1,0 @@
-library languagetool_textfield;
