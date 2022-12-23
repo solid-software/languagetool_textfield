@@ -5,7 +5,7 @@ void main() => runApp(TestApp());
 
 /// Testing app
 class TestApp extends StatelessWidget {
-  final SpellTextEdittingController _controller = SpellTextEdittingController();
+  final SpellTextEditingController _controller = SpellTextEditingController();
 
   TestApp({Key? key}) : super(key: key);
 
@@ -13,9 +13,10 @@ class TestApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: SpellTextField(
+        body: TextField(
           controller: _controller,
-          debouncingDuration: const Duration(seconds: 3),
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
         ),
       ),
     );

@@ -5,11 +5,44 @@ import 'package:flutter/material.dart';
 import 'package:language_tool/language_tool.dart';
 import 'package:throttling/throttling.dart';
 
-/// Test TextEdittingController
-class SpellTextEdittingController extends TextEditingController {
-  List<WritingMistake> mistakes = [];
+/// Test TextEditingController
+class SpellTextEditingController extends TextEditingController {
+  final LanguageTool _languageTool = LanguageTool();
+  final Debouncing _debounce = Debouncing(duration: const Duration(seconds: 3));
+  String _textTemp = '';
+  List<WritingMistake> _mistakes = [];
 
-  SpellTextEdittingController({super.text});
+  /// Creates a spell check controller for an editable text field.
+  ///
+  /// Treats a null [text] argument as if it were the empty string.
+  ///
+  /// The [duration] property is set to 3 seconds by default.
+  SpellTextEditingController({super.text, Duration? duration}) {
+    if (duration != null) _debounce.duration = duration;
+    if (text.isNotEmpty) notifyListeners();
+  }
+
+  @override
+  void notifyListeners() {
+    super.notifyListeners();
+    // Notify listeners to call buildTextSpan when need to show spell check
+    if (_textTemp != text) {
+      _textTemp = text;
+      _mistakes = [];
+      _debounce.debounce(() async {
+        try {
+          _mistakes = await _languageTool.check(_textTemp);
+          notifyListeners();
+        } catch (_) {}
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _debounce.close();
+    super.dispose();
+  }
 
   @override
   TextSpan buildTextSpan({
@@ -17,7 +50,7 @@ class SpellTextEdittingController extends TextEditingController {
     TextStyle? style,
     required bool withComposing,
   }) {
-    if (mistakes.isEmpty) {
+    if (_mistakes.isEmpty) {
       return TextSpan(text: text, style: style);
     }
     // Rebuild TextSpan based on mistakes
@@ -28,23 +61,23 @@ class SpellTextEdittingController extends TextEditingController {
         decorationStyle: TextDecorationStyle.wavy,
         decorationColor: Colors.red,
       );
-      for (int i = 0; i < mistakes.length; i++) {
+      for (int i = 0; i < _mistakes.length; i++) {
         final String left = (i == 0)
-            ? text.substring(0, mistakes[i].offset)
+            ? text.substring(0, _mistakes[i].offset)
             : text.substring(
-                mistakes[i - 1].offset + mistakes[i - 1].length,
-                mistakes[i].offset,
+                _mistakes[i - 1].offset + _mistakes[i - 1].length,
+                _mistakes[i].offset,
               );
         if (left.isNotEmpty) children.add(TextSpan(text: left, style: style));
         final String mid = text.substring(
-          mistakes[i].offset,
-          mistakes[i].offset + mistakes[i].length,
+          _mistakes[i].offset,
+          _mistakes[i].offset + _mistakes[i].length,
         );
         children.add(
           TextSpan(
             text: mid,
             style: style?.merge(errorStyle) ?? errorStyle,
-            // Callback
+            // TextSpan callback
             recognizer: TapGestureRecognizer()
               ..onTapUp = (TapUpDetails details) {
                 showDialog<Widget>(
@@ -53,12 +86,12 @@ class SpellTextEdittingController extends TextEditingController {
                     return AlertDialog(
                       content: Column(
                         children: [
-                          Text(mistakes[i].issueType),
-                          Text(mistakes[i].issueDescription),
-                          Text(mistakes[i].message),
-                          Text(mistakes[i].shortMessage),
+                          Text(_mistakes[i].issueType),
+                          Text(_mistakes[i].issueDescription),
+                          Text(_mistakes[i].message),
+                          Text(_mistakes[i].shortMessage),
                           const Divider(),
-                          ...mistakes[i].replacements.map((m) => Text(m)),
+                          ..._mistakes[i].replacements.map((m) => Text(m)),
                         ],
                       ),
                     );
@@ -69,73 +102,12 @@ class SpellTextEdittingController extends TextEditingController {
         );
       }
       final String right =
-          text.substring(mistakes.last.offset + mistakes.last.length);
+          text.substring(_mistakes.last.offset + _mistakes.last.length);
       if (right.isNotEmpty) children.add(TextSpan(text: right, style: style));
     } catch (_) {
       return TextSpan(text: text, style: style);
     }
 
     return TextSpan(children: children, style: style);
-  }
-}
-
-/// Test TextField
-class SpellTextField extends StatefulWidget {
-  final SpellTextEdittingController controller;
-  final Duration debouncingDuration;
-
-  const SpellTextField({
-    Key? key,
-    required this.controller,
-    this.debouncingDuration = const Duration(seconds: 3),
-  }) : super(key: key);
-
-  @override
-  _SpellTextFieldState createState() => _SpellTextFieldState();
-}
-
-class _SpellTextFieldState extends State<SpellTextField> {
-  final LanguageTool _languageTool = LanguageTool();
-  final Debouncing _debouncing =
-      Debouncing(duration: const Duration(seconds: 3));
-
-  String _textTemp = '';
-
-  SpellTextEdittingController get _controller => widget.controller;
-
-  Duration get _debouncingDuration => widget.debouncingDuration;
-
-  @override
-  void initState() {
-    super.initState();
-    _textTemp = _controller.text;
-    _debouncing.duration = _debouncingDuration;
-
-    // Try to check spell after few seconds after changing text
-    _controller.addListener(() {
-      if (_textTemp != _controller.text) {
-        _textTemp = _controller.text;
-        _controller.mistakes = [];
-        _debouncing.debounce(() async {
-          try {
-            _controller.mistakes = await _languageTool.check(_textTemp);
-            setState(() {});
-          } catch (_) {}
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _debouncing.close();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: _controller,
-    );
   }
 }
