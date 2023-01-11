@@ -61,7 +61,7 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-  final tool = LanguageTool();
+  final _tool = LanguageTool();
   CustomTextFieldController? controller;
   final _textCheckDebouncer = Debouncer(milliseconds: 500);
 
