@@ -119,19 +119,7 @@ class CustomTextFieldController extends TextEditingController {
           final currentMistake = mistakes[i];
           final mistakeStyle = _defineMistakeStyle(currentMistake.issueType);
           result.add(
-            TextSpan(
-              text: text.substring(
-                currentMistake.offset,
-                currentMistake.offset + currentMistake.length,
-              ),
-              style: mistakeStyle,
-              recognizer: TapGestureRecognizer()
-                ..onTap = () async {
-                  // print(mistakes![i].issueType);
-                  // print(mistakes![i].issueDescription);
-                  _showMistakeDialog(currentMistake, context);
-                },
-            ),
+            _buildMistakeSpan(currentMistake);
           );
           final hasNextMistake = i + 1 < mistakes.length;
           if (hasNextMistake) {
