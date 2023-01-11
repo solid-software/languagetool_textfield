@@ -137,13 +137,10 @@ class CustomTextFieldController extends TextEditingController {
           if (hasNextMistake) {
             final nextMistakeOffset = mistakes[i + 1].offset;
             result.add(
-              TextSpan(
-                text: text.substring(
+              _buildCleanSpan(
                   currentMistake.offset + currentMistake.length,
                   nextMistakeOffset,
-                ),
-                style: LanguageToolDefaultStyles.noMistakeStyle,
-              ),
+              )
             );
           } else {
             result.add(
