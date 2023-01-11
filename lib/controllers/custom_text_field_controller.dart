@@ -104,6 +104,40 @@ class CustomTextFieldController extends TextEditingController {
     }
   }
 
+  TextSpan _buildMistakeSpan(
+    WritingMistake currentMistake,
+    TextStyle mistakeStyle,
+    BuildContext context,
+  ) {
+    return TextSpan(
+      text: text.substring(
+        currentMistake.offset,
+        currentMistake.offset + currentMistake.length,
+      ),
+      style: mistakeStyle,
+      recognizer: TapGestureRecognizer()
+        ..onTap = () async {
+          // print(mistakes![i].issueType);
+          // print(mistakes![i].issueDescription);
+          _showMistakeDialog(currentMistake, context);
+        },
+    );
+  }
+
+  TextSpan _buildCleanSpan(
+    int currentMistakeEnd,
+    int nextMistakeOffset,
+  ) {
+    return TextSpan(
+      text: text.substring(
+        currentMistakeEnd,
+        // currentMistake.offset + currentMistake.length,
+        nextMistakeOffset,
+      ),
+      style: LanguageToolDefaultStyles.noMistakeStyle,
+    );
+  }
+
   /// This function creates a TextSpan array with the actual text,
   /// where mistakes are highlited and addressed
   List<TextSpan> _configureText(String text, BuildContext context) {
@@ -119,26 +153,30 @@ class CustomTextFieldController extends TextEditingController {
           final currentMistake = mistakes[i];
           final mistakeStyle = _defineMistakeStyle(currentMistake.issueType);
           result.add(
-            _buildMistakeSpan(currentMistake);
+            _buildMistakeSpan(currentMistake, mistakeStyle, context),
           );
           final hasNextMistake = i + 1 < mistakes.length;
           if (hasNextMistake) {
             final nextMistakeOffset = mistakes[i + 1].offset;
             result.add(
               _buildCleanSpan(
-                  currentMistake.offset + currentMistake.length,
-                  nextMistakeOffset,
-              )
+                currentMistake.offset + currentMistake.length,
+                nextMistakeOffset,
+              ),
             );
           } else {
             result.add(
-              TextSpan(
-                text: text.substring(
-                  currentMistake.offset + currentMistake.length,
-                  text.length,
-                ),
-                style: LanguageToolDefaultStyles.noMistakeStyle,
+              _buildCleanSpan(
+                currentMistake.offset + currentMistake.length,
+                text.length,
               ),
+              // TextSpan(
+              //   text: text.substring(
+              //     currentMistake.offset + currentMistake.length,
+              //     text.length,
+              //   ),
+              //   style: LanguageToolDefaultStyles.noMistakeStyle,
+              // ),
             );
           }
         }

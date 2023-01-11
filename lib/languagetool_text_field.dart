@@ -1,7 +1,7 @@
 library languagetool_text_field;
 
 import "package:flutter/material.dart";
-import 'package:language_tool/language_tool.dart';
+
 import 'package:languagetool_text_field/controllers/custom_text_field_controller.dart';
 import 'package:languagetool_text_field/controllers/debouncer.dart';
 
@@ -61,7 +61,6 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-  final _tool = LanguageTool();
   CustomTextFieldController? controller;
   final _textCheckDebouncer = Debouncer(milliseconds: 500);
 
@@ -83,7 +82,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
         showCursor: true,
         decoration: widget.decoration,
         onChanged: (value) async {
-          _debouncer.run(
+          _textCheckDebouncer.run(
             () {
               controller?.updateValidation(value);
             },

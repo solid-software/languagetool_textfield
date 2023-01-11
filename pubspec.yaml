@@ -15,7 +15,6 @@ dependencies:
   
 
 dev_dependencies:
-  flutter_lints: ^2.0.0 
   flutter_test:
     sdk: flutter
   
@@ -23,3 +22,7 @@ dev_dependencies:
 
 
 flutter:
+  fonts:
+    - family: Greaorgia
+      fonts:
+        - asset: fonts/Georgia.ttf

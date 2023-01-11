@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class Debouncer {
   /// Number of milliseconds for the delay
   final int milliseconds;
-  // VoidCallback action;
+
   Timer? _timer;
 
   /// Constructor
