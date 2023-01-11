@@ -5,7 +5,6 @@ import 'package:languagetool_text_field/styles/app_colors.dart';
 abstract class LanguageToolDefaultStyles {
   /// Style of the right text
   static const TextStyle noMistakeStyle = TextStyle(
-    fontFamily: "Georgia",
     color: Colors.black,
     fontSize: 14,
     height: 1.5,
