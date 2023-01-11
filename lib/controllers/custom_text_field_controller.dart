@@ -92,23 +92,16 @@ class CustomTextFieldController extends TextEditingController {
   }
 
   TextStyle _defineMistakeStyle(String type) {
-    var mistakeStyle = LanguageToolDefaultStyles.noMistakeStyle;
     switch (type) {
       case "typographical":
-        mistakeStyle = typographicalMistakeStyle;
-        break;
+        return typographicalMistakeStyle;
       case 'grammar':
-        mistakeStyle = grammarMistakeStyle;
-        break;
+        return grammarMistakeStyle;
       case 'style':
-        mistakeStyle = styleMistakeStyle;
-        break;
+        return styleMistakeStyle;
       default:
-        mistakeStyle = LanguageToolDefaultStyles.defaulMistakeStyle;
-        break;
+        return LanguageToolDefaultStyles.defaulMistakeStyle;
     }
-
-    return mistakeStyle;
   }
 
   /// This function creates a TextSpan array with the actual text,
