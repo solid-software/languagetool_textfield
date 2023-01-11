@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:languagetool_text_field/styles/app_colors.dart';
 
 /// Abstract class with different predeined styles for different error types
 abstract class LanguageToolDefaultStyles {
@@ -14,7 +15,7 @@ abstract class LanguageToolDefaultStyles {
     decoration: TextDecoration.underline,
     // decorationColor: Color.fromARGB(255, 255, 89, 77),
     // decorationThickness: 4,
-    backgroundColor: Color.fromARGB(255, 255, 238, 164),
+    backgroundColor: AppColors.lightYellowHighlight,
     fontSize: 14,
   );
 
@@ -24,7 +25,7 @@ abstract class LanguageToolDefaultStyles {
     decoration: TextDecoration.underline,
     // decorationColor: Color.fromARGB(255, 255, 222, 77),
     // decorationThickness: 4,
-    backgroundColor: Color.fromARGB(255, 255, 161, 154),
+    backgroundColor: AppColors.lightRedHighlight,
     fontSize: 14,
   );
 
@@ -34,7 +35,7 @@ abstract class LanguageToolDefaultStyles {
     decoration: TextDecoration.underline,
     // decorationColor: Color.fromARGB(255, 255, 222, 77),
     // decorationThickness: 4,
-    backgroundColor: Color.fromARGB(255, 178, 255, 150),
+    backgroundColor: AppColors.lightGreenHighlight,
     fontSize: 14,
   );
 
@@ -44,7 +45,7 @@ abstract class LanguageToolDefaultStyles {
     decoration: TextDecoration.underline,
     // decorationColor: Color.fromARGB(255, 255, 222, 77),
     // decorationThickness: 4,
-    backgroundColor: Color.fromARGB(255, 142, 244, 255),
+    backgroundColor: AppColors.lightBlueHighlight,
     fontSize: 14,
   );
 }

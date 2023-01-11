@@ -44,7 +44,7 @@ class CustomTextFieldController extends TextEditingController {
   Future updateValidation(String text) async {
     // delay for 300 milliseconds befor the call
     await Future<dynamic>.delayed(
-      const Duration(milliseconds: 300),
+      const Duration(seconds: 3),
     );
     mistakes = await _tool.check(text);
   }
