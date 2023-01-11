@@ -69,7 +69,7 @@ class CustomTextFieldController extends TextEditingController {
             ),
             TextButton(
               child: const Text('Replace'),
-              onPressed: () {
+              onPressed: () async {
                 // print(text.length);
                 final errorText = text.substring(
                   mistakeInfo.offset,
@@ -80,8 +80,8 @@ class CustomTextFieldController extends TextEditingController {
                 final String newText = text.replaceFirst(errorText, rightText);
                 text = newText;
                 // print("${text.length}");
-                updateValidation(text);
-                _configureText(newText, context);
+                await updateValidation(text);
+                // _configureText(newText, context);
                 Navigator.of(_context).pop();
               },
             ),
