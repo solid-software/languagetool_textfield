@@ -1,8 +1,8 @@
 library languagetool_text_field;
 
 import "package:flutter/material.dart";
-import 'controllers/custom_text_field_controller.dart';
 import 'package:language_tool/language_tool.dart';
+import 'package:languagetool_text_field/controllers/custom_text_field_controller.dart';
 
 /// TextField widget that makes use of Languagetool API package and checks the
 /// entered text for different kinds mistakes
@@ -16,16 +16,20 @@ class LanguageToolTextField extends StatefulWidget {
   /// Input decoration of the TextField
   final InputDecoration? decoration;
 
-  /// Highlite style mistake with this specified TextStyle. If this is not stated, uses default instead
+  /// Highlite style mistake with this specified TextStyle.
+  /// If this is not stated, uses default instead
   final TextStyle? styleMistakeStyle;
 
-  /// Highlite grammar mistake with this specified TextStyle. If this is not stated, uses default instead
+  /// Highlite grammar mistake with this specified TextStyle.
+  /// If this is not stated, uses default instead
   final TextStyle? grammarMistakeStyle;
 
-  /// Highlite typographical mistake with this specified TextStyle. If this is not stated, uses default instead
+  /// Highlite typographical mistake with this specified TextStyle.
+  ///  If this is not stated, uses default instead
   final TextStyle? typographicalMistakeStyle;
 
-  /// default highlight for all unclassified mistakes. If this is not stated, uses default instead
+  /// default highlight for all unclassified mistakes.
+  /// If this is not stated, uses default instead
   final TextStyle? defaultMistakeStyle;
 
   /// Cursor width
@@ -57,16 +61,16 @@ class LanguageToolTextField extends StatefulWidget {
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   final tool = LanguageTool();
-  late final CustomTextFieldController controller;
+  CustomTextFieldController? controller;
 
   @override
   void initState() {
     controller = CustomTextFieldController(
       text: '',
-      styleMistakeStyle: widget.styleMistakeStyle,
-      defaulMistakeStyle: widget.defaultMistakeStyle,
-      grammarMistakeStyle: widget.grammarMistakeStyle,
-      typographicalMistakeStyle: widget.typographicalMistakeStyle,
+      // styleMistakeStyle: widget.styleMistakeStyle?? ,
+      // defaulMistakeStyle: widget.defaultMistakeStyle,
+      // grammarMistakeStyle: widget.grammarMistakeStyle,
+      // typographicalMistakeStyle: widget.typographicalMistakeStyle,
     );
 
     super.initState();
@@ -83,7 +87,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
         onChanged: (value) async {
           // await controller.updateValidation(context, value);
           // controller.buildTextSpan(context: context, withComposing: false);
-          await controller.updateMistakes(value);
+          await controller?.updateValidation(value);
         },
         cursorWidth: widget.cursorWidth ?? 1,
         maxLines: widget.maxLines ?? 1,
