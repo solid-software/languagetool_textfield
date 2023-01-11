@@ -10,30 +10,37 @@ For general information about developing packages, see the Dart guide for
 and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
+# LanguageTool Text Field 
 ## Features
+- Spell checking with the highly precise LangTool AI.
+- Mistakes are highlighted and easy to spot.
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
 
 ## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+To get started, install the package, import and use the LanguageToolTextField Widget with required parameters of width and height like the normal Container
 
 ## Usage
+First install it, then use:
+``` import 'package:languagetool_text_field/languagetool_text_field.dart'``` 
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+In your code you can do something like:
 
-```dart
-const like = 'sample';
+```
+...
+body: Center(
+        child: LanguageToolTextField(
+        height: heigth,
+        width: width,
+        decoration: InputDecoration(
+            border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(circularRadius),
+            ),
+        ),
+        maxLines: maxLines,
+        //defaultMistakeStyle: TextStyle(fontSize: 60),
+        //styleMistakeStyle: TextStyle(fontSize: 60),
+        ),
+    ),
+    ...
 ```
 
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.

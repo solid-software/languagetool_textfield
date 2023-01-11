@@ -1,5 +1,5 @@
 name: languagetool_text_field
-description: A new Flutter package project.
+description: TextField with spellchecking by LanguageTool API
 version: 0.0.1
 homepage:
 
