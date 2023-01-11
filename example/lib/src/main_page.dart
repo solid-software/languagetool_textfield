@@ -19,17 +19,19 @@ class MainPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Center(
-        child: LanguageToolTextField(
-          height: heigth,
+        child: SizedBox(
           width: width,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(circularRadius),
+          height: heigth,
+          child: LanguageToolTextField(
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(circularRadius),
+              ),
             ),
+            maxLines: maxLines,
+            //defaultMistakeStyle: TextStyle(fontSize: 60),
+            //styleMistakeStyle: TextStyle(fontSize: 60),
           ),
-          maxLines: maxLines,
-          //defaultMistakeStyle: TextStyle(fontSize: 60),
-          //styleMistakeStyle: TextStyle(fontSize: 60),
         ),
       ),
     );

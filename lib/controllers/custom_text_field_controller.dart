@@ -10,7 +10,7 @@ import 'package:languagetool_text_field/styles/languagetool_default_styles.dart'
 class CustomTextFieldController extends TextEditingController {
   /// List of mistakes, currently presented in the text
 
-  List<WritingMistake> mistakes = [];
+  List<WritingMistake> _mistakes = [];
   final _tool = LanguageTool();
 
   /// Highlite style mistake with this specified TextStyle.
@@ -37,16 +37,12 @@ class CustomTextFieldController extends TextEditingController {
     this.grammarMistakeStyle = LanguageToolDefaultStyles.grammarMistakeStyle,
     this.typographicalMistakeStyle =
         LanguageToolDefaultStyles.typographicalMistakeStyle,
-    this.defaulMistakeStyle = LanguageToolDefaultStyles.defaulMistakeStyle,
+    this.defaulMistakeStyle = LanguageToolDefaultStyles.defaultMistakeStyle,
   }) : super(text: text);
 
   /// Function that makes API call and updates the internal array with mistakes.
   Future updateValidation(String text) async {
-    // delay for 300 milliseconds befor the call
-    // await Future<dynamic>.delayed(
-    //   const Duration(seconds: 3),
-    // );
-    mistakes = await _tool.check(text);
+    _mistakes = await _tool.check(text);
   }
 
   /// mistake dialog, which allows us to replace given part of the text
@@ -78,10 +74,10 @@ class CustomTextFieldController extends TextEditingController {
                 // print(errorText);
                 final String rightText = mistakeInfo.replacements.first;
                 final String newText = text.replaceFirst(errorText, rightText);
-                await updateValidation(text);
+                // await updateValidation(text);
                 text = newText;
                 // print("${text.length}");
-
+                _mistakes.remove(mistakeInfo);
                 // _configureText(newText, context);
                 Navigator.of(_context).pop();
               },
@@ -101,7 +97,7 @@ class CustomTextFieldController extends TextEditingController {
       case 'style':
         return styleMistakeStyle;
       default:
-        return LanguageToolDefaultStyles.defaulMistakeStyle;
+        return LanguageToolDefaultStyles.defaultMistakeStyle;
     }
   }
 
@@ -118,22 +114,19 @@ class CustomTextFieldController extends TextEditingController {
       style: mistakeStyle,
       recognizer: TapGestureRecognizer()
         ..onTap = () async {
-          // print(mistakes![i].issueType);
-          // print(mistakes![i].issueDescription);
           _showMistakeDialog(currentMistake, context);
         },
     );
   }
 
   TextSpan _buildCleanSpan(
-    int currentMistakeEnd,
-    int nextMistakeOffset,
+    int start,
+    int end,
   ) {
     return TextSpan(
       text: text.substring(
-        currentMistakeEnd,
-        // currentMistake.offset + currentMistake.length,
-        nextMistakeOffset,
+        start,
+        end,
       ),
       style: LanguageToolDefaultStyles.noMistakeStyle,
     );
@@ -142,50 +135,39 @@ class CustomTextFieldController extends TextEditingController {
   /// This function creates a TextSpan array with the actual text,
   /// where mistakes are highlited and addressed
   List<TextSpan> _configureText(String text, BuildContext context) {
-    try {
-      if (mistakes.isNotEmpty) {
-        final List<TextSpan> result = [];
+    if (_mistakes.isNotEmpty) {
+      final List<TextSpan> result = [];
+      result.add(
+        TextSpan(
+          text: text.substring(0, _mistakes.first.offset),
+        ),
+      );
+      for (int i = 0; i < _mistakes.length; i++) {
+        final currentMistake = _mistakes[i];
+        final mistakeStyle = _defineMistakeStyle(currentMistake.issueType);
         result.add(
-          TextSpan(
-            text: text.substring(0, mistakes.first.offset),
-          ),
+          _buildMistakeSpan(currentMistake, mistakeStyle, context),
         );
-        for (int i = 0; i < mistakes.length; i++) {
-          final currentMistake = mistakes[i];
-          final mistakeStyle = _defineMistakeStyle(currentMistake.issueType);
+        final hasNextMistake = i + 1 < _mistakes.length;
+        if (hasNextMistake) {
+          final nextMistakeOffset = _mistakes[i + 1].offset;
           result.add(
-            _buildMistakeSpan(currentMistake, mistakeStyle, context),
+            _buildCleanSpan(
+              currentMistake.offset + currentMistake.length,
+              nextMistakeOffset,
+            ),
           );
-          final hasNextMistake = i + 1 < mistakes.length;
-          if (hasNextMistake) {
-            final nextMistakeOffset = mistakes[i + 1].offset;
-            result.add(
-              _buildCleanSpan(
-                currentMistake.offset + currentMistake.length,
-                nextMistakeOffset,
-              ),
-            );
-          } else {
-            result.add(
-              _buildCleanSpan(
-                currentMistake.offset + currentMistake.length,
-                text.length,
-              ),
-              // TextSpan(
-              //   text: text.substring(
-              //     currentMistake.offset + currentMistake.length,
-              //     text.length,
-              //   ),
-              //   style: LanguageToolDefaultStyles.noMistakeStyle,
-              // ),
-            );
-          }
+        } else {
+          result.add(
+            _buildCleanSpan(
+              currentMistake.offset + currentMistake.length,
+              text.length,
+            ),
+          );
         }
-
-        return result;
       }
-    } catch (e) {
-      // print(e);
+
+      return result;
     }
 
     return [
@@ -201,6 +183,6 @@ class CustomTextFieldController extends TextEditingController {
   }) {
     final List<TextSpan> result = _configureText(text, context);
 
-    return TextSpan(children: result); //  TextSpan(children: result);
+    return TextSpan(children: result);
   }
 }

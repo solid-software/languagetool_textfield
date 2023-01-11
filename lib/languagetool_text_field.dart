@@ -8,29 +8,19 @@ import 'package:languagetool_text_field/controllers/debouncer.dart';
 /// TextField widget that makes use of Languagetool API package and checks the
 /// entered text for different kinds mistakes
 class LanguageToolTextField extends StatefulWidget {
-  /// Height of the Box, where the TextField is shown
-  final double height;
-
-  /// Width of the Box, where the TextField is shown
-  final double width;
-
   /// Input decoration of the TextField
   final InputDecoration? decoration;
 
-  /// Highlite style mistake with this specified TextStyle.
-  /// If this is not stated, uses default instead
+  /// TextStyle for style mistake
   final TextStyle? styleMistakeStyle;
 
-  /// Highlite grammar mistake with this specified TextStyle.
-  /// If this is not stated, uses default instead
+  /// TextStyle for grammar mistake
   final TextStyle? grammarMistakeStyle;
 
-  /// Highlite typographical mistake with this specified TextStyle.
-  ///  If this is not stated, uses default instead
+  /// TextStyle for typographical mistake
   final TextStyle? typographicalMistakeStyle;
 
-  /// default highlight for all unclassified mistakes.
-  /// If this is not stated, uses default instead
+  /// TextStyle for unidentified mistake
   final TextStyle? defaultMistakeStyle;
 
   /// Cursor width
@@ -41,11 +31,6 @@ class LanguageToolTextField extends StatefulWidget {
 
   /// Constructor
   const LanguageToolTextField({
-    /// Height of the Widget
-    required this.height,
-
-    /// Height of the Widget
-    required this.width,
     required this.decoration,
     this.styleMistakeStyle,
     this.grammarMistakeStyle,
@@ -75,25 +60,19 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: widget.height,
-      width: widget.width,
-      child: TextField(
-        showCursor: true,
-        decoration: widget.decoration,
-        onChanged: (value) async {
-          _textCheckDebouncer.run(
-            () {
-              controller?.updateValidation(value);
-            },
-          );
-          // await controller.updateValidation(context, value);
-          // controller.buildTextSpan(context: context, withComposing: false);
-        },
-        cursorWidth: widget.cursorWidth ?? 1,
-        maxLines: widget.maxLines ?? 1,
-        controller: controller,
-      ),
+    return TextField(
+      showCursor: true,
+      decoration: widget.decoration,
+      onChanged: (value) {
+        _textCheckDebouncer.run(
+          () {
+            controller?.updateValidation(value);
+          },
+        );
+      },
+      cursorWidth: widget.cursorWidth ?? 1,
+      maxLines: widget.maxLines ?? 1,
+      controller: controller,
     );
   }
 }

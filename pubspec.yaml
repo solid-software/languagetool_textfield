@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   language_tool: ^2.1.1
-  motion: ^1.3.3
+  
   
 
 dev_dependencies:
