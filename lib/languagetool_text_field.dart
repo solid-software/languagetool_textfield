@@ -3,6 +3,7 @@ library languagetool_text_field;
 import "package:flutter/material.dart";
 import 'package:language_tool/language_tool.dart';
 import 'package:languagetool_text_field/controllers/custom_text_field_controller.dart';
+import 'package:languagetool_text_field/controllers/debouncer.dart';
 
 /// TextField widget that makes use of Languagetool API package and checks the
 /// entered text for different kinds mistakes
@@ -62,6 +63,7 @@ class LanguageToolTextField extends StatefulWidget {
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   final tool = LanguageTool();
   CustomTextFieldController? controller;
+  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -85,9 +87,13 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
         showCursor: true,
         decoration: widget.decoration,
         onChanged: (value) async {
+          _debouncer.run(
+            () {
+              controller?.updateValidation(value);
+            },
+          );
           // await controller.updateValidation(context, value);
           // controller.buildTextSpan(context: context, withComposing: false);
-          await controller?.updateValidation(value);
         },
         cursorWidth: widget.cursorWidth ?? 1,
         maxLines: widget.maxLines ?? 1,
