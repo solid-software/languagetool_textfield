@@ -78,9 +78,10 @@ class CustomTextFieldController extends TextEditingController {
                 // print(errorText);
                 final String rightText = mistakeInfo.replacements.first;
                 final String newText = text.replaceFirst(errorText, rightText);
+                await updateValidation(text);
                 text = newText;
                 // print("${text.length}");
-                await updateValidation(text);
+
                 // _configureText(newText, context);
                 Navigator.of(_context).pop();
               },

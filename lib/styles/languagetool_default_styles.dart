@@ -13,7 +13,7 @@ abstract class LanguageToolDefaultStyles {
   /// Standart typographical  mistake style
   static const TextStyle typographicalMistakeStyle = TextStyle(
     color: Colors.black,
-    fontFamily: "Georgia",
+
     // decoration: TextDecoration.underline,
     // decorationColor: Color.fromARGB(255, 255, 89, 77),
     // decorationThickness: 4,
@@ -25,7 +25,7 @@ abstract class LanguageToolDefaultStyles {
   /// Standart grammar mistake style
   static const TextStyle grammarMistakeStyle = TextStyle(
     color: Colors.black,
-    fontFamily: "Georgia",
+
     // decoration: TextDecoration.underline,
     // decorationColor: Color.fromARGB(255, 255, 222, 77),
     // decorationThickness: 4,
@@ -37,7 +37,7 @@ abstract class LanguageToolDefaultStyles {
   /// Standart style mistake style
   static const TextStyle styleMistakeStyle = TextStyle(
     color: Colors.black,
-    fontFamily: "Georgia",
+
     // decoration: TextDecoration.underline,
     // decorationColor: Color.fromARGB(255, 255, 222, 77),
     // decorationThickness: 4,
@@ -49,7 +49,6 @@ abstract class LanguageToolDefaultStyles {
   /// Standart unidentified mistake style
   static const TextStyle defaulMistakeStyle = TextStyle(
     color: Colors.black,
-    fontFamily: "Georgia",
 
     // decoration: TextDecoration.underline,
     // decorationColor: Color.fromARGB(255, 255, 222, 77),
