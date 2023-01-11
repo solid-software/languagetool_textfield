@@ -69,10 +69,6 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   void initState() {
     controller = CustomTextFieldController(
       text: '',
-      // styleMistakeStyle: widget.styleMistakeStyle?? ,
-      // defaulMistakeStyle: widget.defaultMistakeStyle,
-      // grammarMistakeStyle: widget.grammarMistakeStyle,
-      // typographicalMistakeStyle: widget.typographicalMistakeStyle,
     );
 
     super.initState();
