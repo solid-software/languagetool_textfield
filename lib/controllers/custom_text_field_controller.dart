@@ -5,6 +5,7 @@ import 'package:language_tool/language_tool.dart';
 import 'package:languagetool_text_field/controllers/timeout.dart';
 
 import 'package:languagetool_text_field/styles/languagetool_default_styles.dart';
+import 'package:rate_limiter/rate_limiter.dart';
 
 /// Custom controller which allows different styles in one TextField
 ///  by concatanating different TextSpan widgets
@@ -47,7 +48,14 @@ class CustomTextFieldController extends TextEditingController {
 
   /// Function that makes API call and updates the internal array with mistakes.
   Future updateValidation(String text) async {
-    _mistakes = await _tool.check(text);
+    final throttledFunction = throttle(
+      () async {
+        _mistakes = await _tool.check(text);
+      },
+      const Duration(seconds: 3),
+    );
+
+    throttledFunction();
   }
 
   TextStyle _defineMistakeStyle(String type) {
