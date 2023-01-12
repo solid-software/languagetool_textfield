@@ -7,7 +7,7 @@ abstract class LanguageToolDefaultStyles {
   static const TextStyle noMistakeStyle = TextStyle(
     color: Colors.black,
     fontSize: 14,
-    height: 1.5,
+    height: 1,
   );
 
   /// Standart typographical  mistake style
@@ -15,7 +15,7 @@ abstract class LanguageToolDefaultStyles {
     color: Colors.black,
     backgroundColor: AppColors.lightYellowHighlight,
     fontSize: 14,
-    height: 1.5,
+    height: 1,
   );
 
   /// Standart grammar mistake style
@@ -23,7 +23,7 @@ abstract class LanguageToolDefaultStyles {
     color: Colors.black,
     backgroundColor: AppColors.lightRedHighlight,
     fontSize: 14,
-    height: 1.5,
+    height: 1,
   );
 
   /// Standart style mistake style
@@ -31,7 +31,7 @@ abstract class LanguageToolDefaultStyles {
     color: Colors.black,
     backgroundColor: AppColors.lightGreenHighlight,
     fontSize: 14,
-    height: 1.5,
+    height: 1,
   );
 
   /// Standart unidentified mistake style
@@ -39,6 +39,6 @@ abstract class LanguageToolDefaultStyles {
     color: Colors.black,
     backgroundColor: AppColors.lightBlueHighlight,
     fontSize: 14,
-    height: 1.5,
+    height: 1,
   );
 }

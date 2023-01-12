@@ -5,7 +5,9 @@ void main() {
   runApp(
     MaterialApp(
       home: const MainPage(),
-      theme: ThemeData(colorSchemeSeed: Colors.lightBlue),
+      theme: ThemeData(
+        colorSchemeSeed: Colors.lightBlue,
+      ),
     ),
   );
 }

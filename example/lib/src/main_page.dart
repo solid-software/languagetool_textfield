@@ -8,7 +8,7 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double width = 500;
+    const double width = 400;
     const double heigth = 300;
     const double circularRadius = 15;
     const int maxLines = 10;
@@ -29,8 +29,6 @@ class MainPage extends StatelessWidget {
               ),
             ),
             maxLines: maxLines,
-            //defaultMistakeStyle: TextStyle(fontSize: 60),
-            //styleMistakeStyle: TextStyle(fontSize: 60),
           ),
         ),
       ),
