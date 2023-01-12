@@ -16,27 +16,19 @@ class Timeout {
 
   /// Runs the required action
   void run(VoidCallback action) {
-    if (_internalTimer == null) {
+    if (_internalTimer != null && !_internalTimer!.isActive) {
       action.call();
-      _internalTimer = Timer(duration, () {});
-
-      return;
-    }
-
-    if (_internalTimer!.isActive) {
-      Timer(
+      _internalTimer = Timer(
+        duration,
+        () {},
+      );
+    } else {
+      _internalTimer = Timer(
         duration,
         () {
           action.call();
         },
       );
-
-      return;
-    } else {
-      action.call();
-      _internalTimer = Timer(duration, () {});
-
-      return;
     }
   }
 }
