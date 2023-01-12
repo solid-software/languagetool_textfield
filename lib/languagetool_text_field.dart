@@ -1,6 +1,8 @@
 library languagetool_text_field;
 
+import 'package:flutter/gestures.dart';
 import "package:flutter/material.dart";
+import 'package:flutter/services.dart';
 
 import 'package:languagetool_text_field/controllers/custom_text_field_controller.dart';
 import 'package:languagetool_text_field/controllers/debouncer.dart';
@@ -30,6 +32,9 @@ class LanguageToolTextField extends StatefulWidget {
   /// Maximum number of lines in the TextField
   final int? maxLines;
 
+  /// Duration set for an input debouncer
+  final Duration debouncerDuration;
+
   /// Constructor
   const LanguageToolTextField({
     required this.decoration,
@@ -39,6 +44,7 @@ class LanguageToolTextField extends StatefulWidget {
     this.defaultMistakeStyle,
     this.cursorWidth,
     this.maxLines,
+    this.debouncerDuration = const Duration(milliseconds: 500),
     super.key,
   });
 
@@ -47,11 +53,18 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-  CustomTextFieldController controller = CustomTextFieldController(text: '');
-  final _textCheckDebouncer = Debouncer(milliseconds: 500);
+  //
+  CustomTextFieldController? controller;
+  Debouncer? _textCheckDebouncer;
 
   @override
   void initState() {
+    controller = CustomTextFieldController(
+      text: '',
+    );
+    _textCheckDebouncer = Debouncer(
+      duration: widget.debouncerDuration,
+    );
     super.initState();
   }
 
@@ -62,11 +75,11 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
       showCursor: true,
       decoration: widget.decoration,
       onChanged: (value) async {
-        controller.nullMistakes();
+        controller?.clearMistakes();
 
-        _textCheckDebouncer.run(
+        _textCheckDebouncer?.run(
           () async {
-            await controller.updateValidation(value);
+            await controller?.updateValidation(value);
           },
         );
       },

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:html';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:language_tool/language_tool.dart';
 import 'package:languagetool_text_field/controllers/debouncer.dart';
@@ -38,16 +40,16 @@ class CustomTextFieldController extends TextEditingController {
 
   /// This function nulls the mistakes before the API call was made
   /// to avoid conflicts
-  void nullMistakes() {
+  void clearMistakes() {
     _mistakes = [];
   }
 
   /// Function that makes API call and updates the internal array with mistakes.
   Future updateValidation(String text) async {
-    final Debouncer debouncer = Debouncer(milliseconds: 3000);
-    debouncer.run(() async {
-      _mistakes = await _tool.check(text);
-    });
+    print("call");
+    _mistakes = await _tool.check(text);
+
+    await Future<dynamic>.delayed(const Duration(seconds: 3));
   }
 
   TextStyle _defineMistakeStyle(String type) {
