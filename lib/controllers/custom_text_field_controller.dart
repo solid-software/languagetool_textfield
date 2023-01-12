@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:language_tool/language_tool.dart';
+import 'package:languagetool_text_field/controllers/timeout.dart';
 
 import 'package:languagetool_text_field/styles/languagetool_default_styles.dart';
 
@@ -10,6 +11,8 @@ import 'package:languagetool_text_field/styles/languagetool_default_styles.dart'
 class CustomTextFieldController extends TextEditingController {
   /// List of mistakes, currently presented in the text
   List<WritingMistake> _mistakes = [];
+
+  final Timeout _timeout = Timeout(const Duration(seconds: 3));
 
   final _tool = LanguageTool();
 
@@ -38,15 +41,13 @@ class CustomTextFieldController extends TextEditingController {
 
   /// This function nulls the mistakes before the API call was made
   /// to avoid conflicts
-  void clearMistakes() {
+  void _clearMistakes() {
     _mistakes = [];
   }
 
   /// Function that makes API call and updates the internal array with mistakes.
   Future updateValidation(String text) async {
     _mistakes = await _tool.check(text);
-
-    await Future<dynamic>.delayed(const Duration(seconds: 3));
   }
 
   TextStyle _defineMistakeStyle(String type) {
@@ -130,6 +131,12 @@ class CustomTextFieldController extends TextEditingController {
     }
 
     return result;
+  }
+
+  @override
+  void notifyListeners() {
+    _clearMistakes();
+    super.notifyListeners();
   }
 
   @override

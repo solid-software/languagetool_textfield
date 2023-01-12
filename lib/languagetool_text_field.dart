@@ -33,6 +33,9 @@ class LanguageToolTextField extends StatefulWidget {
   /// Duration set for an input debouncer
   final Duration debouncerDuration;
 
+  /// This function gets called when the highlited mistake is tapped
+  final Function? onMistakeTap;
+
   /// Constructor
   const LanguageToolTextField({
     required this.decoration,
@@ -43,6 +46,7 @@ class LanguageToolTextField extends StatefulWidget {
     this.cursorWidth,
     this.maxLines,
     this.debouncerDuration = const Duration(milliseconds: 500),
+    this.onMistakeTap,
     super.key,
   });
 
@@ -73,8 +77,6 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
       showCursor: true,
       decoration: widget.decoration,
       onChanged: (value) async {
-        controller?.clearMistakes();
-
         _textCheckDebouncer?.run(
           () async {
             await controller?.updateValidation(value);
