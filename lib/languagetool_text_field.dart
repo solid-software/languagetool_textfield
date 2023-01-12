@@ -1,8 +1,6 @@
 library languagetool_text_field;
 
-import 'package:flutter/gestures.dart';
 import "package:flutter/material.dart";
-import 'package:flutter/services.dart';
 
 import 'package:languagetool_text_field/controllers/custom_text_field_controller.dart';
 import 'package:languagetool_text_field/controllers/debouncer.dart';

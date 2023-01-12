@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:html';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:language_tool/language_tool.dart';
-import 'package:languagetool_text_field/controllers/debouncer.dart';
+
 import 'package:languagetool_text_field/styles/languagetool_default_styles.dart';
 
 /// Custom controller which allows different styles in one TextField
@@ -46,7 +44,6 @@ class CustomTextFieldController extends TextEditingController {
 
   /// Function that makes API call and updates the internal array with mistakes.
   Future updateValidation(String text) async {
-    print("call");
     _mistakes = await _tool.check(text);
 
     await Future<dynamic>.delayed(const Duration(seconds: 3));
