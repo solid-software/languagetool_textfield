@@ -4,9 +4,8 @@ import 'package:languagetool_textfield/domain/mistake.dart';
 
 class LangToolService extends LanguageCheckService {
   final LanguageTool languageTool;
-  final Duration debounceDuration;
 
-  const LangToolService(this.languageTool, this.debounceDuration);
+  const LangToolService(this.languageTool);
 
   @override
   Future<List<Mistake>> findMistakes(String text) async {
