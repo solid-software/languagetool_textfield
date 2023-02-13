@@ -3,7 +3,6 @@ import 'package:languagetool_textfield/domain/language_check_service.dart';
 
 class LanguageToolTextField extends StatefulWidget {
   final LanguageCheckService langService;
-  final Duration debounceDuration;
   final TextStyle style;
   final InputDecoration decoration;
   final Widget Function()? mistakeBuilder;
@@ -13,7 +12,6 @@ class LanguageToolTextField extends StatefulWidget {
     required this.langService,
     required this.style,
     required this.decoration,
-    this.debounceDuration = const Duration(seconds: 3),
     this.mistakeBuilder,
   }) : super(key: key);
 
