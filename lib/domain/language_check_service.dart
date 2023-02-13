@@ -1,4 +1,4 @@
-import 'mistake.dart';
+import 'package:languagetool_textfield/domain/mistake.dart';
 
 abstract class LanguageCheckService {
   const LanguageCheckService();
