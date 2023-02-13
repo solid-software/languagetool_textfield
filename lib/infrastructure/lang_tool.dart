@@ -9,8 +9,18 @@ class LangToolService extends LanguageCheckService {
   const LangToolService(this.languageTool, this.debounceDuration);
 
   @override
-  Future<List<Mistake>> findMistakes(String text) {
-    // TODO: implement findMistakes
-    throw UnimplementedError();
+  Future<List<Mistake>> findMistakes(String text) async {
+    final writingMistakes = await languageTool.check(text);
+    final mistakes = writingMistakes.map(
+      (m) => Mistake(
+        message: m.message,
+        type: m.issueType,
+        offset: m.offset,
+        length: m.length,
+        replacements: m.replacements,
+      ),
+    );
+
+    return mistakes.toList();
   }
 }
