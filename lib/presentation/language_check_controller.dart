@@ -53,8 +53,7 @@ class LanguageCheckController extends TextEditingController {
   }
 
   void _showMistakeOverlay(BuildContext context, Mistake mistake) {
-    _entry?.remove();
-    _entry?.dispose();
+    _hideLastOverlay();
     _entry = OverlayEntry(
       builder: (_) => CompositedTransformFollower(
         link: layerLink,
@@ -68,6 +67,10 @@ class LanguageCheckController extends TextEditingController {
       Overlay.of(context).insert(entry);
     }
   }
+  void _hideLastOverlay() {
+    _entry?.remove();
+    _entry?.dispose();
+  }
 
   Future<void> validate() async {
     _mistakes = await service.findMistakes(text);
@@ -76,8 +79,7 @@ class LanguageCheckController extends TextEditingController {
 
   @override
   void dispose() {
-    _entry?.remove();
-    _entry?.dispose();
+    _hideLastOverlay();
     super.dispose();
   }
 }
