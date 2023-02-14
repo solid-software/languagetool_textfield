@@ -1,25 +1,29 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/domain/api/language_check_service.dart';
 import 'package:languagetool_textfield/domain/model/mistake.dart';
 import 'package:languagetool_textfield/domain/model/mistake_type.dart';
 
 class LanguageCheckController extends TextEditingController {
-  OverlayEntry? _entry;
-  List<Mistake> _mistakes = [];
-
   final LayerLink layerLink;
-  final LanguageCheckService service;
   final TextStyle Function(MistakeType?) resolveStyle;
   final Widget Function(Mistake) mistakeBuilder;
+
+  OverlayEntry? _entry;
+  List<Mistake> _mistakes;
+
+  set mistakes(List<Mistake> value) {
+    _mistakes = value;
+    notifyListeners();
+  }
 
   LanguageCheckController({
     required String text,
     required this.layerLink,
-    required this.service,
     required this.mistakeBuilder,
     required this.resolveStyle,
-  }) : super(text: text);
+    List<Mistake> mistakes = const [],
+  })  : _mistakes = mistakes,
+        super(text: text);
 
   @override
   TextSpan buildTextSpan({
@@ -67,14 +71,10 @@ class LanguageCheckController extends TextEditingController {
       Overlay.of(context).insert(entry);
     }
   }
+
   void _hideLastOverlay() {
     _entry?.remove();
     _entry?.dispose();
-  }
-
-  Future<void> validate() async {
-    _mistakes = await service.findMistakes(text);
-    notifyListeners();
   }
 
   @override

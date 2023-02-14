@@ -20,11 +20,11 @@ class LanguageToolTextField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<LanguageToolTextField> createState() => _LanguageToolTextFieldState();
+  State<LanguageToolTextField> createState() => LanguageToolTextFieldState();
 }
 
-class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-  final layerLink = LayerLink();
+class LanguageToolTextFieldState extends State<LanguageToolTextField> {
+  final _layerLink = LayerLink();
   LanguageCheckController? _controller;
 
   @override
@@ -32,10 +32,9 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
     super.initState();
     _controller = LanguageCheckController(
       text: '',
-      service: widget.langService,
       resolveStyle: widget.resolveStyle,
       mistakeBuilder: widget.mistakeBuilder ?? MistakeTile.new,
-      layerLink: layerLink,
+      layerLink: _layerLink,
     );
   }
 
@@ -47,11 +46,18 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
 
   @override
   Widget build(BuildContext context) => CompositedTransformTarget(
-        link: layerLink,
+        link: _layerLink,
         child: TextField(
           showCursor: true,
           decoration: widget.decoration,
           controller: _controller,
         ),
       );
+
+  Future<void> validate() async {
+    final text = _controller?.text;
+    if (text != null) {
+      _controller?.mistakes = await widget.langService.findMistakes(text);
+    }
+  }
 }
