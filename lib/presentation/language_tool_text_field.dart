@@ -3,6 +3,7 @@ import 'package:languagetool_textfield/domain/api/language_check_service.dart';
 import 'package:languagetool_textfield/domain/model/mistake.dart';
 import 'package:languagetool_textfield/domain/model/mistake_type.dart';
 import 'package:languagetool_textfield/presentation/language_check_controller.dart';
+import 'package:languagetool_textfield/presentation/mistake_tile.dart';
 
 class LanguageToolTextField extends StatefulWidget {
   final LanguageCheckService langService;
@@ -33,7 +34,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
       text: '',
       service: widget.langService,
       resolveStyle: widget.resolveStyle,
-      mistakeBuilder: widget.mistakeBuilder ?? (_) => const SizedBox(),
+      mistakeBuilder: widget.mistakeBuilder ?? MistakeTile.new,
       layerLink: layerLink,
     );
   }

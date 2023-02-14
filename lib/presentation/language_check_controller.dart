@@ -5,6 +5,7 @@ import 'package:languagetool_textfield/domain/model/mistake.dart';
 import 'package:languagetool_textfield/domain/model/mistake_type.dart';
 
 class LanguageCheckController extends TextEditingController {
+  OverlayEntry? _entry;
   List<Mistake> _mistakes = [];
 
   final LayerLink layerLink;
@@ -52,7 +53,9 @@ class LanguageCheckController extends TextEditingController {
   }
 
   void _showMistakeOverlay(BuildContext context, Mistake mistake) {
-    final entry = OverlayEntry(
+    _entry?.remove();
+    _entry?.dispose();
+    _entry = OverlayEntry(
       builder: (_) => CompositedTransformFollower(
         link: layerLink,
         showWhenUnlinked: false,
@@ -60,11 +63,21 @@ class LanguageCheckController extends TextEditingController {
       ),
     );
 
-    Overlay.of(context).insert(entry);
+    final entry = _entry;
+    if (entry != null) {
+      Overlay.of(context).insert(entry);
+    }
   }
 
   Future<void> validate() async {
     _mistakes = await service.findMistakes(text);
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _entry?.remove();
+    _entry?.dispose();
+    super.dispose();
   }
 }

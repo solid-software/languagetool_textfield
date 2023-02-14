@@ -13,7 +13,7 @@ class LangToolService extends LanguageCheckService {
     final writingMistakes = await languageTool.check(text);
     final mistakes = writingMistakes.map(
       (m) => Mistake(
-        message: m.message,
+        description: m.issueDescription,
         offset: m.offset,
         length: m.length,
         replacements: m.replacements,
