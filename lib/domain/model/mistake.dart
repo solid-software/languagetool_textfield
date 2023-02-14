@@ -7,6 +7,10 @@ class Mistake {
   final int length;
   final List<String> replacements;
 
+  int get start => offset;
+
+  int get end => offset + length;
+
   const Mistake({
     required this.description,
     required this.type,
@@ -15,7 +19,4 @@ class Mistake {
     this.replacements = const [],
   });
 
-  int get start => offset;
-
-  int get end => offset + length;
 }
