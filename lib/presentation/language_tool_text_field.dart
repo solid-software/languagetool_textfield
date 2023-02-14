@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/domain/api/language_check_service.dart';
+import 'package:languagetool_textfield/domain/model/mistake.dart';
+import 'package:languagetool_textfield/domain/model/mistake_type.dart';
 import 'package:languagetool_textfield/presentation/language_check_controller.dart';
 
 class LanguageToolTextField extends StatefulWidget {
   final LanguageCheckService langService;
-  final TextStyle style;
+  final TextStyle Function(MistakeType?) resolveStyle;
   final InputDecoration decoration;
-  final Widget Function()? mistakeBuilder;
+  final Widget Function(Mistake)? mistakeBuilder;
 
   const LanguageToolTextField({
     Key? key,
     required this.langService,
-    required this.style,
+    required this.resolveStyle,
     required this.decoration,
     this.mistakeBuilder,
   }) : super(key: key);
@@ -21,6 +23,7 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
+  final layerLink = LayerLink();
   LanguageCheckController? _controller;
 
   @override
@@ -29,14 +32,25 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
     _controller = LanguageCheckController(
       text: '',
       service: widget.langService,
+      resolveStyle: widget.resolveStyle,
+      mistakeBuilder: widget.mistakeBuilder ?? (_) => const SizedBox(),
+      layerLink: layerLink,
     );
   }
 
   @override
-  Widget build(BuildContext context) => TextField(
-        showCursor: true,
-        style: widget.style,
-        decoration: widget.decoration,
-        controller: _controller,
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => CompositedTransformTarget(
+        link: layerLink,
+        child: TextField(
+          showCursor: true,
+          decoration: widget.decoration,
+          controller: _controller,
+        ),
       );
 }
