@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/domain/language_check_service.dart';
+import 'package:languagetool_textfield/domain/api/language_check_service.dart';
+import 'package:languagetool_textfield/presentation/language_check_controller.dart';
 
 class LanguageToolTextField extends StatefulWidget {
   final LanguageCheckService langService;
@@ -20,9 +21,22 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
+  LanguageCheckController? _controller;
 
   @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
+  void initState() {
+    super.initState();
+    _controller = LanguageCheckController(
+      text: '',
+      service: widget.langService,
+    );
   }
+
+  @override
+  Widget build(BuildContext context) => TextField(
+        showCursor: true,
+        style: widget.style,
+        decoration: widget.decoration,
+        controller: _controller,
+      );
 }

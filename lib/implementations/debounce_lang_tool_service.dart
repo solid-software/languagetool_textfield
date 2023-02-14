@@ -1,5 +1,5 @@
-import 'package:languagetool_textfield/domain/language_check_service.dart';
-import 'package:languagetool_textfield/domain/mistake.dart';
+import 'package:languagetool_textfield/domain/api/language_check_service.dart';
+import 'package:languagetool_textfield/domain/model/mistake.dart';
 import 'package:throttling/throttling.dart';
 
 class DebounceLangToolService extends LanguageCheckService {

@@ -1,6 +1,7 @@
 import 'package:language_tool/language_tool.dart';
-import 'package:languagetool_textfield/domain/language_check_service.dart';
-import 'package:languagetool_textfield/domain/mistake.dart';
+import 'package:languagetool_textfield/domain/api/language_check_service.dart';
+import 'package:languagetool_textfield/domain/model/mistake.dart';
+import 'package:languagetool_textfield/domain/model/mistake_type.dart';
 
 class LangToolService extends LanguageCheckService {
   final LanguageTool languageTool;
@@ -13,10 +14,10 @@ class LangToolService extends LanguageCheckService {
     final mistakes = writingMistakes.map(
       (m) => Mistake(
         message: m.message,
-        type: m.issueType,
         offset: m.offset,
         length: m.length,
         replacements: m.replacements,
+        type: MistakeType.values.firstWhere((type) => type.name == m.issueType),
       ),
     );
 

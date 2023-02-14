@@ -1,6 +1,8 @@
+import 'package:languagetool_textfield/domain/model/mistake_type.dart';
+
 class Mistake {
   final String message;
-  final String type;
+  final MistakeType type;
   final int offset;
   final int length;
   final List<String> replacements;
@@ -12,4 +14,8 @@ class Mistake {
     required this.length,
     this.replacements = const [],
   });
+
+  int get start => offset;
+
+  int get end => offset + length;
 }
