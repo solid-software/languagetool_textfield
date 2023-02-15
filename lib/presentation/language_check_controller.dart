@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/domain/model/mistake.dart';
 import 'package:languagetool_textfield/domain/model/mistake_type.dart';
 
+typedef StyleResolver<T> = TextStyle Function(T);
+typedef MistakeBuilder = Widget Function(Mistake);
+
 class LanguageCheckController extends TextEditingController {
   final LayerLink _layerLink;
-  final TextStyle Function(MistakeType?) _resolveStyle;
-  final Widget Function(Mistake) _mistakeBuilder;
+  final StyleResolver<MistakeType?> _resolveStyle;
+  final MistakeBuilder _mistakeBuilder;
 
   OverlayEntry? _entry;
   List<Mistake> _mistakes;
@@ -19,8 +22,8 @@ class LanguageCheckController extends TextEditingController {
   LanguageCheckController({
     required String text,
     required LayerLink layerLink,
-    required TextStyle Function(MistakeType?) resolveStyle,
-    required Widget Function(Mistake) mistakeBuilder,
+    required StyleResolver<MistakeType?> resolveStyle,
+    required MistakeBuilder mistakeBuilder,
     List<Mistake> mistakes = const [],
   })  : _layerLink = layerLink,
         _mistakeBuilder = mistakeBuilder,
