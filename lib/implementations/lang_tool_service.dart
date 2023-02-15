@@ -17,7 +17,10 @@ class LangToolService extends LanguageCheckService {
         offset: m.offset,
         length: m.length,
         replacements: m.replacements,
-        type: MistakeType.values.firstWhere((type) => type.name == m.issueType),
+        type: MistakeType.values.firstWhere(
+          (type) => type.name == m.issueType,
+          orElse: () => MistakeType.unknown,
+        ),
       ),
     );
 
