@@ -6,16 +6,28 @@ const _defaultWidth = 8.0;
 const _defaultSpacing = 8.0;
 const _defaultBorderRadius = BorderRadius.all(Radius.circular(12));
 
+/// Shortcut for replacement builder callback
 typedef ReplacementBuilder = Widget Function(String);
 
+/// Default implementation for widget in mistake popup
 class MistakeTile extends StatelessWidget {
+  /// Info about current mistake
   final Mistake mistake;
+
+  /// Popup elevation
   final double elevation;
+
+  /// Widget width
   final double width;
+
+  /// Spacing between replacements
   final double spacing;
+
+  /// Popup border radius
   final BorderRadius? borderRadius;
   final ReplacementBuilder _replacementBuilder;
 
+  /// Constructor
   const MistakeTile(
     this.mistake, {
     Key? key,

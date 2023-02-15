@@ -3,9 +3,13 @@ import 'package:languagetool_textfield/domain/api/language_check_service.dart';
 import 'package:languagetool_textfield/domain/model/mistake.dart';
 import 'package:languagetool_textfield/domain/model/mistake_type.dart';
 
+/// Implementation of [LanguageCheckService].
+/// It uses [LanguageTool] as API for searching mistakes.
 class LangToolService extends LanguageCheckService {
+  /// API for searching mistakes
   final LanguageTool languageTool;
 
+  /// Constructor
   const LangToolService(this.languageTool);
 
   @override
