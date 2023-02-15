@@ -4,9 +4,9 @@ import 'package:languagetool_textfield/domain/model/mistake.dart';
 import 'package:languagetool_textfield/domain/model/mistake_type.dart';
 
 class LanguageCheckController extends TextEditingController {
-  final LayerLink layerLink;
-  final TextStyle Function(MistakeType?) resolveStyle;
-  final Widget Function(Mistake) mistakeBuilder;
+  final LayerLink _layerLink;
+  final TextStyle Function(MistakeType?) _resolveStyle;
+  final Widget Function(Mistake) _mistakeBuilder;
 
   OverlayEntry? _entry;
   List<Mistake> _mistakes;
@@ -18,11 +18,14 @@ class LanguageCheckController extends TextEditingController {
 
   LanguageCheckController({
     required String text,
-    required this.layerLink,
-    required this.mistakeBuilder,
-    required this.resolveStyle,
+    required LayerLink layerLink,
+    required TextStyle Function(MistakeType?) resolveStyle,
+    required Widget Function(Mistake) mistakeBuilder,
     List<Mistake> mistakes = const [],
-  })  : _mistakes = mistakes,
+  })  : _layerLink = layerLink,
+        _mistakeBuilder = mistakeBuilder,
+        _resolveStyle = resolveStyle,
+        _mistakes = mistakes,
         super(text: text);
 
   @override
@@ -40,11 +43,11 @@ class LanguageCheckController extends TextEditingController {
     for (final mistake in _mistakes) {
       yield TextSpan(
         text: text.substring(lastMistakeEnd, mistake.start),
-        style: resolveStyle(null),
+        style: _resolveStyle(null),
       );
       yield TextSpan(
         text: text.substring(mistake.start, mistake.end),
-        style: resolveStyle(mistake.type),
+        style: _resolveStyle(mistake.type),
         recognizer: TapGestureRecognizer()
           ..onTap = () => _showMistakeOverlay(context, mistake),
       );
@@ -52,24 +55,22 @@ class LanguageCheckController extends TextEditingController {
     }
     yield TextSpan(
       text: text.substring(lastMistakeEnd),
-      style: resolveStyle(null),
+      style: _resolveStyle(null),
     );
   }
 
   void _showMistakeOverlay(BuildContext context, Mistake mistake) {
     _hideLastOverlay();
-    _entry = OverlayEntry(
+    final entry = OverlayEntry(
       builder: (_) => CompositedTransformFollower(
-        link: layerLink,
+        link: _layerLink,
         showWhenUnlinked: false,
-        child: mistakeBuilder(mistake),
+        child: _mistakeBuilder(mistake),
       ),
     );
 
-    final entry = _entry;
-    if (entry != null) {
-      Overlay.of(context).insert(entry);
-    }
+    _entry = entry;
+    Overlay.of(context).insert(entry);
   }
 
   void _hideLastOverlay() {
