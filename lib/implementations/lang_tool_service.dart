@@ -2,9 +2,12 @@ import 'package:language_tool/language_tool.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 
+/// Implementation of language check service with language tool service.
 class LangToolService extends LanguageCheckService {
+  /// Object that will be used to interact with LanguageTool API.
   final LanguageTool languageTool;
 
+  /// Implementation of language check service with language tool service.
   const LangToolService(this.languageTool);
 
   @override
