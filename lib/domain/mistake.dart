@@ -3,7 +3,7 @@ class Mistake {
   /// A brief description of the mistake.
   final String message;
 
-  /// The type of mistake.
+  /// A type of this mistake.
   final String type;
 
   /// A position of the beginning of the mistake.
@@ -17,7 +17,7 @@ class Mistake {
   /// Sorted by probability.
   final List<String> replacements;
 
-  /// Create a new instance of the [Mistake] class
+  /// Creates a new instance of the [Mistake] class
   const Mistake({
     required this.message,
     required this.type,
