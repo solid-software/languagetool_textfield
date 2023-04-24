@@ -20,7 +20,6 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
