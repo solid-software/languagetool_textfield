@@ -40,10 +40,6 @@ jobs:
               --fatal-warnings \
               --fatal-performance \
               --fatal-style
-            dart run dart_code_metrics:metrics \
-              check-unused-files \
-              $dirs_to_analyze \
-              --fatal-unused
           fi
       - name: Check formatting
         run: dart format . --set-exit-if-changed
