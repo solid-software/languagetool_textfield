@@ -5,6 +5,6 @@ abstract class LanguageCheckService {
   /// Creates a new instance of the [LanguageCheckService] class.
   const LanguageCheckService();
 
-  /// Function that finds mistakes in given text.
+  /// Returns found mistakes in the given [text].
   Future<List<Mistake>> findMistakes(String text);
 }

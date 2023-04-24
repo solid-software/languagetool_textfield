@@ -1,4 +1,4 @@
-/// A data model classs that stores information about a single writing mistake.
+/// A data model class that stores information about a single writing mistake.
 class Mistake {
   /// A brief description of the mistake.
   final String message;
@@ -6,13 +6,13 @@ class Mistake {
   /// A type of this mistake.
   final String type;
 
-  /// A position of the beginning of the mistake.
+  /// A position of the beginning of this mistake.
   final int offset;
 
-  /// Length of the mistake after the offset.
+  /// Length of this mistake after the offset.
   final int length;
 
-  /// A list of suggestions for replacing the mistake.
+  /// A list of suggestions for replacing this mistake.
   ///
   /// Sorted by probability.
   final List<String> replacements;
