@@ -7,7 +7,7 @@ class DebounceLangToolService extends LanguageCheckService {
   /// Base language check service.
   final LanguageCheckService baseService;
 
-  /// Debouncing.
+  /// A debouncing used to debounce the API calls.
   final Debouncing debouncing;
 
   /// Implementation of language check service with debouncing.

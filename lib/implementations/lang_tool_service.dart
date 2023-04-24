@@ -4,7 +4,7 @@ import 'package:languagetool_textfield/domain/mistake.dart';
 
 /// Implementation of language check service with language tool service.
 class LangToolService extends LanguageCheckService {
-  /// Object that will be used to interact with LanguageTool API.
+  /// Objects of this class are used to interact with LanguageTool API.
   final LanguageTool languageTool;
 
   /// Implementation of language check service with language tool service.

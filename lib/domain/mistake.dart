@@ -1,4 +1,4 @@
-/// Object that stores information about a single writing mistake.
+/// A data model classs that stores information about a single writing mistake.
 class Mistake {
   /// A brief description of the mistake.
   final String message;
@@ -6,7 +6,7 @@ class Mistake {
   /// The type of mistake.
   final String type;
 
-  /// Position of the beginning of the mistake.
+  /// A position of the beginning of the mistake.
   final int offset;
 
   /// Length of the mistake after the offset.
@@ -17,7 +17,7 @@ class Mistake {
   /// Sorted by probability.
   final List<String> replacements;
 
-  /// Object that stores information about a single writing mistake.
+  /// Create a new instance of the [Mistake] class
   const Mistake({
     required this.message,
     required this.type,

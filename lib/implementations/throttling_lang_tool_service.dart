@@ -7,7 +7,7 @@ class ThrottlingLangToolService extends LanguageCheckService {
   /// Base language check service.
   final LanguageCheckService baseService;
 
-  /// Throttling.
+  /// A throttling used to throttle the API calls.
   final Throttling throttling;
 
   /// Implementation of LanguageCheckService with throttling.
