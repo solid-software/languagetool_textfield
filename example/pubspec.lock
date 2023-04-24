@@ -196,7 +196,7 @@ packages:
     source: hosted
     version: "4.8.0"
   language_tool:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: language_tool
       sha256: "90ceb6f0a0b57fb3a5b88be82ffd676c90639cd06d622d25f76add30d5a2acd6"
@@ -204,7 +204,7 @@ packages:
     source: hosted
     version: "2.1.1"
   languagetool_textfield:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       path: ".."
       relative: true
