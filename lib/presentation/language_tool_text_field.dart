@@ -16,7 +16,7 @@ class LanguageToolTextField extends StatefulWidget {
   /// A builder function used to build errors.
   final Widget Function()? mistakeBuilder;
 
-  /// A text controller used to highlight errors
+  /// A text controller used to highlight errors.
   final LanguageToolTextEditingController? controller;
 
   /// Creates a widget that checks grammar errors.
