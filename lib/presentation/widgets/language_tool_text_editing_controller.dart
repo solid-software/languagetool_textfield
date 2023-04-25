@@ -19,7 +19,7 @@ class LanguageToolTextEditingController extends TextEditingController {
     TextStyle? style,
     required bool withComposing,
   }) {
-    final children = <TextSpan>[];
+    final children = <InlineSpan>[];
     const underlineThickness = 2.0;
     const backgroundOpacity = 0.2;
 
@@ -47,13 +47,15 @@ class LanguageToolTextEditingController extends TextEditingController {
 
         final textStyle = style ?? const TextStyle();
         children.add(
-          TextSpan(
-            text: text.substring(mistakeStart, mistakeEnd),
-            style: textStyle.copyWith(
-              decoration: TextDecoration.underline,
-              decorationColor: Colors.red,
-              decorationThickness: underlineThickness,
-              backgroundColor: Colors.red.withOpacity(backgroundOpacity),
+          WidgetSpan(
+            child: Text(
+              text.substring(mistakeStart, mistakeEnd),
+              style: textStyle.copyWith(
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.red,
+                decorationThickness: underlineThickness,
+                backgroundColor: Colors.red.withOpacity(backgroundOpacity),
+              ),
             ),
           ),
         );
