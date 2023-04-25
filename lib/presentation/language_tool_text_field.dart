@@ -2,13 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/presentation/widgets/language_tool_text_editing_controller.dart';
 
+/// A TextField widget that checks the grammar using the given [langService]
 class LanguageToolTextField extends StatefulWidget {
+  /// A service for checking errors.
   final LanguageCheckService langService;
+
+  /// A style to use for the text being edited.
   final TextStyle? style;
+
+  /// A decoration of this [TextField].
   final InputDecoration? decoration;
+
+  /// A builder function used to build errors.
   final Widget Function()? mistakeBuilder;
+
+  /// A text controller used to highlight errors
   final LanguageToolTextEditingController? controller;
 
+  /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
     Key? key,
     required this.langService,
