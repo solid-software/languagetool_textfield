@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 
-/// Widget for checking grammar errors.
+/// A TextField widget that checks the grammar using the given [langService]
 class LanguageToolTextField extends StatefulWidget {
-  /// Service for checking errors.
+  /// A service for checking errors.
   final LanguageCheckService langService;
 
-  /// The style to use for the text being edited.
+  /// A style to use for the text being edited.
   final TextStyle style;
 
-  /// Decoration of widget
+  /// A decoration of this [TextField].
   final InputDecoration decoration;
 
-  /// Will build custom errors based on state.
+  /// A builder function used to build errors.
   final Widget Function()? mistakeBuilder;
 
   /// Creates a widget that checks grammar errors.

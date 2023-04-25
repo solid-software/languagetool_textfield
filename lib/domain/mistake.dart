@@ -9,7 +9,7 @@ class Mistake {
   /// A position of the beginning of this mistake.
   final int offset;
 
-  /// Length of this mistake after the offset.
+  /// A length of this mistake after the offset.
   final int length;
 
   /// A list of suggestions for replacing this mistake.
@@ -17,7 +17,7 @@ class Mistake {
   /// Sorted by probability.
   final List<String> replacements;
 
-  /// Creates a new instance of the [Mistake] class
+  /// Creates a new instance of the [Mistake] class.
   const Mistake({
     required this.message,
     required this.type,

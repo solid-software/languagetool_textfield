@@ -2,15 +2,15 @@ import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:throttling/throttling.dart';
 
-/// Implementation of language check service with debouncing.
+/// A language check service with debouncing.
 class DebounceLangToolService extends LanguageCheckService {
-  /// Base language check service.
+  /// A base language check service.
   final LanguageCheckService baseService;
 
   /// A debouncing used to debounce the API calls.
   final Debouncing debouncing;
 
-  /// Implementation of language check service with debouncing.
+  /// Creates a new instance of the [DebounceLangToolService] class.
   DebounceLangToolService(
     this.baseService,
     Duration debouncingDuration,
