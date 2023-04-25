@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:language_tool/language_tool.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
 
-/// Main screen widget demonstrating library usage example
+/// A main screen widget demonstrating library usage example
 class App extends StatefulWidget {
   /// Creates a new instance of main screen widget
   const App({super.key});
@@ -12,7 +12,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  final LangToolService _langToolService = LangToolService(LanguageTool());
+  final _langToolService = LangToolService(LanguageTool());
 
   @override
   void initState() {

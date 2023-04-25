@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/presentation/widgets/custom_text_field_controller.dart';
+import 'package:languagetool_textfield/presentation/widgets/language_tool_text_editing_controller.dart';
 
 class LanguageToolTextField extends StatefulWidget {
   final LanguageCheckService langService;
-  final TextStyle style;
+  final TextStyle? style;
   final InputDecoration? decoration;
   final Widget Function()? mistakeBuilder;
+  final LanguageToolTextEditingController? controller;
 
   const LanguageToolTextField({
     Key? key,
@@ -15,6 +16,7 @@ class LanguageToolTextField extends StatefulWidget {
     required this.style,
     this.decoration,
     this.mistakeBuilder,
+    this.controller,
   }) : super(key: key);
 
   @override
@@ -22,7 +24,7 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-  final _textFieldController = CustomTextFieldController(
+  final _textFieldController = LanguageToolTextEditingController(
     text: 'OkayOkayOkay',
     mistakes: [
       const Mistake(
@@ -65,13 +67,14 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
       textCapitalization: TextCapitalization.none,
       keyboardType: TextInputType.multiline,
       maxLines: null,
+      style: widget.style,
       decoration: widget.decoration ??
           InputDecoration(
             focusedBorder: _textFieldBorder,
             enabledBorder: _textFieldBorder,
             border: _textFieldBorder,
           ),
-      controller: _textFieldController,
+      controller: widget.controller ?? _textFieldController,
     );
   }
 }

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 
-/// Custom controller for an editable text field, that supports
+/// A custom controller for an editable text field, that supports
 /// mistakes highlighting.
-class CustomTextFieldController extends TextEditingController {
-  /// List of mistakes in text.
+class LanguageToolTextEditingController extends TextEditingController {
+  /// A list of mistakes in the text.
   final List<Mistake> mistakes;
 
   /// Creates a controller for an editable text field.
-  CustomTextFieldController({
+  LanguageToolTextEditingController({
     String? text,
     this.mistakes = const [],
   }) : super(text: text);
@@ -19,7 +19,7 @@ class CustomTextFieldController extends TextEditingController {
     TextStyle? style,
     required bool withComposing,
   }) {
-    final List<TextSpan> children = [];
+    final children = <TextSpan>[];
     const underlineThickness = 2.0;
     const backgroundOpacity = 0.2;
 
@@ -29,8 +29,12 @@ class CustomTextFieldController extends TextEditingController {
 
     for (int i = 0; i < mistakes.length; i++) {
       final mistake = mistakes[i];
-      final previousMistakePosition =
-          i > 0 ? mistakes[i - 1].offset + mistakes[i - 1].length : 0;
+      int previousMistakePosition = 0;
+      if (i > 0) {
+        final previousMistake = mistakes[i - 1];
+        previousMistakePosition =
+            previousMistake.offset + previousMistake.length;
+      }
       final mistakeStart = mistake.offset;
       final mistakeEnd = mistakeStart + mistake.length;
 
@@ -38,10 +42,11 @@ class CustomTextFieldController extends TextEditingController {
         TextSpan(text: text.substring(previousMistakePosition, mistakeStart)),
       );
 
+      final textStyle = style ?? const TextStyle();
       children.add(
         TextSpan(
           text: text.substring(mistakeStart, mistakeEnd),
-          style: TextStyle(
+          style: textStyle.copyWith(
             decoration: TextDecoration.underline,
             decorationColor: Colors.red,
             decorationThickness: underlineThickness,
@@ -50,7 +55,7 @@ class CustomTextFieldController extends TextEditingController {
         ),
       );
 
-      if (mistake == mistakes.last) {
+      if (i == mistakes.length - 1) {
         children.add(
           TextSpan(
             text: text.substring(
