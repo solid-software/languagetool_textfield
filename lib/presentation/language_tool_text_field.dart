@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
-import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:languagetool_textfield/presentation/widgets/language_tool_text_editing_controller.dart';
 
 class LanguageToolTextField extends StatefulWidget {
@@ -24,34 +23,10 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-  final _textFieldController = LanguageToolTextEditingController(
-    text: 'OkayOkayOkay',
-    mistakes: [
-      const Mistake(
-        message: 'bad',
-        type: 'bad',
-        offset: 1,
-        length: 2,
-        replacements: ['1'],
-      ),
-      const Mistake(
-        message: 'bad',
-        type: 'bad',
-        offset: 4,
-        length: 2,
-        replacements: ['1'],
-      ),
-      const Mistake(
-        message: 'bad',
-        type: 'bad',
-        offset: 8,
-        length: 2,
-        replacements: ['1'],
-      ),
-    ],
-  );
   static const _borderRadius = 15.0;
   static const _borderOpacity = 0.5;
+
+  final _textFieldController = LanguageToolTextEditingController();
   final _textFieldBorder = OutlineInputBorder(
     borderSide: BorderSide(
       color: Colors.grey.withOpacity(_borderOpacity),
