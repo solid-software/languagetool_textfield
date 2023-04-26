@@ -11,30 +11,23 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  final _languageTool = LanguageTool();
-  DebounceLangToolService? _debouncedLangService;
+  static final LanguageTool _languageTool = LanguageTool();
+  final DebounceLangToolService _debouncedLangService;
 
-  void _initializeLangService() {
-    _debouncedLangService = DebounceLangToolService(
-      LangToolService(_languageTool),
-      const Duration(milliseconds: 500),
-    );
-  }
-
-  @override
-  void initState() {
-    _initializeLangService();
-    super.initState();
-  }
+  _AppState()
+      : _debouncedLangService = DebounceLangToolService(
+          LangToolService(_languageTool),
+          const Duration(milliseconds: 500),
+        );
 
   @override
   Widget build(BuildContext context) {
     return Material(
       child: LanguageToolTextField(
-        langService: _debouncedLangService!,
+        langService: _debouncedLangService,
         style: TextStyle(),
         decoration: InputDecoration(),
-        mistakeBuilder: (){
+        mistakeBuilder: () {
           return Container();
         },
       ),
