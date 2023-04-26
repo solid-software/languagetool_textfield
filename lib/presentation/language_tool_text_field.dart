@@ -36,14 +36,20 @@ class LanguageToolTextField extends StatefulWidget {
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   static const _borderRadius = 15.0;
   static const _borderOpacity = 0.5;
-
-  final _textFieldController = LanguageToolTextEditingController();
   final _textFieldBorder = OutlineInputBorder(
     borderSide: BorderSide(
       color: Colors.grey.withOpacity(_borderOpacity),
     ),
     borderRadius: BorderRadius.circular(_borderRadius),
   );
+
+  LanguageToolTextEditingController get _textFieldController =>
+      widget.controller ?? LanguageToolTextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +59,12 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
       textCapitalization: TextCapitalization.none,
       keyboardType: TextInputType.multiline,
       maxLines: null,
+      onChanged: (value) async {
+        final mistakes = await widget.langService.findMistakes(value);
+        setState(() {
+          _textFieldController.mistakes = mistakes;
+        });
+      },
       style: widget.style,
       decoration: widget.decoration ??
           InputDecoration(
@@ -60,7 +72,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
             enabledBorder: _textFieldBorder,
             border: _textFieldBorder,
           ),
-      controller: widget.controller ?? _textFieldController,
+      controller: _textFieldController,
     );
   }
 }

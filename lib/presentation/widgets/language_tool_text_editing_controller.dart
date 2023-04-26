@@ -5,7 +5,7 @@ import 'package:languagetool_textfield/domain/mistake.dart';
 /// mistakes highlighting.
 class LanguageToolTextEditingController extends TextEditingController {
   /// A list of mistakes in the text.
-  final List<Mistake> mistakes;
+  List<Mistake> mistakes;
 
   /// Creates a controller for an editable text field.
   LanguageToolTextEditingController({
@@ -22,7 +22,6 @@ class LanguageToolTextEditingController extends TextEditingController {
     final children = <InlineSpan>[];
     const underlineThickness = 2.0;
     const backgroundOpacity = 0.2;
-
     if (mistakes.isEmpty) {
       return TextSpan(text: text, style: style);
     }

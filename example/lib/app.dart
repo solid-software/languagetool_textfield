@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:language_tool/language_tool.dart';
-import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
 
 /// A main screen widget demonstrating library usage example
@@ -13,24 +12,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  final _langToolService = LangToolService(LanguageTool());
-  final _textController = LanguageToolTextEditingController(
-    text: 'OKAYOKAYOKAYOKAYOKAY',
-    mistakes: [
-      const Mistake(
-        message: 'bad',
-        type: 'bad',
-        offset: 0,
-        length: 3,
-      ),
-      const Mistake(
-        message: 'bad',
-        type: 'bad',
-        offset: 8,
-        length: 5,
-      ),
-    ],
-  );
+  final _langToolService = LangToolService(LanguageTool(language: 'en-US'));
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +22,6 @@ class _AppState extends State<App> {
           padding: const EdgeInsets.all(20.0),
           child: LanguageToolTextField(
             langService: _langToolService,
-            controller: _textController,
             style: const TextStyle(),
           ),
         ),
