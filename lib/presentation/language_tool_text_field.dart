@@ -43,12 +43,14 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
     borderRadius: BorderRadius.circular(_borderRadius),
   );
 
-  LanguageToolTextEditingController get _textFieldController =>
-      widget.controller ?? LanguageToolTextEditingController();
+  LanguageToolTextEditingController textFieldController =
+      LanguageToolTextEditingController();
 
   @override
   void initState() {
     super.initState();
+    textFieldController =
+        widget.controller ?? LanguageToolTextEditingController();
   }
 
   @override
@@ -62,7 +64,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
       onChanged: (value) async {
         final mistakes = await widget.langService.findMistakes(value);
         setState(() {
-          _textFieldController.mistakes = mistakes;
+          textFieldController.mistakes = mistakes;
         });
       },
       style: widget.style,
@@ -72,7 +74,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
             enabledBorder: _textFieldBorder,
             border: _textFieldBorder,
           ),
-      controller: _textFieldController,
+      controller: textFieldController,
     );
   }
 }
