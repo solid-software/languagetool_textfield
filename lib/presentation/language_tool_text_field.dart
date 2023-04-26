@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 
@@ -33,7 +35,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
 
   Future<void> _check(String text) async {
     final list = await widget.langService.findMistakes(text);
-    print(list);
+    log(list.toString());
   }
 
   @override

@@ -25,8 +25,8 @@ class _AppState extends State<App> {
     return Material(
       child: LanguageToolTextField(
         langService: _debouncedLangService,
-        style: TextStyle(),
-        decoration: InputDecoration(),
+        style: const TextStyle(),
+        decoration: const InputDecoration(),
         mistakeBuilder: () {
           return Container();
         },
