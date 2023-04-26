@@ -17,6 +17,9 @@ class Mistake {
   /// Sorted by probability.
   final List<String> replacements;
 
+  /// A range of this mistake from offset to the end.
+  int get range => offset + length;
+
   /// Creates a new instance of the [Mistake] class.
   const Mistake({
     required this.message,

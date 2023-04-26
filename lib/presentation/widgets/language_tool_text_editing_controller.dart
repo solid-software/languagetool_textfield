@@ -28,40 +28,45 @@ class LanguageToolTextEditingController extends TextEditingController {
     }
 
     final lastMistakeIndex = mistakes.length - 1;
-
     for (int i = 0; i < mistakes.length; i++) {
       final mistake = mistakes[i];
-      int previousMistakePosition = 0;
+      int previousMistakeEnd = 0;
       if (i > 0) {
         final previousMistake = mistakes[i - 1];
-        previousMistakePosition =
-            previousMistake.offset + previousMistake.length;
+        previousMistakeEnd = previousMistake.offset + previousMistake.length;
       }
       final mistakeStart = mistake.offset;
-      final mistakeEnd = mistakeStart + mistake.length;
 
-      if (mistakeEnd > text.length) {
+      if (mistake.range > text.length) {
         children.add(
           TextSpan(
-            text: text.substring(previousMistakePosition),
+            text: text.substring(previousMistakeEnd),
           ),
         );
         break;
       }
 
       children.add(
-        TextSpan(text: text.substring(previousMistakePosition, mistakeStart)),
+        TextSpan(text: text.substring(previousMistakeEnd, mistakeStart)),
       );
 
       final textStyle = style ?? const TextStyle();
-      final mistakeText = text.substring(mistakeStart, mistakeEnd);
+      final mistakeText = text.substring(mistakeStart, mistake.range);
 
-      // WidgetSpans with mistake text characters are used here to calculate the correct caret position, which can be incorrectly positioned because of the WidgetSpan issue, described here: https://github.com/flutter/flutter/issues/107432.
-      // TextSpan recognizer to process clicks can't be used, because it requires the RichText widget instead of TextField, which we are using. Issue described here: https://github.com/flutter/flutter/issues/34931
+      // WidgetSpans with mistake text characters are used here to
+      // calculate the correct caret position, which can be
+      // incorrectly positioned because of the WidgetSpan issue,
+      // described here: https://github.com/flutter/flutter/issues/107432.
+      //
+      // TextSpan recognizer to process clicks can't be used,
+      // because it requires the RichText widget but the TextField
+      // widget does not contain one.
+      // Issue described here: https://github.com/flutter/flutter/issues/34931
 
       children.add(
         TextSpan(
           style: textStyle.copyWith(
+            color: Colors.green,
             decoration: TextDecoration.underline,
             decorationColor: Colors.red,
             decorationThickness: underlineThickness,
@@ -78,10 +83,11 @@ class LanguageToolTextEditingController extends TextEditingController {
           ],
         ),
       );
+
       if (i == lastMistakeIndex) {
         children.add(
           TextSpan(
-            text: text.substring(mistakeEnd),
+            text: text.substring(mistake.range),
           ),
         );
       }
