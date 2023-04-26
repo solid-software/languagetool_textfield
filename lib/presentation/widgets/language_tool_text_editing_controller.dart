@@ -19,7 +19,7 @@ class LanguageToolTextEditingController extends TextEditingController {
     TextStyle? style,
     required bool withComposing,
   }) {
-    final children = <TextSpan>[];
+    final children = <InlineSpan>[];
     const underlineThickness = 2.0;
     const backgroundOpacity = 0.2;
 
@@ -54,24 +54,34 @@ class LanguageToolTextEditingController extends TextEditingController {
       );
 
       final textStyle = style ?? const TextStyle();
+      final mistakeText = text.substring(mistakeStart, mistakeEnd);
+
+      // WidgetSpans with mistake text characters are used here to calculate the correct caret position, which can be incorrectly positioned because of the WidgetSpan issue, described here: https://github.com/flutter/flutter/issues/107432.
+      // TextSpan recognizer to process clicks can't be used, because it requires the RichText widget instead of TextField, which we are using. Issue described here: https://github.com/flutter/flutter/issues/34931
+
       children.add(
         TextSpan(
-          text: text.substring(mistakeStart, mistakeEnd),
           style: textStyle.copyWith(
             decoration: TextDecoration.underline,
             decorationColor: Colors.red,
             decorationThickness: underlineThickness,
             backgroundColor: Colors.red.withOpacity(backgroundOpacity),
           ),
+          children: [
+            for (final mistakeCharacter in mistakeText.characters)
+              WidgetSpan(
+                child: Text(
+                  mistakeCharacter,
+                  style: style,
+                ),
+              ),
+          ],
         ),
       );
-
       if (i == lastMistakeIndex) {
         children.add(
           TextSpan(
-            text: text.substring(
-              mistakeEnd,
-            ),
+            text: text.substring(mistakeEnd),
           ),
         );
       }

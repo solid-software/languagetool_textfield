@@ -14,6 +14,23 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   final _langToolService = LangToolService(LanguageTool());
+  final _textController = LanguageToolTextEditingController(
+    text: 'OKAYOKAYOKAYOKAYOKAY',
+    mistakes: [
+      const Mistake(
+        message: 'bad',
+        type: 'bad',
+        offset: 0,
+        length: 3,
+      ),
+      const Mistake(
+        message: 'bad',
+        type: 'bad',
+        offset: 8,
+        length: 5,
+      ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -23,29 +40,7 @@ class _AppState extends State<App> {
           padding: const EdgeInsets.all(20.0),
           child: LanguageToolTextField(
             langService: _langToolService,
-            controller: LanguageToolTextEditingController(
-              text: 'OKAYOKAYOKAY',
-              mistakes: [
-                const Mistake(
-                  message: 'bad',
-                  type: 'bad',
-                  offset: 2,
-                  length: 2,
-                ),
-                const Mistake(
-                  message: 'bad',
-                  type: 'bad',
-                  offset: 5,
-                  length: 1,
-                ),
-                const Mistake(
-                  message: 'bad',
-                  type: 'bad',
-                  offset: 7,
-                  length: 3,
-                ),
-              ],
-            ),
+            controller: _textController,
             style: const TextStyle(),
           ),
         ),
