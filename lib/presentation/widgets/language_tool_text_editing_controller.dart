@@ -29,47 +29,52 @@ class LanguageToolTextEditingController extends TextEditingController {
 
     final lastMistakeIndex = mistakes.length - 1;
 
-    try {
-      for (int i = 0; i < mistakes.length; i++) {
-        final mistake = mistakes[i];
-        int previousMistakePosition = 0;
-        if (i > 0) {
-          final previousMistake = mistakes[i - 1];
-          previousMistakePosition =
-              previousMistake.offset + previousMistake.length;
-        }
-        final mistakeStart = mistake.offset;
-        final mistakeEnd = mistakeStart + mistake.length;
+    for (int i = 0; i < mistakes.length; i++) {
+      final mistake = mistakes[i];
+      int previousMistakePosition = 0;
+      if (i > 0) {
+        final previousMistake = mistakes[i - 1];
+        previousMistakePosition =
+            previousMistake.offset + previousMistake.length;
+      }
+      final mistakeStart = mistake.offset;
+      final mistakeEnd = mistakeStart + mistake.length;
 
-        children.add(
-          TextSpan(text: text.substring(previousMistakePosition, mistakeStart)),
-        );
-
-        final textStyle = style ?? const TextStyle();
+      if (mistakeEnd > text.length) {
         children.add(
           TextSpan(
-            text: text.substring(mistakeStart, mistakeEnd),
-            style: textStyle.copyWith(
-              decoration: TextDecoration.underline,
-              decorationColor: Colors.red,
-              decorationThickness: underlineThickness,
-              backgroundColor: Colors.red.withOpacity(backgroundOpacity),
+            text: text.substring(previousMistakePosition),
+          ),
+        );
+        break;
+      }
+
+      children.add(
+        TextSpan(text: text.substring(previousMistakePosition, mistakeStart)),
+      );
+
+      final textStyle = style ?? const TextStyle();
+      children.add(
+        TextSpan(
+          text: text.substring(mistakeStart, mistakeEnd),
+          style: textStyle.copyWith(
+            decoration: TextDecoration.underline,
+            decorationColor: Colors.red,
+            decorationThickness: underlineThickness,
+            backgroundColor: Colors.red.withOpacity(backgroundOpacity),
+          ),
+        ),
+      );
+
+      if (i == lastMistakeIndex) {
+        children.add(
+          TextSpan(
+            text: text.substring(
+              mistakeEnd,
             ),
           ),
         );
-
-        if (i == lastMistakeIndex) {
-          children.add(
-            TextSpan(
-              text: text.substring(
-                mistakeEnd,
-              ),
-            ),
-          );
-        }
       }
-    } catch (e) {
-      return TextSpan(text: text, style: style);
     }
 
     return TextSpan(children: children, style: style);
