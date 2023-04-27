@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/controllers/colored_text_editing_controller.dart';
-import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 
 /// A TextField widget that checks the grammar using the given [langService]

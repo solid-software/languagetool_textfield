@@ -23,6 +23,13 @@ class ColoredTextEditingController extends TextEditingController {
     this.highlightStyle = const HighlightStyle(),
   });
 
+  /// Clear mistakes list when text mas modified
+  void _handleTextChange(String newValue) {
+    if (newValue.length != text.length) {
+      _mistakes.clear();
+    }
+  }
+
   /// Generates TextSpan from Mistake list
   @override
   TextSpan buildTextSpan({
@@ -30,9 +37,9 @@ class ColoredTextEditingController extends TextEditingController {
     TextStyle? style,
     required bool withComposing,
   }) {
-    final int textLength = text.length;
-    final Iterable<TextSpan> spanList =
-        _generateSpans(textLength: textLength, style: style);
+    final Iterable<TextSpan> spanList = _generateSpans(
+      style: style,
+    );
 
     return TextSpan(
       children: spanList.toList(),
@@ -41,19 +48,12 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Generator function to create TextSpan instances
   Iterable<TextSpan> _generateSpans({
-    required int textLength,
+    // required int textLength,
     TextStyle? style,
   }) sync* {
     int currentOffset = 0; // enter index
 
     for (final Mistake mistake in _mistakes) {
-      /// Breaks the loop if iterated Mistake offset is bigger than text
-      /// length.
-      if (mistake.offset > textLength ||
-          mistake.offset + mistake.length > textLength) {
-        break;
-      }
-
       /// TextSpan before mistake
       yield TextSpan(
         text: text.substring(
@@ -88,45 +88,6 @@ class ColoredTextEditingController extends TextEditingController {
       text: text.substring(currentOffset),
       style: style,
     );
-  }
-
-  /// Apply changes to Mistake list while new data being fetched
-  void _handleTextChange(String newText) {
-    final int deltaLength = newText.length - text.length;
-
-    /// Update the _mistakes list in-place based on the text modifications
-    _mistakes = _mistakes
-        .map((mistake) {
-          int newOffset = mistake.offset;
-          int newLength = mistake.length;
-
-          /// If the text modification starts within the mistake
-          if (selection.start >= mistake.offset &&
-              selection.start <= mistake.offset + mistake.length) {
-            newLength += deltaLength;
-          }
-
-          /// If the text modification starts before the mistake
-          else if (selection.start < mistake.offset) {
-            newOffset += deltaLength;
-          }
-
-          /// Return the updated mistake (if the length is greater than 0)
-          return newLength > 0
-              ? Mistake(
-                  message: mistake.message,
-                  type: mistake.type,
-                  offset: newOffset,
-                  length: newLength,
-                  replacements: mistake.replacements,
-                )
-              : null;
-        })
-        .whereType<Mistake>()
-        .toList();
-
-    /// Notify listeners to rebuild the widget
-    notifyListeners();
   }
 
   /// A method sets new list of Mistake and triggers buildTextSpan
