@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/controllers/colored_text_editing_controller.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';

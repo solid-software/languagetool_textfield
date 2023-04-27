@@ -11,10 +11,10 @@ class ColoredTextEditingController extends TextEditingController {
   List<Mistake> _mistakes = [];
 
   final double _backGroundOpacity =
-  0.2; // background opacity for mistake TextSpan
+      0.2; // background opacity for mistake TextSpan
 
   final double _mistakeLineThickness =
-  1.5; // mistake TextSpan underline thickness
+      1.5; // mistake TextSpan underline thickness
 
   /// A method sets new list of Mistake and triggers buildTextSpan
   void setMistakes(List<Mistake> list) {
