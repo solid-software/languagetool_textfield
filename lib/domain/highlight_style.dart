@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class HighlightStyle {
   ///Initial values
   static const double _initialBackgroundOpacity = 0.2;
-  static const  double _initialLineHeight = 1.5;
+  static const double _initialLineHeight = 1.5;
 
   /// Misspelling mistake highlight color
   final Color misspellingMistakeColor;

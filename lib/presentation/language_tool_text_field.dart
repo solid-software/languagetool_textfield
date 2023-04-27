@@ -35,7 +35,6 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-
   /// Sends API request to get a list of Mistake
   Future<void> _check(String text) async {
     final mistakes = await widget.langService.findMistakes(text);
