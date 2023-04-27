@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
 
+/// Example App main page
 class App extends StatefulWidget {
+  /// Example app constructor
   const App({super.key});
 
   @override
@@ -9,9 +11,13 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  /// Initialize LanguageTool
   static final LanguageTool _languageTool = LanguageTool();
+
+  /// Initialize DebounceLangToolService
   final DebounceLangToolService _debouncedLangService;
 
+  /// Set DebounceLangToolService
   _AppState()
       : _debouncedLangService = DebounceLangToolService(
           LangToolService(_languageTool),
