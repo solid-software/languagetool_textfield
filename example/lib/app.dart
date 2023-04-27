@@ -14,9 +14,9 @@ class _AppState extends State<App> {
 
   _AppState()
       : _debouncedLangService = DebounceLangToolService(
-    LangToolService(_languageTool),
-    const Duration(milliseconds: 500),
-  );
+          LangToolService(_languageTool),
+          const Duration(milliseconds: 500),
+        );
   @override
   Widget build(BuildContext context) {
     return Material(
