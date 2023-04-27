@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
-import 'package:languagetool_textfield/domain/highlight_colors.dart';
+import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
 class ColoredTextEditingController extends TextEditingController {
   /// Color scheme to highlight mistakes
-  final HighlightColors? highlightColorScheme;
+  final HighlightStyle highlightStyle;
 
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
-
-  final double _backgroundOpacity =
-      0.2; // background opacity for mistake TextSpan
-
-  final double _mistakeLineThickness =
-      1.5; // mistake TextSpan underline thickness
 
   @override
   set value(TextEditingValue newValue) {
@@ -25,7 +19,9 @@ class ColoredTextEditingController extends TextEditingController {
   }
 
   /// Controller constructor
-  ColoredTextEditingController({this.highlightColorScheme});
+  ColoredTextEditingController({
+    this.highlightStyle = const HighlightStyle(),
+  });
 
   /// Generates TextSpan from Mistake list
   @override
@@ -34,55 +30,64 @@ class ColoredTextEditingController extends TextEditingController {
     TextStyle? style,
     required bool withComposing,
   }) {
+    final int textLength = text.length;
+    final Iterable<TextSpan> spanList =
+        _generateSpans(textLength: textLength, style: style);
+
+    return TextSpan(
+      children: spanList.toList(),
+    );
+  }
+
+  /// Generator function to create TextSpan instances
+  Iterable<TextSpan> _generateSpans({
+    required int textLength,
+    TextStyle? style,
+  }) sync* {
     int currentOffset = 0; // enter index
 
-    final int textLength = text.length;
-
-    /// Generator function to create TextSpan instances
-    Iterable<TextSpan> generateSpans() sync* {
-      for (final Mistake mistake in _mistakes) {
-        /// Breaks the loop if iterated Mistake offset is bigger than text
-        /// length.
-        if (mistake.offset > textLength ||
-            mistake.offset + mistake.length > textLength) {
-          break;
-        }
-
-        /// TextSpan before mistake
-        yield TextSpan(
-          text: text.substring(
-            currentOffset,
-            mistake.offset,
-          ),
-          style: style,
-        );
-
-        /// Get a highlight color
-        final Color mistakeColor = _getMistakeColor(mistake.type);
-
-        /// Mistake highlighted TextSpan
-        yield TextSpan(
-          text: text.substring(mistake.offset, mistake.offset + mistake.length),
-          mouseCursor: MaterialStateMouseCursor.clickable,
-          style: style?.copyWith(
-            backgroundColor: mistakeColor.withOpacity(_backgroundOpacity),
-            decoration: TextDecoration.underline,
-            decorationColor: mistakeColor,
-            decorationThickness: _mistakeLineThickness,
-          ),
-        );
-
-        currentOffset = mistake.offset + mistake.length;
+    for (final Mistake mistake in _mistakes) {
+      /// Breaks the loop if iterated Mistake offset is bigger than text
+      /// length.
+      if (mistake.offset > textLength ||
+          mistake.offset + mistake.length > textLength) {
+        break;
       }
 
-      /// TextSpan after mistake
+      /// TextSpan before mistake
       yield TextSpan(
-        text: text.substring(currentOffset),
+        text: text.substring(
+          currentOffset,
+          mistake.offset,
+        ),
         style: style,
       );
+
+      /// Get a highlight color
+      final Color mistakeColor = _getMistakeColor(mistake.type);
+
+      /// Mistake highlighted TextSpan
+      yield TextSpan(
+        text: text.substring(mistake.offset, mistake.offset + mistake.length),
+        mouseCursor: MaterialStateMouseCursor.clickable,
+        style: style?.copyWith(
+          backgroundColor: mistakeColor.withOpacity(
+            highlightStyle.backgroundOpacity,
+          ),
+          decoration: TextDecoration.underline,
+          decorationColor: mistakeColor,
+          decorationThickness: highlightStyle.mistakeLineThickness,
+        ),
+      );
+
+      currentOffset = mistake.offset + mistake.length;
     }
 
-    return TextSpan(children: generateSpans().toList());
+    /// TextSpan after mistake
+    yield TextSpan(
+      text: text.substring(currentOffset),
+      style: style,
+    );
   }
 
   /// Apply changes to Mistake list while new data being fetched
@@ -134,21 +139,19 @@ class ColoredTextEditingController extends TextEditingController {
   Color _getMistakeColor(MistakeType type) {
     switch (type) {
       case MistakeType.misspelling:
-        return highlightColorScheme?.misspellingMistakeColor ?? Colors.red;
+        return highlightStyle.misspellingMistakeColor;
       case MistakeType.typographical:
-        return highlightColorScheme?.typographicalMistakeColor ?? Colors.green;
+        return highlightStyle.typographicalMistakeColor;
       case MistakeType.grammar:
-        return highlightColorScheme?.grammarMistakeColor ?? Colors.amber;
+        return highlightStyle.grammarMistakeColor;
       case MistakeType.uncategorized:
-        return highlightColorScheme?.uncategorizedMistakeColor ?? Colors.blue;
+        return highlightStyle.uncategorizedMistakeColor;
       case MistakeType.nonConformance:
-        return highlightColorScheme?.nonConformanceMistakeColor ??
-            Colors.greenAccent;
+        return highlightStyle.nonConformanceMistakeColor;
       case MistakeType.style:
-        return highlightColorScheme?.styleMistakeColor ??
-            Colors.deepPurpleAccent;
+        return highlightStyle.styleMistakeColor;
       case MistakeType.other:
-        return highlightColorScheme?.otherMistakeColor ?? Colors.white60;
+        return highlightStyle.otherMistakeColor;
     }
   }
 }

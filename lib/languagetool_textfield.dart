@@ -2,7 +2,8 @@ library languagetool_textfield;
 
 export 'package:language_tool/language_tool.dart';
 
-export 'domain/highlight_colors.dart';
+export 'core/controllers/colored_text_editing_controller.dart';
+export 'domain/highlight_style.dart';
 export 'domain/language_check_service.dart';
 export 'domain/mistake.dart';
 export 'implementations/debounce_lang_tool_service.dart';

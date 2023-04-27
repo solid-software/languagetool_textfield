@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/controllers/colored_text_editing_controller.dart';
-import 'package:languagetool_textfield/domain/highlight_colors.dart';
+import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 
 /// A TextField widget that checks the grammar using the given [langService]
@@ -18,7 +18,7 @@ class LanguageToolTextField extends StatefulWidget {
   final Widget Function()? mistakeBuilder;
 
   /// Color scheme to highlight mistakes
-  final HighlightColors? highlightColorScheme;
+  final ColoredTextEditingController coloredController;
 
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
@@ -27,7 +27,7 @@ class LanguageToolTextField extends StatefulWidget {
     required this.style,
     required this.decoration,
     this.mistakeBuilder,
-    this.highlightColorScheme,
+    required this.coloredController,
   }) : super(key: key);
 
   @override
@@ -35,21 +35,17 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-  ColoredTextEditingController? _controller;
 
   /// Sends API request to get a list of Mistake
   Future<void> _check(String text) async {
     final mistakes = await widget.langService.findMistakes(text);
     if (mistakes.isNotEmpty) {
-      _controller?.highlightMistakes(mistakes);
+      widget.coloredController.highlightMistakes(mistakes);
     }
   }
 
   @override
   void initState() {
-    _controller = ColoredTextEditingController(
-      highlightColorScheme: widget.highlightColorScheme,
-    );
     super.initState();
   }
 
@@ -59,12 +55,8 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
       padding: const EdgeInsets.all(24.0),
       child: Center(
         child: TextField(
-          controller: _controller,
-          onChanged: (String text) {
-            if (_controller != null) {
-              _check(text);
-            }
-          },
+          controller: widget.coloredController,
+          onChanged: _check,
           style: widget.style,
           decoration: widget.decoration,
         ),
@@ -75,6 +67,6 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   @override
   void dispose() {
     super.dispose();
-    _controller?.dispose(); // disposes controller
+    widget.coloredController.dispose();
   }
 }

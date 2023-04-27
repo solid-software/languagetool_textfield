@@ -17,12 +17,17 @@ class _AppState extends State<App> {
   /// Initialize DebounceLangToolService
   final DebounceLangToolService _debouncedLangService;
 
+  /// Initialize ColoredTextEditingController
+  final ColoredTextEditingController controller =
+      ColoredTextEditingController();
+
   /// Set DebounceLangToolService
   _AppState()
       : _debouncedLangService = DebounceLangToolService(
           LangToolService(_languageTool),
           const Duration(milliseconds: 500),
         );
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -33,6 +38,7 @@ class _AppState extends State<App> {
         mistakeBuilder: () {
           return Container();
         },
+        coloredController: controller,
       ),
     );
   }
