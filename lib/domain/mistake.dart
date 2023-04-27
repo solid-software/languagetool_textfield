@@ -25,4 +25,10 @@ class Mistake {
     required this.length,
     this.replacements = const [],
   });
+
+  @override
+  String toString() {
+    return 'Mistake{message: $message, type: $type, offset: $offset, '
+        'length: $length, replacements: $replacements}';
+  }
 }
