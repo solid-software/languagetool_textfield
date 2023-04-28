@@ -33,13 +33,12 @@ class ColoredTextEditingController extends TextEditingController {
   Future<void> _handleTextChange(String newText) async {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
-    if (newText.length != text.length) {
-      _mistakes.clear();
-      final mistakes = await languageCheckService.findMistakes(newText);
-      if (mistakes.isNotEmpty) {
-        _mistakes = mistakes;
-        notifyListeners();
-      }
+    if (newText.length == text.length) return;
+    _mistakes.clear();
+    final mistakes = await languageCheckService.findMistakes(newText);
+    if (mistakes.isNotEmpty) {
+      _mistakes = mistakes;
+      notifyListeners();
     }
   }
 
@@ -90,7 +89,7 @@ class ColoredTextEditingController extends TextEditingController {
               backgroundColor: mistakeColor.withOpacity(
                 highlightStyle.backgroundOpacity,
               ),
-              decoration: TextDecoration.underline,
+              decoration: highlightStyle.decoration,
               decorationColor: mistakeColor,
               decorationThickness: highlightStyle.mistakeLineThickness,
             ),

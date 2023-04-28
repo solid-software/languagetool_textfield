@@ -33,6 +33,9 @@ class HighlightStyle {
   /// mistake TextSpan underline thickness
   final double mistakeLineThickness;
 
+  /// Mistaken text decoration style
+  final TextDecoration decoration;
+
   ///Color scheme constructor
   const HighlightStyle({
     this.misspellingMistakeColor = Colors.red,
@@ -44,5 +47,6 @@ class HighlightStyle {
     this.otherMistakeColor = Colors.white60,
     this.backgroundOpacity = _initialBackgroundOpacity,
     this.mistakeLineThickness = _initialLineHeight,
+    this.decoration = TextDecoration.underline,
   });
 }
