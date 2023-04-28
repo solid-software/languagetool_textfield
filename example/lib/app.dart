@@ -15,31 +15,33 @@ class _AppState extends State<App> {
   static final LanguageTool _languageTool = LanguageTool();
 
   /// Initialize DebounceLangToolService
-  final DebounceLangToolService _debouncedLangService;
+  static final DebounceLangToolService _debouncedLangService =
+      DebounceLangToolService(
+    LangToolService(_languageTool),
+    const Duration(milliseconds: 500),
+  );
 
   /// Initialize ColoredTextEditingController
-  final ColoredTextEditingController controller =
-      ColoredTextEditingController();
-
-  /// Set DebounceLangToolService
-  _AppState()
-      : _debouncedLangService = DebounceLangToolService(
-          LangToolService(_languageTool),
-          const Duration(milliseconds: 500),
-        );
+  final ColoredTextEditingController _controller =
+      ColoredTextEditingController(languageCheckService: _debouncedLangService);
 
   @override
   Widget build(BuildContext context) {
     return Material(
       child: LanguageToolTextField(
-        langService: _debouncedLangService,
         style: const TextStyle(),
         decoration: const InputDecoration(),
         mistakeBuilder: () {
           return Container();
         },
-        coloredController: controller,
+        coloredController: _controller,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

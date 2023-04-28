@@ -1,6 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
+import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
@@ -8,6 +10,9 @@ import 'package:languagetool_textfield/domain/mistake.dart';
 class ColoredTextEditingController extends TextEditingController {
   /// Color scheme to highlight mistakes
   final HighlightStyle highlightStyle;
+
+  /// Language tool API index
+  final LanguageCheckService languageCheckService;
 
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
@@ -20,13 +25,22 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Controller constructor
   ColoredTextEditingController({
+    required this.languageCheckService,
     this.highlightStyle = const HighlightStyle(),
   });
 
-  /// Clear mistakes list when text mas modified
-  void _handleTextChange(String newValue) {
-    if (newValue.length != text.length) {
+  /// Clear mistakes list when text mas modified and get a new list of mistakes
+  /// via API
+  Future<void> _handleTextChange(String newText) async {
+    ///set value triggers each time, even when cursor changes its location
+    ///so this check avoid cleaning Mistake list when text wasn't really changed
+    if (newText.length != text.length) {
       _mistakes.clear();
+      final mistakes = await languageCheckService.findMistakes(newText);
+      if (mistakes.isNotEmpty) {
+        _mistakes = mistakes;
+      }
+      notifyListeners();
     }
   }
 
@@ -37,12 +51,12 @@ class ColoredTextEditingController extends TextEditingController {
     TextStyle? style,
     required bool withComposing,
   }) {
-    final Iterable<TextSpan> spanList = _generateSpans(
+    final formattedTextSpans = _generateSpans(
       style: style,
     );
 
     return TextSpan(
-      children: spanList.toList(),
+      children: formattedTextSpans.toList(),
     );
   }
 
@@ -68,16 +82,21 @@ class ColoredTextEditingController extends TextEditingController {
 
       /// Mistake highlighted TextSpan
       yield TextSpan(
-        text: text.substring(mistake.offset, mistake.offset + mistake.length),
-        mouseCursor: MaterialStateMouseCursor.clickable,
-        style: style?.copyWith(
-          backgroundColor: mistakeColor.withOpacity(
-            highlightStyle.backgroundOpacity,
+        children: [
+          TextSpan(
+            text:
+                text.substring(mistake.offset, mistake.offset + mistake.length),
+            mouseCursor: MaterialStateMouseCursor.clickable,
+            style: style?.copyWith(
+              backgroundColor: mistakeColor.withOpacity(
+                highlightStyle.backgroundOpacity,
+              ),
+              decoration: TextDecoration.underline,
+              decorationColor: mistakeColor,
+              decorationThickness: highlightStyle.mistakeLineThickness,
+            ),
           ),
-          decoration: TextDecoration.underline,
-          decorationColor: mistakeColor,
-          decorationThickness: highlightStyle.mistakeLineThickness,
-        ),
+        ],
       );
 
       currentOffset = mistake.offset + mistake.length;
@@ -88,12 +107,6 @@ class ColoredTextEditingController extends TextEditingController {
       text: text.substring(currentOffset),
       style: style,
     );
-  }
-
-  /// A method sets new list of Mistake and triggers buildTextSpan
-  void highlightMistakes(List<Mistake> list) {
-    _mistakes = list;
-    notifyListeners();
   }
 
   /// Returns color for mistake TextSpan style
