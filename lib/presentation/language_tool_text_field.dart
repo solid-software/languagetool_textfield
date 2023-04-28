@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/core/controllers/colored_text_editing_controller.dart';
+import 'package:languagetool_textfield/languagetool_textfield.dart';
 
 /// A TextField widget that checks the grammar using the given
-/// [coloredController]
+/// [languageTool]
 class LanguageToolTextField extends StatefulWidget {
   /// A style to use for the text being edited.
   final TextStyle style;
@@ -13,16 +13,20 @@ class LanguageToolTextField extends StatefulWidget {
   /// A builder function used to build errors.
   final Widget Function()? mistakeBuilder;
 
-  /// Color scheme to highlight mistakes
-  final ColoredTextEditingController coloredController;
+  /// A Service to get mistakes from API
+  final LanguageTool languageTool;
+
+  /// User customization for mistake highlighting
+  final HighlightStyle mistakeHighlightStyle;
 
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
     Key? key,
     required this.style,
     required this.decoration,
+    required this.languageTool,
+    this.mistakeHighlightStyle = const HighlightStyle(),
     this.mistakeBuilder,
-    required this.coloredController,
   }) : super(key: key);
 
   @override
@@ -30,13 +34,46 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
+  /// Initialize ColoredTextEditingController
+  ColoredTextEditingController? _controller;
+
+  @override
+  void initState() {
+    /// Creating an instance of DebounceLangToolService
+    final DebounceLangToolService _debouncedLangService =
+        DebounceLangToolService(
+      LangToolService(widget.languageTool),
+      const Duration(milliseconds: 500),
+    );
+
+    /// Setting ColoredTextEditingController with DebounceLangToolService and
+    /// a Dialog trigger function
+    _controller = ColoredTextEditingController(
+      languageCheckService: _debouncedLangService,
+      highlightStyle: widget.mistakeHighlightStyle,
+      onMistakeTap: (
+        Offset globalPosition,
+        Color color,
+        Mistake mistake,
+      ) {
+        createPopupEntry(
+          globalPosition: globalPosition,
+          context: context,
+          mistake: mistake,
+          color: color,
+        );
+      },
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Center(
         child: TextField(
-          controller: widget.coloredController,
+          controller: _controller,
           style: widget.style,
           decoration: widget.decoration,
         ),

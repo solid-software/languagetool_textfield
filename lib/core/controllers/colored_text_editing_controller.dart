@@ -1,8 +1,13 @@
+import 'dart:developer';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:language_tool/language_tool.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
+import 'package:languagetool_textfield/implementations/lang_tool_service.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -12,6 +17,10 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Language tool API index
   final LanguageCheckService languageCheckService;
+
+  /// Register tap to show overlay popup
+  final Function(Offset globalPosition, Color color, Mistake mistake)
+      onMistakeTap;
 
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
@@ -24,8 +33,9 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Controller constructor
   ColoredTextEditingController({
+    required this.onMistakeTap,
     required this.languageCheckService,
-    this.highlightStyle = const HighlightStyle(),
+    required this.highlightStyle,
   });
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
@@ -92,6 +102,16 @@ class ColoredTextEditingController extends TextEditingController {
               decorationColor: mistakeColor,
               decorationThickness: highlightStyle.mistakeLineThickness,
             ),
+
+            /// Recognizes user tap on highlighted area
+            recognizer: TapGestureRecognizer()
+              ..onTapDown = (TapDownDetails details) {
+                _openPopup(
+                  details: details,
+                  color: mistakeColor,
+                  mistake: mistake,
+                );
+              },
           ),
         ],
       );
@@ -104,6 +124,15 @@ class ColoredTextEditingController extends TextEditingController {
       text: text.substring(currentOffset),
       style: style,
     );
+  }
+
+  void _openPopup({
+    required TapDownDetails details,
+    required Color color,
+    required Mistake mistake,
+  }) {
+    log(details.globalPosition.toString());
+    onMistakeTap(details.globalPosition, color, mistake);
   }
 
   /// Returns color for mistake TextSpan style
