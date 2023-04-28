@@ -60,7 +60,6 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Generator function to create TextSpan instances
   Iterable<TextSpan> _generateSpans({
-    // required int textLength,
     TextStyle? style,
   }) sync* {
     int currentOffset = 0; // enter index
