@@ -38,8 +38,8 @@ class ColoredTextEditingController extends TextEditingController {
       final mistakes = await languageCheckService.findMistakes(newText);
       if (mistakes.isNotEmpty) {
         _mistakes = mistakes;
+        notifyListeners();
       }
-      notifyListeners();
     }
   }
 
