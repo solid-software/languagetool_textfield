@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
