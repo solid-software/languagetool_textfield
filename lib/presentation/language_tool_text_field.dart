@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/domain/language_check_service.dart';
+import 'package:languagetool_textfield/core/controllers/colored_text_editing_controller.dart';
 
-/// A TextField widget that checks the grammar using the given [langService]
+/// A TextField widget that checks the grammar using the given
+/// [coloredController]
 class LanguageToolTextField extends StatefulWidget {
-  /// A service for checking errors.
-  final LanguageCheckService langService;
-
   /// A style to use for the text being edited.
   final TextStyle style;
 
@@ -15,13 +13,16 @@ class LanguageToolTextField extends StatefulWidget {
   /// A builder function used to build errors.
   final Widget Function()? mistakeBuilder;
 
+  /// Color scheme to highlight mistakes
+  final ColoredTextEditingController coloredController;
+
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
     Key? key,
-    required this.langService,
     required this.style,
     required this.decoration,
     this.mistakeBuilder,
+    required this.coloredController,
   }) : super(key: key);
 
   @override
@@ -31,6 +32,15 @@ class LanguageToolTextField extends StatefulWidget {
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Center(
+        child: TextField(
+          controller: widget.coloredController,
+          style: widget.style,
+          decoration: widget.decoration,
+        ),
+      ),
+    );
   }
 }
