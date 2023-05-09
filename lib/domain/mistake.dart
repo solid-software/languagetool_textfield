@@ -1,10 +1,12 @@
+import 'package:languagetool_textfield/core/enums/mistake_type.dart';
+
 /// A data model class that stores information about a single writing mistake.
 class Mistake {
   /// A brief description of the mistake.
   final String message;
 
   /// A type of this mistake.
-  final String type;
+  final MistakeType type;
 
   /// A position of the beginning of this mistake.
   final int offset;
