@@ -9,6 +9,8 @@ import 'package:languagetool_textfield/domain/mistake.dart';
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
 class ColoredTextEditingController extends TextEditingController {
+  OverlayEntry? overlayEntry;
+
   /// Color scheme to highlight mistakes
   final HighlightStyle highlightStyle;
 
@@ -86,12 +88,19 @@ class ColoredTextEditingController extends TextEditingController {
         children: [
           TextSpan(
             recognizer: TapGestureRecognizer()
-              ..onTap = () => showDialog<Dialog>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        child: Padding(
-                          padding: const EdgeInsets.all(15.0),
+              ..onTapDown = (TapDownDetails pressDetails) {
+                final position = pressDetails.globalPosition;
+                _removeHighlightOverlay();
+                overlayEntry = OverlayEntry(
+                  builder: (BuildContext context) {
+                    return Positioned(
+                    top: position.dy + 20,
+                    left: position.dx,
+                    child: Material(
+                      child: Card(
+                        child: Container(
+                          padding: const EdgeInsets.all(10.0),
+                          width: 300.0,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +124,7 @@ class ColoredTextEditingController extends TextEditingController {
                                 ],
                               ),
                               const SizedBox(height: 20.0),
-                              Text(mistake.message),
+                              Text(mistake.message, softWrap: true,),
                               const SizedBox(height: 20.0),
                               Wrap(
                                 children: mistake.replacements
@@ -127,7 +136,7 @@ class ColoredTextEditingController extends TextEditingController {
                                             mistake.offset + mistake.length,
                                             elem,
                                           );
-                                          Navigator.pop(context);
+                                          _removeHighlightOverlay();
                                         },
                                         child: Container(
                                           margin: const EdgeInsets.only(
@@ -156,9 +165,14 @@ class ColoredTextEditingController extends TextEditingController {
                             ],
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                    );
+                  },
+                );
+
+                Overlay.of(context).insert(overlayEntry!);
+              },
             text:
                 text.substring(mistake.offset, mistake.offset + mistake.length),
             mouseCursor: MaterialStateMouseCursor.clickable,
@@ -182,6 +196,11 @@ class ColoredTextEditingController extends TextEditingController {
       text: text.substring(currentOffset),
       style: style,
     );
+  }
+
+  void _removeHighlightOverlay() {
+    overlayEntry?.remove();
+    overlayEntry = null;
   }
 
   /// Returns color for mistake TextSpan style
