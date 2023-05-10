@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
+
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
@@ -33,7 +35,7 @@ class ColoredTextEditingController extends TextEditingController {
   Future<void> _handleTextChange(String newText) async {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
-    if (newText.length == text.length) return;
+    if (newText == text) return;
     _mistakes.clear();
     final mistakes = await languageCheckService.findMistakes(newText);
     if (mistakes.isNotEmpty) {
@@ -50,6 +52,7 @@ class ColoredTextEditingController extends TextEditingController {
     required bool withComposing,
   }) {
     final formattedTextSpans = _generateSpans(
+      context: context,
       style: style,
     );
 
@@ -60,6 +63,7 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Generator function to create TextSpan instances
   Iterable<TextSpan> _generateSpans({
+    required BuildContext context,
     TextStyle? style,
   }) sync* {
     int currentOffset = 0; // enter index
@@ -81,6 +85,80 @@ class ColoredTextEditingController extends TextEditingController {
       yield TextSpan(
         children: [
           TextSpan(
+            recognizer: TapGestureRecognizer()
+              ..onTap = () => showDialog<Dialog>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 10,
+                                    height: 10,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: mistakeColor,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5.0),
+                                  Text(
+                                    mistake.type.toString(),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20.0),
+                              Text(mistake.message),
+                              const SizedBox(height: 20.0),
+                              Wrap(
+                                children: mistake.replacements
+                                    .map(
+                                      (elem) => GestureDetector(
+                                        onTap: () {
+                                          text = text.replaceRange(
+                                            mistake.offset,
+                                            mistake.offset + mistake.length,
+                                            elem,
+                                          );
+                                          Navigator.pop(context);
+                                        },
+                                        child: Container(
+                                          margin: const EdgeInsets.only(
+                                            right: 5.0,
+                                            bottom: 5.0,
+                                          ),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.lightBlue,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(5.0),
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            elem,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
             text:
                 text.substring(mistake.offset, mistake.offset + mistake.length),
             mouseCursor: MaterialStateMouseCursor.clickable,
