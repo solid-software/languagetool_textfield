@@ -15,7 +15,7 @@ class ColoredTextEditingController extends TextEditingController {
   /// that appears on a mistake.
   OverlayEntry? overlayEntry;
 
-  /// Represents the maximum numbers of suggestions.
+  /// Represents the maximum numbers of suggestions allowed.
   final int suggestionsLimit;
 
   static const int _defaultSuggestionLimit = 4;
@@ -96,7 +96,8 @@ class ColoredTextEditingController extends TextEditingController {
       /// Get a highlight color
       final Color mistakeColor = _getMistakeColor(mistake.type);
 
-      /// Only getting the first 4 recommended suggestions.
+      /// Number of suggestions depends on a limit.
+      /// By default it is being set in _defaultSuggestionLimit
       final List<String> replacements =
           mistake.replacements.length <= suggestionsLimit
               ? mistake.replacements
