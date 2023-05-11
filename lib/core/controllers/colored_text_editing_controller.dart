@@ -54,6 +54,9 @@ class ColoredTextEditingController extends TextEditingController {
       _mistakes = mistakes;
       notifyListeners();
     }
+
+    /// To remove the overlay when new text is entered in the field.
+    _removeHighlightOverlay();
   }
 
   /// Generates TextSpan from Mistake list
@@ -112,7 +115,7 @@ class ColoredTextEditingController extends TextEditingController {
                 /// getting the position of the user's finger
                 final position = pressDetails.globalPosition;
 
-                /// removing the overlay that is already present
+                /// To remove overlay if present.
                 _removeHighlightOverlay();
 
                 overlayEntry = OverlayEntry(
