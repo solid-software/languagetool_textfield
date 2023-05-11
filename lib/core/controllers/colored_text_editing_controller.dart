@@ -153,7 +153,9 @@ class ColoredTextEditingController extends TextEditingController {
                   },
                 );
 
-                Overlay.of(context).insert(overlayEntry!);
+                Overlay.of(context).insert(
+                  overlayEntry ?? OverlayEntry(builder: (_) => Container()),
+                );
               },
             text:
                 text.substring(mistake.offset, mistake.offset + mistake.length),
