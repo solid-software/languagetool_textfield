@@ -18,6 +18,8 @@ class ColoredTextEditingController extends TextEditingController {
   /// Represents the maximum numbers of suggestions.
   final int suggestionsLimit;
 
+  static const int _defaultSuggestionLimit = 4;
+
   /// Color scheme to highlight mistakes
   final HighlightStyle highlightStyle;
 
@@ -37,7 +39,7 @@ class ColoredTextEditingController extends TextEditingController {
   ColoredTextEditingController({
     required this.languageCheckService,
     this.highlightStyle = const HighlightStyle(),
-    this.suggestionsLimit = 4,
+    this.suggestionsLimit = _defaultSuggestionLimit,
   });
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
