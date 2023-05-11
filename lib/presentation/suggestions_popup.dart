@@ -26,6 +26,9 @@ class SuggestionsPopup extends StatelessWidget {
   /// A callback that will run when a suggestion is pressed.
   final void Function(String suggestion) onTapCallback;
 
+  /// A callback function that will pop [SuggestionsPopup] from the [Overlay]
+  final void Function() closeCallBack;
+
   /// Constructor for the [SuggestionsPopup] widget.
   const SuggestionsPopup({
     required this.mistakeName,
@@ -33,6 +36,7 @@ class SuggestionsPopup extends StatelessWidget {
     required this.mistakeColor,
     required this.replacements,
     required this.onTapCallback,
+    required this.closeCallBack,
     required this.dx,
     required this.dy,
     Key? key,
@@ -65,11 +69,20 @@ class SuggestionsPopup extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 5.0),
-                    Text(
-                      mistakeName,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Text(
+                        mistakeName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      iconSize: 20.0,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: closeCallBack,
                     ),
                   ],
                 ),
@@ -83,7 +96,10 @@ class SuggestionsPopup extends StatelessWidget {
                   children: replacements
                       .map(
                         (elem) => GestureDetector(
-                          onTap: () => onTapCallback(elem),
+                          onTap: () {
+                            onTapCallback(elem);
+                            closeCallBack();
+                          },
                           child: Container(
                             margin: const EdgeInsets.only(
                               right: 5.0,

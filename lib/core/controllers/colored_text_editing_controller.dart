@@ -128,8 +128,8 @@ class ColoredTextEditingController extends TextEditingController {
                           mistake.offset + mistake.length,
                           newValue,
                         );
-                        _removeHighlightOverlay();
                       },
+                      closeCallBack: _removeHighlightOverlay,
                       dx: position.dx,
                       dy: position.dy + 10,
                     );
