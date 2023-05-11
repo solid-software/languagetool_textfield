@@ -5,6 +5,7 @@ import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
+import 'package:languagetool_textfield/presentation/suggestions_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -13,6 +14,9 @@ class ColoredTextEditingController extends TextEditingController {
   /// This entry represents the floating popup
   /// that appears on a mistake.
   OverlayEntry? overlayEntry;
+
+  /// Represents the maximum numbers of suggestions.
+  final int suggestionsLimit;
 
   /// Color scheme to highlight mistakes
   final HighlightStyle highlightStyle;
@@ -33,6 +37,7 @@ class ColoredTextEditingController extends TextEditingController {
   ColoredTextEditingController({
     required this.languageCheckService,
     this.highlightStyle = const HighlightStyle(),
+    this.suggestionsLimit = 4,
   });
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
@@ -87,9 +92,10 @@ class ColoredTextEditingController extends TextEditingController {
       final Color mistakeColor = _getMistakeColor(mistake.type);
 
       /// Only getting the first 4 recommended suggestions.
-      final List<String> replacements = mistake.replacements.length <= 4
-          ? mistake.replacements
-          : mistake.replacements.sublist(0, 4);
+      final List<String> replacements =
+          mistake.replacements.length <= suggestionsLimit
+              ? mistake.replacements
+              : mistake.replacements.sublist(0, suggestionsLimit);
 
       /// Parsing the mistake enum types to string type
       final String mistakeName =
@@ -101,89 +107,29 @@ class ColoredTextEditingController extends TextEditingController {
           TextSpan(
             recognizer: TapGestureRecognizer()
               ..onTapDown = (TapDownDetails pressDetails) {
+                /// getting the position of the user's finger
                 final position = pressDetails.globalPosition;
+
+                /// removing the overlay that is already present
                 _removeHighlightOverlay();
+
                 overlayEntry = OverlayEntry(
                   builder: (BuildContext context) {
-                    return Positioned(
-                      top: position.dy + 15,
-                      left: position.dx,
-                      child: Material(
-                        type: MaterialType.transparency,
-                        child: Card(
-                          child: Container(
-                            padding: const EdgeInsets.all(10.0),
-                            width: 250.0,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 10,
-                                      height: 10,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: mistakeColor,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5.0),
-                                    Text(
-                                      mistakeName,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 20.0),
-                                Text(
-                                  mistake.message,
-                                  softWrap: true,
-                                ),
-                                const SizedBox(height: 20.0),
-                                Wrap(
-                                  children: replacements
-                                      .map(
-                                        (elem) => GestureDetector(
-                                          onTap: () {
-                                            text = text.replaceRange(
-                                              mistake.offset,
-                                              mistake.offset + mistake.length,
-                                              elem,
-                                            );
-                                            _removeHighlightOverlay();
-                                          },
-                                          child: Container(
-                                            margin: const EdgeInsets.only(
-                                              right: 5.0,
-                                              bottom: 5.0,
-                                            ),
-                                            decoration: const BoxDecoration(
-                                              color: Colors.lightBlue,
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(5.0),
-                                              ),
-                                            ),
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              elem,
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                    return SuggestionsPopup(
+                      mistakeName: mistakeName,
+                      mistakeMessage: mistake.message,
+                      mistakeColor: mistakeColor,
+                      replacements: replacements,
+                      onTapCallback: (newValue) {
+                        text = text.replaceRange(
+                          mistake.offset,
+                          mistake.offset + mistake.length,
+                          newValue,
+                        );
+                        _removeHighlightOverlay();
+                      },
+                      dx: position.dx,
+                      dy: position.dy + 10,
                     );
                   },
                 );
