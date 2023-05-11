@@ -124,6 +124,10 @@ class ColoredTextEditingController extends TextEditingController {
                   containerWidth,
                 );
 
+                /// y axis of the popup widget.
+                /// it will be slightly below the tapped area.
+                final newDy = position.dy + 10;
+
                 /// To remove overlay if present.
                 _removeHighlightOverlay();
 
@@ -144,7 +148,7 @@ class ColoredTextEditingController extends TextEditingController {
                       closeCallBack: _removeHighlightOverlay,
                       containerWidth: containerWidth,
                       dx: newDx,
-                      dy: position.dy + 10,
+                      dy: newDy,
                     );
                   },
                 );
@@ -203,12 +207,15 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Calculates the new x axis for the popup so that it wont exceed the screen.
   double _calculateDxOfPopup(
-      double dxOfTap, double screenWidth, double containerWidth) {
+    double dxOfTap,
+    double screenWidth,
+    double containerWidth,
+  ) {
     /// The x axis point after which the popup exceeds the screen
     final dxBoundary = screenWidth - containerWidth;
 
     /// Calculating final x axis
-    final newDx = dxOfTap >= dxBoundary ?  dxBoundary : dxOfTap;
+    final newDx = dxOfTap >= dxBoundary ? dxBoundary : dxOfTap;
 
     return newDx;
   }

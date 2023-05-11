@@ -33,6 +33,9 @@ class SuggestionsPopup extends StatelessWidget {
   /// Width is adjusted according to the screen size.
   final double containerWidth;
 
+  static const double _mistakeCircleSize = 10.0;
+  static const double _iconSize = 20.0;
+
   /// Constructor for the [SuggestionsPopup] widget.
   const SuggestionsPopup({
     required this.mistakeName,
@@ -66,8 +69,8 @@ class SuggestionsPopup extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      width: 10,
-                      height: 10,
+                      width: _mistakeCircleSize,
+                      height: _mistakeCircleSize,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: mistakeColor,
@@ -84,7 +87,7 @@ class SuggestionsPopup extends StatelessWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.close),
-                      iconSize: 20.0,
+                      iconSize: _iconSize,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: closeCallBack,
