@@ -29,6 +29,10 @@ class SuggestionsPopup extends StatelessWidget {
   /// A callback function that will pop [SuggestionsPopup] from the [Overlay]
   final void Function() closeCallBack;
 
+  /// width of the [Container] that will contain the widget.
+  /// Width is adjusted according to the screen size.
+  final double containerWidth;
+
   /// Constructor for the [SuggestionsPopup] widget.
   const SuggestionsPopup({
     required this.mistakeName,
@@ -37,6 +41,7 @@ class SuggestionsPopup extends StatelessWidget {
     required this.replacements,
     required this.onTapCallback,
     required this.closeCallBack,
+    required this.containerWidth,
     required this.dx,
     required this.dy,
     Key? key,
@@ -53,7 +58,7 @@ class SuggestionsPopup extends StatelessWidget {
         child: Card(
           child: Container(
             padding: const EdgeInsets.all(10.0),
-            width: 250.0,
+            width: containerWidth,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,

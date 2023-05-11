@@ -114,6 +114,14 @@ class ColoredTextEditingController extends TextEditingController {
               ..onTapDown = (TapDownDetails pressDetails) {
                 /// getting the position of the user's finger
                 final position = pressDetails.globalPosition;
+                final screenWidth = MediaQuery.of(context).size.width;
+                final containerWidth = screenWidth / 1.5;
+
+                final newDx = _calculateDxOfPopup(
+                  position.dx,
+                  screenWidth,
+                  containerWidth,
+                );
 
                 /// To remove overlay if present.
                 _removeHighlightOverlay();
@@ -133,7 +141,8 @@ class ColoredTextEditingController extends TextEditingController {
                         );
                       },
                       closeCallBack: _removeHighlightOverlay,
-                      dx: position.dx,
+                      containerWidth: containerWidth,
+                      dx: newDx,
                       dy: position.dy + 10,
                     );
                   },
@@ -189,5 +198,17 @@ class ColoredTextEditingController extends TextEditingController {
       case MistakeType.other:
         return highlightStyle.otherMistakeColor;
     }
+  }
+
+  /// Calculates the new x axis for the popup so that it wont exceed the screen.
+  double _calculateDxOfPopup(
+      double dxOfTap, double screenWidth, double containerWidth) {
+    /// The x axis point after which the popup exceeds the screen
+    final dxBoundary = screenWidth - containerWidth;
+
+    /// Calculating final x axis
+    final newDx = dxOfTap >= dxBoundary ?  dxBoundary : dxOfTap;
+
+    return newDx;
   }
 }
