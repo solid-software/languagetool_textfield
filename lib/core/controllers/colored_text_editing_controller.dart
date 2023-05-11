@@ -9,6 +9,9 @@ import 'package:languagetool_textfield/domain/mistake.dart';
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
 class ColoredTextEditingController extends TextEditingController {
+  /// An [OverlayEntry] for the [Overlay] class.
+  /// This entry represents the floating popup
+  /// that appears on a mistake.
   OverlayEntry? overlayEntry;
 
   /// Color scheme to highlight mistakes
@@ -83,6 +86,15 @@ class ColoredTextEditingController extends TextEditingController {
       /// Get a highlight color
       final Color mistakeColor = _getMistakeColor(mistake.type);
 
+      /// Only getting the first 4 recommended suggestions.
+      final List<String> replacements = mistake.replacements.length <= 4
+          ? mistake.replacements
+          : mistake.replacements.sublist(0, 4);
+
+      /// Parsing the mistake enum types to string type
+      final String mistakeName =
+          mistake.type.name[0].toUpperCase() + mistake.type.name.substring(1);
+
       /// Mistake highlighted TextSpan
       yield TextSpan(
         children: [
@@ -94,79 +106,84 @@ class ColoredTextEditingController extends TextEditingController {
                 overlayEntry = OverlayEntry(
                   builder: (BuildContext context) {
                     return Positioned(
-                    top: position.dy + 20,
-                    left: position.dx,
-                    child: Material(
-                      child: Card(
-                        child: Container(
-                          padding: const EdgeInsets.all(10.0),
-                          width: 300.0,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: mistakeColor,
+                      top: position.dy + 15,
+                      left: position.dx,
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Card(
+                          child: Container(
+                            padding: const EdgeInsets.all(10.0),
+                            width: 250.0,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: mistakeColor,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 5.0),
-                                  Text(
-                                    mistake.type.toString(),
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20.0),
-                              Text(mistake.message, softWrap: true,),
-                              const SizedBox(height: 20.0),
-                              Wrap(
-                                children: mistake.replacements
-                                    .map(
-                                      (elem) => GestureDetector(
-                                        onTap: () {
-                                          text = text.replaceRange(
-                                            mistake.offset,
-                                            mistake.offset + mistake.length,
-                                            elem,
-                                          );
-                                          _removeHighlightOverlay();
-                                        },
-                                        child: Container(
-                                          margin: const EdgeInsets.only(
-                                            right: 5.0,
-                                            bottom: 5.0,
-                                          ),
-                                          decoration: const BoxDecoration(
-                                            color: Colors.lightBlue,
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(5.0),
+                                    const SizedBox(width: 5.0),
+                                    Text(
+                                      mistakeName,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 20.0),
+                                Text(
+                                  mistake.message,
+                                  softWrap: true,
+                                ),
+                                const SizedBox(height: 20.0),
+                                Wrap(
+                                  children: replacements
+                                      .map(
+                                        (elem) => GestureDetector(
+                                          onTap: () {
+                                            text = text.replaceRange(
+                                              mistake.offset,
+                                              mistake.offset + mistake.length,
+                                              elem,
+                                            );
+                                            _removeHighlightOverlay();
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.only(
+                                              right: 5.0,
+                                              bottom: 5.0,
                                             ),
-                                          ),
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            elem,
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
+                                            decoration: const BoxDecoration(
+                                              color: Colors.lightBlue,
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(5.0),
+                                              ),
+                                            ),
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              elem,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                            ],
+                                      )
+                                      .toList(),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
                     );
                   },
                 );
