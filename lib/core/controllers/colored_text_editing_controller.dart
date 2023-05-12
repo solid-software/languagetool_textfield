@@ -153,9 +153,7 @@ class ColoredTextEditingController extends TextEditingController {
                   containerWidth,
                 );
 
-                /// y axis of the popup widget.
-                /// it will be slightly below the tapped area.
-                final newDy = position.dy + 10;
+                final newDy = _calculateDyOfPopup(context, position.dy);
 
                 /// To remove overlay if present.
                 _removeHighlightOverlay();
@@ -258,5 +256,28 @@ class ColoredTextEditingController extends TextEditingController {
     final newDx = dxOfTap >= dxBoundary ? dxBoundary : dxOfTap;
 
     return newDx;
+  }
+
+  /// Calculates y axis for the popup so that it appears right below the mistake
+  double _calculateDyOfPopup(BuildContext context, double originalDy) {
+    /// getting the rendering information of the TextSpan widget
+    final textSpanRenderBox = context.findRenderObject() as RenderBox?;
+
+    /// This will be the default y axis
+    /// if the rendering information is not available
+    var newDy = originalDy + 10;
+
+    if (textSpanRenderBox != null) {
+      /// Top-Left corner of the TextSpan widget
+      final offset = textSpanRenderBox.localToGlobal(Offset.zero);
+
+      final textSpanHeight = textSpanRenderBox.size.height;
+
+      /// Adding the pixels in the height of text span to
+      /// the top left corner point of text span
+      newDy = offset.dy + textSpanHeight;
+    }
+
+    return newDy;
   }
 }
