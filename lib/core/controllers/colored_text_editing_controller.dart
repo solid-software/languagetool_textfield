@@ -32,12 +32,12 @@ class ColoredTextEditingController extends TextEditingController {
   /// A builder function to build a custom mistake widget.
   /// If it is not provided then a default widget will be displayed.
   final Widget Function(
-  String name,
-  String message,
-  Color color,
-  List<String> replacements,
-  Function(String) onSuggestionTap,
-  Function() onClose,
+    String name,
+    String message,
+    Color color,
+    List<String> replacements,
+    Function(String) onSuggestionTap,
+    Function() onClose,
   )? mistakeBuilder;
 
   @override
