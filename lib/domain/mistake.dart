@@ -19,6 +19,10 @@ class Mistake {
   /// Sorted by probability.
   final List<String> replacements;
 
+  /// Name of the mistake in string form.
+  /// The first letter will be capitalized
+  String get name => type.name[0].toUpperCase() + type.name.substring(1);
+
   /// Creates a new instance of the [Mistake] class.
   const Mistake({
     required this.message,

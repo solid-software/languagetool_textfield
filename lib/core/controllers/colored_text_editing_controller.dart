@@ -13,7 +13,7 @@ class ColoredTextEditingController extends TextEditingController {
   /// An [OverlayEntry] for the [Overlay] class.
   /// This entry represents the floating popup
   /// that appears on a mistake.
-  OverlayEntry? overlayEntry;
+  OverlayEntry? _overlayEntry;
 
   /// Represents the maximum numbers of suggestions allowed.
   final int suggestionsLimit;
@@ -104,8 +104,7 @@ class ColoredTextEditingController extends TextEditingController {
               : mistake.replacements.sublist(0, suggestionsLimit);
 
       /// Parsing the mistake enum types to string type
-      final String mistakeName =
-          mistake.type.name[0].toUpperCase() + mistake.type.name.substring(1);
+      final String mistakeName = mistake.name;
 
       /// Mistake highlighted TextSpan
       yield TextSpan(
@@ -131,7 +130,7 @@ class ColoredTextEditingController extends TextEditingController {
                 /// To remove overlay if present.
                 _removeHighlightOverlay();
 
-                overlayEntry = OverlayEntry(
+                final overlayEntry = OverlayEntry(
                   builder: (BuildContext context) {
                     return SuggestionsPopup(
                       mistakeName: mistakeName,
@@ -153,9 +152,8 @@ class ColoredTextEditingController extends TextEditingController {
                   },
                 );
 
-                Overlay.of(context).insert(
-                  overlayEntry ?? OverlayEntry(builder: (_) => Container()),
-                );
+                _overlayEntry = overlayEntry;
+                Overlay.of(context).insert(overlayEntry);
               },
             text:
                 text.substring(mistake.offset, mistake.offset + mistake.length),
@@ -183,8 +181,8 @@ class ColoredTextEditingController extends TextEditingController {
   }
 
   void _removeHighlightOverlay() {
-    overlayEntry?.remove();
-    overlayEntry = null;
+    _overlayEntry?.remove();
+    _overlayEntry = null;
   }
 
   /// Returns color for mistake TextSpan style
