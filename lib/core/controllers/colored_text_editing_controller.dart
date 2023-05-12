@@ -71,6 +71,13 @@ class ColoredTextEditingController extends TextEditingController {
     _removeHighlightOverlay();
   }
 
+  @override
+  void dispose() {
+    /// Removing the overlay when the controller gets disposed.
+    _removeHighlightOverlay();
+    super.dispose();
+  }
+
   /// Generates TextSpan from Mistake list
   @override
   TextSpan buildTextSpan({
