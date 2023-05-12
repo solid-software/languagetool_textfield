@@ -4,12 +4,6 @@ import 'package:flutter/material.dart';
 /// This widget represents the pop up that appears when a mistake is present in
 /// the text.
 class SuggestionsPopup extends StatelessWidget {
-  /// The x component of offset.
-  final double dx;
-
-  /// The y component of offset.
-  final double dy;
-
   /// represents the [Color] of the mistake for which
   /// the [SuggestionsPopup] is being displayed.
   final Color mistakeColor;
@@ -29,10 +23,6 @@ class SuggestionsPopup extends StatelessWidget {
   /// A callback function that will pop [SuggestionsPopup] from the [Overlay]
   final void Function() closeCallBack;
 
-  /// width of the [Container] that will contain the widget.
-  /// Width is adjusted according to the screen size.
-  final double containerWidth;
-
   static const double _mistakeCircleSize = 10.0;
   static const double _iconSize = 20.0;
 
@@ -44,97 +34,84 @@ class SuggestionsPopup extends StatelessWidget {
     required this.replacements,
     required this.onTapCallback,
     required this.closeCallBack,
-    required this.containerWidth,
-    required this.dx,
-    required this.dy,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: dy,
-      left: dx,
-      child: Material(
-        type: MaterialType.transparency,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: Card(
-          child: Container(
-            padding: const EdgeInsets.all(10.0),
-            width: containerWidth,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Card(
+      child: Container(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: _mistakeCircleSize,
-                      height: _mistakeCircleSize,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: mistakeColor,
-                      ),
-                    ),
-                    const SizedBox(width: 5.0),
-                    Expanded(
-                      child: Text(
-                        mistakeName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      iconSize: _iconSize,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      onPressed: closeCallBack,
-                    ),
-                  ],
+                Container(
+                  width: _mistakeCircleSize,
+                  height: _mistakeCircleSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: mistakeColor,
+                  ),
                 ),
-                const SizedBox(height: 20.0),
-                Text(
-                  mistakeMessage,
-                  softWrap: true,
+                const SizedBox(width: 5.0),
+                Expanded(
+                  child: Text(
+                    mistakeName,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 20.0),
-                Wrap(
-                  children: replacements
-                      .map(
-                        (elem) => GestureDetector(
-                          onTap: () {
-                            onTapCallback(elem);
-                            closeCallBack();
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                              right: 5.0,
-                              bottom: 5.0,
-                            ),
-                            decoration: const BoxDecoration(
-                              color: Colors.lightBlue,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(5.0),
-                              ),
-                            ),
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              elem,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  iconSize: _iconSize,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: closeCallBack,
                 ),
               ],
             ),
-          ),
+            const SizedBox(height: 20.0),
+            Text(
+              mistakeMessage,
+              softWrap: true,
+            ),
+            const SizedBox(height: 20.0),
+            Wrap(
+              children: replacements
+                  .map(
+                    (elem) => GestureDetector(
+                      onTap: () {
+                        onTapCallback(elem);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                          right: 5.0,
+                          bottom: 5.0,
+                        ),
+                        decoration: const BoxDecoration(
+                          color: Colors.lightBlue,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(5.0),
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          elem,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
         ),
       ),
     );

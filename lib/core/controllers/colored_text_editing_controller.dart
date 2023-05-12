@@ -29,6 +29,17 @@ class ColoredTextEditingController extends TextEditingController {
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
 
+  /// A builder function to build a custom mistake widget.
+  /// If it is not provided then a default widget will be displayed.
+  final Widget Function(
+  String name,
+  String message,
+  Color color,
+  List<String> replacements,
+  Function(String) onSuggestionTap,
+  Function() onClose,
+  )? mistakeBuilder;
+
   @override
   set value(TextEditingValue newValue) {
     _handleTextChange(newValue.text);
@@ -38,6 +49,7 @@ class ColoredTextEditingController extends TextEditingController {
   /// Controller constructor
   ColoredTextEditingController({
     required this.languageCheckService,
+    this.mistakeBuilder,
     this.highlightStyle = const HighlightStyle(),
     this.suggestionsLimit = _defaultSuggestionLimit,
   });
@@ -73,6 +85,24 @@ class ColoredTextEditingController extends TextEditingController {
 
     return TextSpan(
       children: formattedTextSpans.toList(),
+    );
+  }
+
+  Widget _widgetBuilder(
+    String name,
+    String message,
+    Color color,
+    List<String> replacements,
+    void Function(String) onSuggestionTap,
+    void Function() onClose,
+  ) {
+    return SuggestionsPopup(
+      mistakeName: name,
+      mistakeMessage: message,
+      mistakeColor: color,
+      replacements: replacements,
+      onTapCallback: onSuggestionTap,
+      closeCallBack: onClose,
     );
   }
 
@@ -130,24 +160,34 @@ class ColoredTextEditingController extends TextEditingController {
                 /// To remove overlay if present.
                 _removeHighlightOverlay();
 
+                final callback = mistakeBuilder ?? _widgetBuilder;
+
                 final overlayEntry = OverlayEntry(
                   builder: (BuildContext context) {
-                    return SuggestionsPopup(
-                      mistakeName: mistakeName,
-                      mistakeMessage: mistake.message,
-                      mistakeColor: mistakeColor,
-                      replacements: replacements,
-                      onTapCallback: (newValue) {
-                        text = text.replaceRange(
-                          mistake.offset,
-                          mistake.offset + mistake.length,
-                          newValue,
-                        );
-                      },
-                      closeCallBack: _removeHighlightOverlay,
-                      containerWidth: containerWidth,
-                      dx: newDx,
-                      dy: newDy,
+                    return Positioned(
+                      top: newDy,
+                      left: newDx,
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: SizedBox(
+                          width: containerWidth,
+                          child: callback(
+                            mistakeName,
+                            mistake.message,
+                            mistakeColor,
+                            replacements,
+                            (newValue) {
+                              text = text.replaceRange(
+                                mistake.offset,
+                                mistake.offset + mistake.length,
+                                newValue,
+                              );
+                              _removeHighlightOverlay();
+                            },
+                            _removeHighlightOverlay,
+                          ),
+                        ),
+                      ),
                     );
                   },
                 );
