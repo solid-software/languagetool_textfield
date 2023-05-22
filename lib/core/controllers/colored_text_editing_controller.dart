@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
@@ -15,6 +16,7 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
+  final List<TapGestureRecognizer> _recognizers = [];
 
   @override
   set value(TextEditingValue newValue) {
@@ -34,7 +36,13 @@ class ColoredTextEditingController extends TextEditingController {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
     if (newText.length == text.length) return;
+
     _mistakes.clear();
+    for (final recognizer in _recognizers) {
+      recognizer.dispose();
+    }
+    _recognizers.clear();
+
     final mistakes = await languageCheckService.findMistakes(newText);
     if (mistakes.isNotEmpty) {
       _mistakes = mistakes;
@@ -50,6 +58,7 @@ class ColoredTextEditingController extends TextEditingController {
     required bool withComposing,
   }) {
     final formattedTextSpans = _generateSpans(
+      context,
       style: style,
     );
 
@@ -59,7 +68,9 @@ class ColoredTextEditingController extends TextEditingController {
   }
 
   /// Generator function to create TextSpan instances
-  Iterable<TextSpan> _generateSpans({
+  Iterable<TextSpan> _generateSpans(
+    // fixme remove temporary context used for ScaffoldMessenger
+    BuildContext context, {
     TextStyle? style,
   }) sync* {
     int currentOffset = 0; // enter index
@@ -77,21 +88,38 @@ class ColoredTextEditingController extends TextEditingController {
       /// Get a highlight color
       final Color mistakeColor = _getMistakeColor(mistake.type);
 
+      /// Create a gesture recognizer for mistake
+      final _onTap = TapGestureRecognizer()
+        ..onTap = () {
+          // todo create popup here
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(mistake.message),
+            ),
+          );
+        };
+
+      /// Adding recognizer to the list for future disposing
+      _recognizers.add(_onTap);
+
       /// Mistake highlighted TextSpan
       yield TextSpan(
+        mouseCursor: MaterialStateMouseCursor.clickable,
+        style: style?.copyWith(
+          backgroundColor: mistakeColor.withOpacity(
+            highlightStyle.backgroundOpacity,
+          ),
+          decoration: highlightStyle.decoration,
+          decorationColor: mistakeColor,
+          decorationThickness: highlightStyle.mistakeLineThickness,
+        ),
         children: [
           TextSpan(
-            text:
-                text.substring(mistake.offset, mistake.offset + mistake.length),
-            mouseCursor: MaterialStateMouseCursor.clickable,
-            style: style?.copyWith(
-              backgroundColor: mistakeColor.withOpacity(
-                highlightStyle.backgroundOpacity,
-              ),
-              decoration: highlightStyle.decoration,
-              decorationColor: mistakeColor,
-              decorationThickness: highlightStyle.mistakeLineThickness,
+            text: text.substring(
+              mistake.offset,
+              mistake.offset + mistake.length,
             ),
+            recognizer: _onTap,
           ),
         ],
       );
