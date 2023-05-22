@@ -33,64 +33,69 @@ class LanguageToolMistakePopup {
     final Offset _offset = _calculateOffset(context);
 
     _overlayEntry = OverlayEntry(
-      builder: (context) => Positioned.fromRect(
-        rect: Rect.fromLTWH(_offset.dx, _offset.dy, width, height),
-        child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () {
-            dismiss();
-          },
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              width: width,
-              height: height,
-              decoration: BoxDecoration(
-                boxShadow: const [
-                  BoxShadow(color: Colors.grey, blurRadius: 20)
-                ],
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    mistake.type.name,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+      builder: (context) => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          dismiss();
+        },
+        child: Material(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              Positioned(
+                left: _offset.dx,
+                top: _offset.dy,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  width: width,
+                  height: height,
+                  decoration: BoxDecoration(
+                    boxShadow: const [
+                      BoxShadow(color: Colors.grey, blurRadius: 20)
+                    ],
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    mistake.message,
-                    style: const TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontSize: 14,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        mistake.type.name,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        mistake.message,
+                        style: const TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Expanded(
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) => const SizedBox(
+                            width: 5,
+                          ),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: mistake.replacements.length,
+                          itemBuilder: (context, index) => ElevatedButton(
+                            onPressed: () {
+                              // todo replace word
+                              throw UnimplementedError("what the flutter?");
+                            },
+                            child: Text(mistake.replacements[index]),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                  const SizedBox(height: 10),
-                  Expanded(
-                    child: ListView.separated(
-                      separatorBuilder: (context, index) => const SizedBox(
-                        width: 5,
-                      ),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: mistake.replacements.length,
-                      itemBuilder: (context, index) => ElevatedButton(
-                        onPressed: () {
-                          // todo replace word
-                          throw UnimplementedError("what the flutter?");
-                        },
-                        child: Text(mistake.replacements[index]),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
+                ),
+              )
+            ],
           ),
         ),
       ),
