@@ -65,7 +65,7 @@ class LanguageToolMistakePopup {
     ColoredTextEditingController controller,
   ) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(10),
       width: width,
       height: height,
       decoration: BoxDecoration(
@@ -74,25 +74,33 @@ class LanguageToolMistakePopup {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             mistake.type.name,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            mistake.message,
-            style: const TextStyle(
-              fontStyle: FontStyle.italic,
-              fontSize: 14,
+            style: TextStyle(
+              color: Colors.grey.shade700,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 10),
           Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Text(
+                mistake.message,
+                style: const TextStyle(
+                  // fontStyle: FontStyle.italic,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 35,
             child: ListView.separated(
               separatorBuilder: (context, index) => const SizedBox(
                 width: 5,
