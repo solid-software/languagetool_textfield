@@ -4,7 +4,6 @@ import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/utils/language_tool_mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -19,6 +18,14 @@ class ColoredTextEditingController extends TextEditingController {
   List<Mistake> _mistakes = [];
   final List<TapGestureRecognizer> _recognizers = [];
 
+  /// Callback that will be executed after mistake tapped
+  void Function(
+    BuildContext context,
+    Mistake mistake,
+    Offset mistakeOffset,
+    ColoredTextEditingController controller,
+  )? showPopup;
+
   @override
   set value(TextEditingValue newValue) {
     _handleTextChange(newValue.text);
@@ -30,6 +37,36 @@ class ColoredTextEditingController extends TextEditingController {
     required this.languageCheckService,
     this.highlightStyle = const HighlightStyle(),
   });
+
+  /// Generates TextSpan from Mistake list
+  @override
+  TextSpan buildTextSpan({
+    required BuildContext context,
+    TextStyle? style,
+    required bool withComposing,
+  }) {
+    final formattedTextSpans = _generateSpans(
+      context,
+      style: style,
+    );
+
+    return TextSpan(
+      children: formattedTextSpans.toList(),
+    );
+  }
+
+  /// Replaces mistake with given replacement
+  void replaceMistake(Mistake mistake, String replacement) {
+    text = text.replaceRange(
+      mistake.offset,
+      mistake.offset + mistake.length,
+      replacement,
+    );
+    _mistakes.remove(mistake);
+    selection = TextSelection.fromPosition(
+      TextPosition(offset: mistake.offset + replacement.length),
+    );
+  }
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
   /// via API
@@ -49,23 +86,6 @@ class ColoredTextEditingController extends TextEditingController {
       _mistakes = mistakes;
       notifyListeners();
     }
-  }
-
-  /// Generates TextSpan from Mistake list
-  @override
-  TextSpan buildTextSpan({
-    required BuildContext context,
-    TextStyle? style,
-    required bool withComposing,
-  }) {
-    final formattedTextSpans = _generateSpans(
-      context,
-      style: style,
-    );
-
-    return TextSpan(
-      children: formattedTextSpans.toList(),
-    );
   }
 
   /// Generator function to create TextSpan instances
@@ -91,12 +111,7 @@ class ColoredTextEditingController extends TextEditingController {
       /// Create a gesture recognizer for mistake
       final _onTap = TapGestureRecognizer()
         ..onTapDown = (details) {
-          LanguageToolMistakePopup(
-            mistake: mistake,
-            mistakeOffset: details.globalPosition,
-            width: 220,
-            height: 120,
-          ).show(context);
+          showPopup?.call(context, mistake, details.globalPosition, this);
         };
 
       // /// Adding recognizer to the list for future disposing

@@ -31,10 +31,8 @@ class _AppState extends State<App> {
       child: LanguageToolTextField(
         style: const TextStyle(),
         decoration: const InputDecoration(),
-        mistakeBuilder: () {
-          return Container();
-        },
         coloredController: _controller,
+        mistakePopup: LanguageToolMistakePopup(width: 250, height: 150),
       ),
     );
   }

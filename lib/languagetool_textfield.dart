@@ -9,4 +9,5 @@ export 'domain/mistake.dart';
 export 'implementations/debounce_lang_tool_service.dart';
 export 'implementations/lang_tool_service.dart';
 export 'implementations/throttling_lang_tool_service.dart';
-export "presentation/language_tool_text_field.dart";
+export 'presentation/language_tool_text_field.dart';
+export 'utils/language_tool_mistake_popup.dart';
