@@ -4,6 +4,7 @@ import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
+import 'package:languagetool_textfield/utils/language_tool_mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -69,7 +70,6 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Generator function to create TextSpan instances
   Iterable<TextSpan> _generateSpans(
-    // fixme remove temporary context used for ScaffoldMessenger
     BuildContext context, {
     TextStyle? style,
   }) sync* {
@@ -90,34 +90,34 @@ class ColoredTextEditingController extends TextEditingController {
 
       /// Create a gesture recognizer for mistake
       final _onTap = TapGestureRecognizer()
-        ..onTap = () {
-          // todo create popup here
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(mistake.message),
-            ),
-          );
+        ..onTapDown = (details) {
+          LanguageToolMistakePopup(
+            mistake: mistake,
+            mistakeOffset: details.globalPosition,
+            width: 220,
+            height: 120,
+          ).show(context);
         };
 
-      /// Adding recognizer to the list for future disposing
+      // /// Adding recognizer to the list for future disposing
       _recognizers.add(_onTap);
 
       /// Mistake highlighted TextSpan
       yield TextSpan(
-        mouseCursor: MaterialStateMouseCursor.clickable,
-        style: style?.copyWith(
-          backgroundColor: mistakeColor.withOpacity(
-            highlightStyle.backgroundOpacity,
-          ),
-          decoration: highlightStyle.decoration,
-          decorationColor: mistakeColor,
-          decorationThickness: highlightStyle.mistakeLineThickness,
-        ),
         children: [
           TextSpan(
             text: text.substring(
               mistake.offset,
               mistake.offset + mistake.length,
+            ),
+            mouseCursor: MaterialStateMouseCursor.clickable,
+            style: style?.copyWith(
+              backgroundColor: mistakeColor.withOpacity(
+                highlightStyle.backgroundOpacity,
+              ),
+              decoration: highlightStyle.decoration,
+              decorationColor: mistakeColor,
+              decorationThickness: highlightStyle.mistakeLineThickness,
             ),
             recognizer: _onTap,
           ),

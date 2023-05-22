@@ -28,16 +28,13 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      // todo remove temporary scaffold
-      child: Scaffold(
-        body: LanguageToolTextField(
-          style: const TextStyle(),
-          decoration: const InputDecoration(),
-          mistakeBuilder: () {
-            return Container();
-          },
-          coloredController: _controller,
-        ),
+      child: LanguageToolTextField(
+        style: const TextStyle(),
+        decoration: const InputDecoration(),
+        mistakeBuilder: () {
+          return Container();
+        },
+        coloredController: _controller,
       ),
     );
   }
