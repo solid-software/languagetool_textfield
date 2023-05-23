@@ -55,11 +55,7 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Replaces mistake with given replacement
   void replaceMistake(Mistake mistake, String replacement) {
-    text = text.replaceRange(
-      mistake.offset,
-      mistake.offset + mistake.length,
-      replacement,
-    );
+    text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
     _mistakes.remove(mistake);
     selection = TextSelection.fromPosition(
       TextPosition(offset: mistake.offset + replacement.length),
@@ -71,7 +67,7 @@ class ColoredTextEditingController extends TextEditingController {
   Future<void> _handleTextChange(String newText) async {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
-    if (newText.length == text.length) return;
+    if (newText == text) return;
 
     _mistakes.clear();
     for (final recognizer in _recognizers) {
@@ -80,10 +76,8 @@ class ColoredTextEditingController extends TextEditingController {
     _recognizers.clear();
 
     final mistakes = await languageCheckService.findMistakes(newText);
-    if (mistakes.isNotEmpty) {
-      _mistakes = mistakes;
-      notifyListeners();
-    }
+    _mistakes = mistakes;
+    notifyListeners();
   }
 
   /// Generator function to create TextSpan instances
@@ -119,10 +113,7 @@ class ColoredTextEditingController extends TextEditingController {
       yield TextSpan(
         children: [
           TextSpan(
-            text: text.substring(
-              mistake.offset,
-              mistake.offset + mistake.length,
-            ),
+            text: text.substring(mistake.offset, mistake.endOffset),
             mouseCursor: MaterialStateMouseCursor.clickable,
             style: style?.copyWith(
               backgroundColor: mistakeColor.withOpacity(
@@ -137,7 +128,7 @@ class ColoredTextEditingController extends TextEditingController {
         ],
       );
 
-      currentOffset = mistake.offset + mistake.length;
+      currentOffset = mistake.endOffset;
     }
 
     /// TextSpan after mistake

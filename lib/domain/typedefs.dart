@@ -1,9 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:languagetool_textfield/core/controllers/colored_text_editing_controller.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
+import 'package:languagetool_textfield/utils/mistake_popup.dart';
 
 /// Callback used to build popup body
 typedef MistakeBuilderCallback = Widget Function(
+  PopupOverlayRenderer popupRenderer,
   Mistake mistake,
   ColoredTextEditingController controller,
 );

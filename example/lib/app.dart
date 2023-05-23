@@ -31,6 +31,8 @@ class _AppState extends State<App> {
     const _popupHeight = 150.0;
 
     return Material(
+      // column here for test purposes;
+      // change mainAxisAlignment to test popup behaviour
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
