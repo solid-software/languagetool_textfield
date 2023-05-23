@@ -44,14 +44,8 @@ class MistakePopup {
 class PopupOverlayRenderer {
   OverlayEntry? _overlayEntry;
 
-  /// Width of popup
-  final double width;
-
-  /// Height of popup
-  final double height;
-
   /// [PopupOverlayRenderer] constructor
-  PopupOverlayRenderer({required this.width, required this.height});
+  PopupOverlayRenderer();
 
   /// Render overlay entry on the screen with dismiss logic
   OverlayEntry render(
@@ -72,17 +66,14 @@ class PopupOverlayRenderer {
               Positioned(
                 left: _popupPosition.dx,
                 top: _popupPosition.dy,
-                child: SizedBox(
-                  width: width,
-                  height: height,
-                  child: popupBuilder(context),
-                ),
+                child: popupBuilder(context),
               ),
             ],
           ),
         ),
       ),
     );
+
     Overlay.of(context).insert(_createdEntry);
     _overlayEntry = _createdEntry;
 
@@ -92,11 +83,17 @@ class PopupOverlayRenderer {
   /// Function that bounds given offset to screen sizes
   Offset _calculatePosition(BuildContext context, Offset position) {
     final _screenSize = MediaQuery.of(context).size;
+
+    // todo find window size somehow
+    const width = 250.0;
+    const height = 250.0;
+
     final _popupRect = Rect.fromCenter(
       center: position,
       width: width,
       height: height,
     );
+
     const _screenBorderPadding = 10.0;
 
     double dx = _popupRect.left;
@@ -153,7 +150,6 @@ class LanguageToolMistakePopup extends StatelessWidget {
     const _borderRadius = 10.0;
     const _mistakeNameFontSize = 13.0;
     const _mistakeMessageFontSize = 15.0;
-    const _replacementsButtonsRowHeight = 35.0;
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -162,52 +158,45 @@ class LanguageToolMistakePopup extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(_borderRadius),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            mistake.type.name,
-            style: TextStyle(
-              color: Colors.grey.shade700,
-              fontSize: _mistakeNameFontSize,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Text(
-                mistake.message,
-                style: const TextStyle(
-                  // fontStyle: FontStyle.italic,
-                  fontSize: _mistakeMessageFontSize,
-                ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 250),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              mistake.type.name,
+              style: TextStyle(
+                color: Colors.grey.shade700,
+                fontSize: _mistakeNameFontSize,
+                fontWeight: FontWeight.w500,
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: _replacementsButtonsRowHeight,
-            child: ListView.separated(
-              separatorBuilder: (context, index) => const SizedBox(width: 5),
-              scrollDirection: Axis.horizontal,
-              itemCount: mistake.replacements.length,
-              itemBuilder: (context, index) {
-                final replacement = mistake.replacements[index];
-
-                return ElevatedButton(
-                  onPressed: () {
-                    controller.replaceMistake(mistake, replacement);
-                    popupRenderer.dismiss();
-                  },
-                  child: Text(replacement),
-                );
-              },
+            const SizedBox(height: 10),
+            Text(
+              mistake.message,
+              style: const TextStyle(
+                // fontStyle: FontStyle.italic,
+                fontSize: _mistakeMessageFontSize,
+              ),
             ),
-          )
-        ],
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 10,
+              direction: Axis.horizontal,
+              children: mistake.replacements
+                  .map(
+                    (replacement) => ElevatedButton(
+                      onPressed: () {
+                        controller.replaceMistake(mistake, replacement);
+                        popupRenderer.dismiss();
+                      },
+                      child: Text(replacement),
+                    ),
+                  )
+                  .toList(growable: false),
+            ),
+          ],
+        ),
       ),
     );
   }

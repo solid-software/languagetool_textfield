@@ -34,17 +34,14 @@ class _AppState extends State<App> {
       // column here for test purposes;
       // change mainAxisAlignment to test popup behaviour
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           LanguageToolTextField(
             style: const TextStyle(),
             decoration: const InputDecoration(),
             coloredController: _controller,
             mistakePopup: MistakePopup(
-              popupRenderer: PopupOverlayRenderer(
-                width: _popupWidth,
-                height: _popupHeight,
-              ),
+              popupRenderer: PopupOverlayRenderer(),
             ),
           ),
         ],
