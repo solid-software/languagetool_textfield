@@ -27,6 +27,9 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    const _popupWidth = 250.0;
+    const _popupHeight = 150.0;
+
     return Material(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -35,7 +38,10 @@ class _AppState extends State<App> {
             style: const TextStyle(),
             decoration: const InputDecoration(),
             coloredController: _controller,
-            mistakePopup: LanguageToolMistakePopup(width: 250, height: 150),
+            mistakePopup: LanguageToolMistakePopup(
+              width: _popupWidth,
+              height: _popupHeight,
+            ),
           ),
         ],
       ),
