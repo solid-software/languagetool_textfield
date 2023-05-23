@@ -27,14 +27,11 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    const _popupWidth = 250.0;
-    const _popupHeight = 150.0;
-
     return Material(
       // column here for test purposes;
       // change mainAxisAlignment to test popup behaviour
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           LanguageToolTextField(
             style: const TextStyle(),
