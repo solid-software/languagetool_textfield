@@ -28,11 +28,16 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: LanguageToolTextField(
-        style: const TextStyle(),
-        decoration: const InputDecoration(),
-        coloredController: _controller,
-        mistakePopup: LanguageToolMistakePopup(width: 250, height: 150),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          LanguageToolTextField(
+            style: const TextStyle(),
+            decoration: const InputDecoration(),
+            coloredController: _controller,
+            mistakePopup: LanguageToolMistakePopup(width: 250, height: 150),
+          ),
+        ],
       ),
     );
   }

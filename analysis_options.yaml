@@ -1,1 +1,6 @@
 include: package:solid_lints/analysis_options.yaml
+
+dart_code_metrics:
+  rules:
+    - no-magic-number:
+      allow-only-once: true

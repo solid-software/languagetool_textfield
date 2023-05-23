@@ -36,7 +36,7 @@ class LanguageToolMistakePopup {
     final Offset _popupPosition = _calculatePosition(context, mistakeOffset);
     final _popupBuilderToUse = popupBuilder ?? _defaultPopupBuilder;
 
-    _overlayEntry = OverlayEntry(
+    final _createdEntry = OverlayEntry(
       builder: (context) => GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
@@ -56,14 +56,19 @@ class LanguageToolMistakePopup {
         ),
       ),
     );
-
-    Overlay.of(context).insert(_overlayEntry!);
+    Overlay.of(context).insert(_createdEntry);
+    _overlayEntry = _createdEntry;
   }
 
   Widget _defaultPopupBuilder(
     Mistake mistake,
     ColoredTextEditingController controller,
   ) {
+    const _borderRadius = 10.0;
+    const _mistakeNameFontSize = 13.0;
+    const _mistakeMessageFontSize = 15.0;
+    const _replacementsButtonsRowHeight = 35.0;
+
     return Container(
       padding: const EdgeInsets.all(10),
       width: width,
@@ -71,7 +76,7 @@ class LanguageToolMistakePopup {
       decoration: BoxDecoration(
         boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 20)],
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(_borderRadius),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -81,7 +86,7 @@ class LanguageToolMistakePopup {
             mistake.type.name,
             style: TextStyle(
               color: Colors.grey.shade700,
-              fontSize: 13,
+              fontSize: _mistakeNameFontSize,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -93,14 +98,14 @@ class LanguageToolMistakePopup {
                 mistake.message,
                 style: const TextStyle(
                   // fontStyle: FontStyle.italic,
-                  fontSize: 15,
+                  fontSize: _mistakeMessageFontSize,
                 ),
               ),
             ),
           ),
           const SizedBox(height: 10),
           SizedBox(
-            height: 35,
+            height: _replacementsButtonsRowHeight,
             child: ListView.separated(
               separatorBuilder: (context, index) => const SizedBox(
                 width: 5,
@@ -137,18 +142,22 @@ class LanguageToolMistakePopup {
       width: width,
       height: height,
     );
-    const _defaultPopupPadding = 10.0;
+    const _popupBorderPadding = 10.0;
+    const _popupYDistance = 30.0;
 
     double dx = _popupRect.left;
-    dx = max(_defaultPopupPadding, dx);
-
-    if (dx + width > _screenSize.width) {
-      dx = _screenSize.width - width - _defaultPopupPadding;
+    // limiting X offset left border
+    dx = max(_popupBorderPadding, dx);
+    // limiting X offset right border
+    if ((dx + width) > _screenSize.width) {
+      dx = (_screenSize.width - width) - _popupBorderPadding;
     }
 
-    double dy = mistakeOffset.dy + 30;
-    if (dy <= MediaQuery.of(context).padding.top + _defaultPopupPadding) {
-      dy = mistakeOffset.dy - _defaultPopupPadding * 3;
+    // under the mistake
+    double dy = mistakeOffset.dy + _popupYDistance;
+    // if not enough space underneath, rendering above the mistake
+    if ((dy + height) > _screenSize.height) {
+      dy = (mistakeOffset.dy - height) - _popupYDistance;
     }
 
     return Offset(dx, dy);
