@@ -4,6 +4,7 @@ import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
+import 'package:languagetool_textfield/domain/typedefs.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -16,15 +17,12 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
+
+  /// List of that is used to dispose recognizers after mistakes rebuilt
   final List<TapGestureRecognizer> _recognizers = [];
 
-  /// Callback that will be executed after mistake tapped
-  void Function(
-    BuildContext context,
-    Mistake mistake,
-    Offset mistakeOffset,
-    ColoredTextEditingController controller,
-  )? showPopup;
+  /// Callback that will be executed after mistake clicked
+  ShowPopupCallback? showPopup;
 
   @override
   set value(TextEditingValue newValue) {

@@ -1,66 +1,42 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:languagetool_textfield/domain/typedefs.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
 
-/// Popup that shows information about mistake and offers word replacements
-class LanguageToolMistakePopup {
-  /// Callback that returns widget for given mistake
-  final Widget Function(
-    Mistake mistake,
-    ColoredTextEditingController controller,
-  )? popupBuilder;
+/// Builder class that uses specified [popupRenderer] and [mistakeBuilder]
+/// to create mistake popup
+class MistakePopup {
+  /// PopupRenderer class that used to render popup on the screen
+  final PopupOverlayRenderer popupRenderer;
 
-  /// Width of popup
-  final double width;
+  /// Optional builder function that creates popup widget
+  MistakeBuilderCallback? mistakeBuilder;
 
-  /// Height of popup
-  final double height;
-
-  OverlayEntry? _overlayEntry;
-
-  /// [LanguageToolMistakePopup] constructor
-  LanguageToolMistakePopup({
-    required this.width,
-    required this.height,
-    this.popupBuilder,
+  /// [MistakePopup] constructor
+  MistakePopup({
+    required this.popupRenderer,
+    this.mistakeBuilder,
   });
 
-  /// Show popup with information about mistake
+  /// Show popup at specified [popupPosition] with info about [mistake]
   void show(
     BuildContext context,
     Mistake mistake,
-    Offset mistakeOffset,
+    Offset popupPosition,
     ColoredTextEditingController controller,
   ) {
-    final Offset _popupPosition = _calculatePosition(context, mistakeOffset);
-    final _popupBuilderToUse = popupBuilder ?? _defaultPopupBuilder;
+    final _builderToUse = mistakeBuilder ?? defaultPopupBuilder;
 
-    final _createdEntry = OverlayEntry(
-      builder: (context) => GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          dismiss();
-        },
-        child: Material(
-          color: Colors.transparent,
-          child: Stack(
-            children: [
-              Positioned(
-                left: _popupPosition.dx,
-                top: _popupPosition.dy,
-                child: _popupBuilderToUse(mistake, controller),
-              ),
-            ],
-          ),
-        ),
-      ),
+    popupRenderer.render(
+      context,
+      position: popupPosition,
+      popupBuilder: () => _builderToUse(mistake, controller),
     );
-    Overlay.of(context).insert(_createdEntry);
-    _overlayEntry = _createdEntry;
   }
 
-  Widget _defaultPopupBuilder(
+  /// Widget builder that creates window looking similar to LanguageTool popup
+  Widget defaultPopupBuilder(
     Mistake mistake,
     ColoredTextEditingController controller,
   ) {
@@ -71,8 +47,6 @@ class LanguageToolMistakePopup {
 
     return Container(
       padding: const EdgeInsets.all(10),
-      width: width,
-      height: height,
       decoration: BoxDecoration(
         boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 20)],
         color: Colors.white,
@@ -118,7 +92,7 @@ class LanguageToolMistakePopup {
                     mistake,
                     mistake.replacements[index],
                   );
-                  dismiss();
+                  popupRenderer.dismiss();
                 },
                 child: Text(mistake.replacements[index]),
               ),
@@ -128,17 +102,65 @@ class LanguageToolMistakePopup {
       ),
     );
   }
+}
 
-  /// Remove popup
-  void dismiss() {
-    _overlayEntry?.remove();
+/// Renderer used to show popup window overlay
+class PopupOverlayRenderer {
+  OverlayEntry? _overlayEntry;
+
+  /// Width of popup
+  final double width;
+
+  /// Height of popup
+  final double height;
+
+  /// [PopupOverlayRenderer] constructor
+  PopupOverlayRenderer({required this.width, required this.height});
+
+  /// Render overlay entry on the screen with dismiss logic
+  OverlayEntry render(
+    BuildContext context, {
+    required Offset position,
+    required Widget Function() popupBuilder,
+  }) {
+    final Offset _popupPosition = _calculatePosition(context, position);
+
+    final _createdEntry = OverlayEntry(
+      builder: (context) => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          dismiss();
+        },
+        child: Material(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              Positioned(
+                left: _popupPosition.dx,
+                top: _popupPosition.dy,
+                child: SizedBox(
+                  width: width,
+                  height: height,
+                  child: popupBuilder(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    Overlay.of(context).insert(_createdEntry);
+    _overlayEntry = _createdEntry;
+
+    return _createdEntry;
   }
 
-  Offset _calculatePosition(BuildContext context, Offset mistakeOffset) {
+  /// Function that bounds given offset to screen sizes
+  Offset _calculatePosition(BuildContext context, Offset position) {
     final _view = View.of(context);
     final _screenSize = _view.physicalSize / _view.devicePixelRatio;
     final _popupRect = Rect.fromCenter(
-      center: mistakeOffset,
+      center: position,
       width: width,
       height: height,
     );
@@ -146,20 +168,25 @@ class LanguageToolMistakePopup {
     const _popupYDistance = 30.0;
 
     double dx = _popupRect.left;
-    // limiting X offset left border
+    // limiting X offset by left border
     dx = max(_popupBorderPadding, dx);
-    // limiting X offset right border
+    // limiting X offset by right border
     if ((dx + width) > _screenSize.width) {
       dx = (_screenSize.width - width) - _popupBorderPadding;
     }
 
-    // under the mistake
-    double dy = mistakeOffset.dy + _popupYDistance;
-    // if not enough space underneath, rendering above the mistake
+    // under the desired position
+    double dy = position.dy + _popupYDistance;
+    // if not enough space underneath, rendering above the desired position
     if ((dy + height) > _screenSize.height) {
-      dy = (mistakeOffset.dy - height) - _popupYDistance;
+      dy = (position.dy - height) - _popupYDistance;
     }
 
     return Offset(dx, dy);
+  }
+
+  /// Remove popup
+  void dismiss() {
+    _overlayEntry?.remove();
   }
 }

@@ -32,15 +32,17 @@ class _AppState extends State<App> {
 
     return Material(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           LanguageToolTextField(
             style: const TextStyle(),
             decoration: const InputDecoration(),
             coloredController: _controller,
-            mistakePopup: LanguageToolMistakePopup(
-              width: _popupWidth,
-              height: _popupHeight,
+            mistakePopup: MistakePopup(
+              popupRenderer: PopupOverlayRenderer(
+                width: _popupWidth,
+                height: _popupHeight,
+              ),
             ),
           ),
         ],
