@@ -36,12 +36,6 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return Material(
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => setState(() {
-            currentAlignmentIndex += 1;
-            currentAlignmentIndex %= alignments.length;
-          }),
-        ),
         body: Column(
           mainAxisAlignment: alignments[currentAlignmentIndex],
           children: [
@@ -51,6 +45,17 @@ class _AppState extends State<App> {
               coloredController: _controller,
               mistakePopup: MistakePopup(popupRenderer: PopupOverlayRenderer()),
             ),
+            DropdownMenu(
+              hintText: "Select alignment...",
+              onSelected: (value) => setState(() {
+                currentAlignmentIndex = value ?? 0;
+              }),
+              dropdownMenuEntries: const [
+                DropdownMenuEntry(value: 0, label: "Center alignment"),
+                DropdownMenuEntry(value: 1, label: "Top alignment"),
+                DropdownMenuEntry(value: 2, label: "Bottom alignment"),
+              ],
+            )
           ],
         ),
       ),
