@@ -25,23 +25,34 @@ class _AppState extends State<App> {
   final ColoredTextEditingController _controller =
       ColoredTextEditingController(languageCheckService: _debouncedLangService);
 
+  static const List<MainAxisAlignment> alignments = [
+    MainAxisAlignment.center,
+    MainAxisAlignment.start,
+    MainAxisAlignment.end,
+  ];
+  int currentAlignmentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Material(
-      // column here for test purposes;
-      // change mainAxisAlignment to test popup behaviour
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          LanguageToolTextField(
-            style: const TextStyle(),
-            decoration: const InputDecoration(),
-            coloredController: _controller,
-            mistakePopup: MistakePopup(
-              popupRenderer: PopupOverlayRenderer(),
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => setState(() {
+            currentAlignmentIndex += 1;
+            currentAlignmentIndex %= alignments.length;
+          }),
+        ),
+        body: Column(
+          mainAxisAlignment: alignments[currentAlignmentIndex],
+          children: [
+            LanguageToolTextField(
+              style: const TextStyle(),
+              decoration: const InputDecoration(),
+              coloredController: _controller,
+              mistakePopup: MistakePopup(popupRenderer: PopupOverlayRenderer()),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
