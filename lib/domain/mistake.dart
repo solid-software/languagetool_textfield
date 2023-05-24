@@ -19,6 +19,9 @@ class Mistake {
   /// Sorted by probability.
   final List<String> replacements;
 
+  /// A position of the end of this mistake.
+  int get endOffset => offset + length;
+
   /// Creates a new instance of the [Mistake] class.
   const Mistake({
     required this.message,

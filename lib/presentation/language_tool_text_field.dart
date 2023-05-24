@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/controllers/colored_text_editing_controller.dart';
+import 'package:languagetool_textfield/utils/mistake_popup.dart';
 
 /// A TextField widget that checks the grammar using the given
 /// [coloredController]
@@ -10,19 +11,19 @@ class LanguageToolTextField extends StatefulWidget {
   /// A decoration of this [TextField].
   final InputDecoration decoration;
 
-  /// A builder function used to build errors.
-  final Widget Function()? mistakeBuilder;
-
   /// Color scheme to highlight mistakes
   final ColoredTextEditingController coloredController;
+
+  /// Mistake popup window
+  final MistakePopup mistakePopup;
 
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
     Key? key,
     required this.style,
     required this.decoration,
-    this.mistakeBuilder,
     required this.coloredController,
+    required this.mistakePopup,
   }) : super(key: key);
 
   @override
@@ -30,6 +31,12 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
+  @override
+  void initState() {
+    widget.coloredController.showPopup = widget.mistakePopup.show;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
