@@ -2,18 +2,24 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-///
+/// defaultPopupWidth
 const defaultPopupWidth = 250.0;
+
+/// defaultScreenBorderPadding
+const defaultScreenBorderPadding = 10.0;
+
+/// defaultVerticalMargin
+const defaultVerticalMargin = 30.0;
 
 /// Renderer used to show popup window overlay
 class PopupOverlayRenderer {
   OverlayEntry? _overlayEntry;
 
   /// Max width of popup window
-  final double maxWidth;
+  final double width;
 
   /// [PopupOverlayRenderer] constructor
-  PopupOverlayRenderer({this.maxWidth = defaultPopupWidth});
+  PopupOverlayRenderer({this.width = defaultPopupWidth});
 
   /// Render overlay entry on the screen with dismiss logic
   OverlayEntry render(
@@ -21,22 +27,22 @@ class PopupOverlayRenderer {
     required Offset position,
     required WidgetBuilder popupBuilder,
   }) {
-    // final Offset _popupPosition = _calculatePosition(context, position);
-
     final _createdEntry = OverlayEntry(
       builder: (context) => GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: dismiss,
         child: Material(
           color: Colors.transparent,
+          type: MaterialType.canvas,
           child: Stack(
             children: [
-              Positioned(
-                child: CustomSingleChildLayout(
-                  delegate: PopupOverlayLayoutDelegate(maxWidth, position),
+              CustomSingleChildLayout(
+                delegate: PopupOverlayLayoutDelegate(position),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: width),
                   child: popupBuilder(context),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -58,13 +64,24 @@ class PopupOverlayRenderer {
 /// Class that calculates where to place popup window on the screen
 class PopupOverlayLayoutDelegate extends SingleChildLayoutDelegate {
   /// max width of popup window
-  final double maxWidth;
+  final double width;
 
   /// desired position of popup window
   final Offset position;
 
+  /// padding of screen for popup window
+  final double screenBorderPadding;
+
+  /// vertical distance to offset from [position]
+  final double verticalMargin;
+
   /// [PopupOverlayLayoutDelegate] constructor
-  const PopupOverlayLayoutDelegate(this.maxWidth, this.position);
+  const PopupOverlayLayoutDelegate(
+    this.position, {
+    this.width = defaultPopupWidth,
+    this.screenBorderPadding = defaultScreenBorderPadding,
+    this.verticalMargin = defaultVerticalMargin,
+  });
 
   @override
   Offset getPositionForChild(Size size, Size childSize) {
@@ -77,27 +94,23 @@ class PopupOverlayLayoutDelegate extends SingleChildLayoutDelegate {
       width: childSize.width,
       height: childSize.height,
     );
-    const _screenBorderPadding = 10.0;
-    print("size: $size");
-
     double dx = _popupRect.left;
     // limiting X offset
-    dx = max(_screenBorderPadding, dx);
+    dx = max(screenBorderPadding, dx);
     final rightBorderPosition = dx + childSize.width;
     final rightScreenBorderOverflow = rightBorderPosition - size.width;
     if (rightScreenBorderOverflow >= 0) {
-      dx -= rightScreenBorderOverflow + _screenBorderPadding;
+      dx -= rightScreenBorderOverflow + screenBorderPadding;
     }
 
-    const _verticalMargin = 30.0;
     // under the desired position
-    double dy = position.dy + _verticalMargin;
+    double dy = position.dy + verticalMargin;
     final bottomBorderPosition = dy + childSize.height;
     final bottomScreenBorderOverflow = bottomBorderPosition - size.height;
     // if not enough space underneath, rendering above the desired position
     if (bottomScreenBorderOverflow >= 0) {
       final newBottomBorderPosition = position.dy - childSize.height;
-      dy = newBottomBorderPosition - _verticalMargin;
+      dy = newBottomBorderPosition - verticalMargin;
     }
 
     return Offset(dx, dy);

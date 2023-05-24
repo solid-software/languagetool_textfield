@@ -9,13 +9,10 @@ class MistakePopup {
   final PopupOverlayRenderer popupRenderer;
 
   /// Optional builder function that creates popup widget
-  MistakeBuilderCallback? mistakeBuilder;
+  final MistakeBuilderCallback? mistakeBuilder;
 
   /// [MistakePopup] constructor
-  MistakePopup({
-    required this.popupRenderer,
-    this.mistakeBuilder,
-  });
+  const MistakePopup({required this.popupRenderer, this.mistakeBuilder});
 
   /// Show popup at specified [popupPosition] with info about [mistake]
   void show(
@@ -65,7 +62,6 @@ class LanguageToolMistakePopup extends StatelessWidget {
     const _replacementButtonsSpacing = 10.0;
 
     return Container(
-      width: popupRenderer.maxWidth,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 20)],
@@ -90,10 +86,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
           // mistake message
           Text(
             mistake.message,
-            style: const TextStyle(
-              // fontStyle: FontStyle.italic,
-              fontSize: _mistakeMessageFontSize,
-            ),
+            style: const TextStyle(fontSize: _mistakeMessageFontSize),
           ),
           const SizedBox(height: 10),
 
