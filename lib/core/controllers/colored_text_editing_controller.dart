@@ -69,14 +69,42 @@ class ColoredTextEditingController extends TextEditingController {
     ///so this check avoid cleaning Mistake list when text wasn't really changed
     if (newText == text) return;
 
-    _mistakes.clear();
-    for (final recognizer in _recognizers) {
-      recognizer.dispose();
+    // list containing mistakes with updated offset
+    final List<Mistake> newMistakes = [];
+    for (final mistake in _mistakes) {
+      // do not display mistake that was changed during text input
+      final bool _mistakeTextChanged = selection.start >= mistake.offset &&
+          selection.start <= mistake.endOffset;
+      if (_mistakeTextChanged) {
+        continue;
+      }
+
+      int newOffset = mistake.offset;
+      // move mistake if it located by the right side of cursor
+      if (selection.start <= mistake.offset) {
+        final bool _isTextExtended = newText.length > text.length;
+        _isTextExtended ? newOffset += 1 : newOffset -= 1;
+      }
+
+      newMistakes.add(
+        Mistake(
+          message: mistake.message,
+          type: mistake.type,
+          offset: newOffset,
+          length: mistake.length,
+        ),
+      );
     }
-    _recognizers.clear();
+    // update current mistakes list with the moved one
+    _mistakes = newMistakes;
 
     final mistakes = await languageCheckService.findMistakes(newText);
-    _mistakes = mistakes;
+    // findMistakes() future returns empty list if debouncing
+    // so in that case we don't need to update it
+    if (mistakes.isNotEmpty) {
+      _mistakes = mistakes;
+    }
+
     notifyListeners();
   }
 
