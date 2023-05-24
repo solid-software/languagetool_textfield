@@ -17,11 +17,11 @@ class DebounceLangToolService extends LanguageCheckService {
   ) : debouncing = Debouncing(duration: debouncingDuration);
 
   @override
-  Future<List<Mistake>> findMistakes(String text) async {
+  Future<List<Mistake>?> findMistakes(String text) async {
     final value = await debouncing.debounce(() {
       return baseService.findMistakes(text);
     }) as List<Mistake>?;
 
-    return value ?? [];
+    return value;
   }
 }

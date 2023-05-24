@@ -1,3 +1,4 @@
+import 'package:collection_ext/ranges.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
@@ -55,8 +56,8 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Replaces mistake with given replacement
   void replaceMistake(Mistake mistake, String replacement) {
-    text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
     _mistakes.remove(mistake);
+    text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
     selection = TextSelection.fromPosition(
       TextPosition(offset: mistake.offset + replacement.length),
     );
@@ -69,23 +70,26 @@ class ColoredTextEditingController extends TextEditingController {
     ///so this check avoid cleaning Mistake list when text wasn't really changed
     if (newText == text) return;
 
+    // do not display mistake that was changed during text input
+    final selectionRange = IntRange(selection.start, selection.end).toSet();
+    _mistakes.removeWhere((mistake) {
+      final mistakeRange = IntRange(
+        mistake.offset,
+        mistake.endOffset,
+      ).toSet();
+
+      return selectionRange.intersection(mistakeRange).isNotEmpty;
+    });
+
     // list containing mistakes with updated offset
     final List<Mistake> newMistakes = [];
+    final lengthDifference = newText.length - text.length;
     for (final mistake in _mistakes) {
-      // do not display mistake that was changed during text input
-      final bool _mistakeTextChanged = selection.start >= mistake.offset &&
-          selection.start <= mistake.endOffset;
-      if (_mistakeTextChanged) {
-        continue;
-      }
-
       int newOffset = mistake.offset;
       // move mistake if it located by the right side of cursor
       if (selection.start <= mistake.offset) {
-        final bool _isTextExtended = newText.length > text.length;
-        _isTextExtended ? newOffset += 1 : newOffset -= 1;
+        newOffset += lengthDifference;
       }
-
       newMistakes.add(
         Mistake(
           message: mistake.message,
@@ -95,13 +99,11 @@ class ColoredTextEditingController extends TextEditingController {
         ),
       );
     }
-    // update current mistakes list with the moved one
     _mistakes = newMistakes;
 
     final mistakes = await languageCheckService.findMistakes(newText);
-    // findMistakes() future returns empty list if debouncing
-    // so in that case we don't need to update it
-    if (mistakes.isNotEmpty) {
+    // null is returned in case of debouncing when API isn't truly queried
+    if (mistakes != null) {
       _mistakes = mistakes;
     }
 

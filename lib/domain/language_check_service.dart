@@ -6,5 +6,6 @@ abstract class LanguageCheckService {
   const LanguageCheckService();
 
   /// Returns found mistakes in the given [text].
-  Future<List<Mistake>> findMistakes(String text);
+  /// Returns null if API wasn't queried, i.e when using debouncing
+  Future<List<Mistake>?> findMistakes(String text);
 }
