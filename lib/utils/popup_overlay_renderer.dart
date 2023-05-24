@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 /// defaultPopupWidth
 const defaultPopupWidth = 250.0;
 
-/// defaultScreenBorderPadding
-const defaultScreenBorderPadding = 10.0;
+/// defaultHorizontalPadding
+const defaultHorizontalPadding = 10.0;
 
 /// defaultVerticalMargin
-const defaultVerticalMargin = 30.0;
+const defaultVerticalPadding = 30.0;
 
 /// Renderer used to show popup window overlay
 class PopupOverlayRenderer {
@@ -70,17 +70,17 @@ class PopupOverlayLayoutDelegate extends SingleChildLayoutDelegate {
   final Offset position;
 
   /// padding of screen for popup window
-  final double screenBorderPadding;
+  final double horizontalPadding;
 
   /// vertical distance to offset from [position]
-  final double verticalMargin;
+  final double verticalPadding;
 
   /// [PopupOverlayLayoutDelegate] constructor
   const PopupOverlayLayoutDelegate(
     this.position, {
     this.width = defaultPopupWidth,
-    this.screenBorderPadding = defaultScreenBorderPadding,
-    this.verticalMargin = defaultVerticalMargin,
+    this.horizontalPadding = defaultHorizontalPadding,
+    this.verticalPadding = defaultVerticalPadding,
   });
 
   @override
@@ -96,21 +96,21 @@ class PopupOverlayLayoutDelegate extends SingleChildLayoutDelegate {
     );
     double dx = _popupRect.left;
     // limiting X offset
-    dx = max(screenBorderPadding, dx);
+    dx = max(horizontalPadding, dx);
     final rightBorderPosition = dx + childSize.width;
     final rightScreenBorderOverflow = rightBorderPosition - size.width;
     if (rightScreenBorderOverflow >= 0) {
-      dx -= rightScreenBorderOverflow + screenBorderPadding;
+      dx -= rightScreenBorderOverflow + horizontalPadding;
     }
 
     // under the desired position
-    double dy = position.dy + verticalMargin;
+    double dy = position.dy + verticalPadding;
     final bottomBorderPosition = dy + childSize.height;
     final bottomScreenBorderOverflow = bottomBorderPosition - size.height;
     // if not enough space underneath, rendering above the desired position
     if (bottomScreenBorderOverflow >= 0) {
       final newBottomBorderPosition = position.dy - childSize.height;
-      dy = newBottomBorderPosition - verticalMargin;
+      dy = newBottomBorderPosition - verticalPadding;
     }
 
     return Offset(dx, dy);
