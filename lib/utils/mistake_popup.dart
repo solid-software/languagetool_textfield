@@ -73,7 +73,6 @@ class LanguageToolMistakePopup extends StatelessWidget {
     const _borderRadius = 10.0;
     const _mistakeNameFontSize = 13.0;
     const _mistakeMessageFontSize = 15.0;
-    const _replacementButtonsSpacing = 10.0;
 
     const padding = 10.0;
     const paddingCount = 4;
@@ -92,48 +91,55 @@ class LanguageToolMistakePopup extends StatelessWidget {
         borderRadius: BorderRadius.circular(_borderRadius),
       ),
       constraints: BoxConstraints(maxHeight: availableSpace),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // mistake type
-            Text(
-              mistake.type.name,
-              style: TextStyle(
-                color: Colors.grey.shade700,
-                fontSize: _mistakeNameFontSize,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: padding),
+      child: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // mistake type
+                Text(
+                  mistake.type.name,
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontSize: _mistakeNameFontSize,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: padding),
 
-            // mistake message
-            Text(
-              mistake.message,
-              style: const TextStyle(fontSize: _mistakeMessageFontSize),
+                // mistake message
+                Text(
+                  mistake.message,
+                  style: const TextStyle(fontSize: _mistakeMessageFontSize),
+                ),
+                const SizedBox(height: padding),
+              ],
             ),
-            const SizedBox(height: padding),
+          ),
+          SliverList.builder(
+            itemCount: mistake.replacements.length,
+            itemBuilder: _suggestionsListBuilder,
+          ),
+        ],
+      ),
+    );
+  }
 
-            // replacements
-            Wrap(
-              spacing: _replacementButtonsSpacing,
-              runSpacing: _replacementButtonsSpacing,
-              direction: Axis.horizontal,
-              children: mistake.replacements
-                  .map(
-                    (replacement) => ElevatedButton(
-                      onPressed: () {
-                        controller.replaceMistake(mistake, replacement);
-                        popupRenderer.dismiss();
-                      },
-                      child: Text(replacement),
-                    ),
-                  )
-                  .toList(growable: false),
-            ),
-          ],
-        ),
+  Widget _suggestionsListBuilder(BuildContext _, int index) {
+    const replacementButtonsSpacing = 10.0;
+
+    final replacement = mistake.replacements[index];
+
+    return Padding(
+      padding: const EdgeInsets.all(replacementButtonsSpacing / 2),
+      child: ElevatedButton(
+        onPressed: () {
+          controller.replaceMistake(mistake, replacement);
+          popupRenderer.dismiss();
+        },
+        child: Text(replacement),
       ),
     );
   }
