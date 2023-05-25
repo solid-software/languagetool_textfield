@@ -25,7 +25,6 @@ class ThrottlingLangToolService extends LanguageCheckService {
   @override
   Future<void> dispose() async {
     await throttling.close();
-
-    return baseService.dispose();
+    await baseService.dispose();
   }
 }
