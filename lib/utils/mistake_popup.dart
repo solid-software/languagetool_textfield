@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/domain/typedefs.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
@@ -21,16 +23,18 @@ class MistakePopup {
     Offset popupPosition,
     ColoredTextEditingController controller,
   ) {
+    final MistakeBuilderCallback builder =
+        mistakeBuilder ?? LanguageToolMistakePopup.new;
+
     popupRenderer.render(
       context,
       position: popupPosition,
-      popupBuilder: (context) =>
-          mistakeBuilder?.call(popupRenderer, mistake, controller) ??
-          LanguageToolMistakePopup(
-            popupRenderer: popupRenderer,
-            mistake: mistake,
-            controller: controller,
-          ),
+      popupBuilder: (context) => builder.call(
+        popupRenderer: popupRenderer,
+        mistake: mistake,
+        controller: controller,
+        mistakePosition: popupPosition,
+      ),
     );
   }
 }
@@ -43,6 +47,8 @@ class LanguageToolMistakePopup extends StatelessWidget {
     required this.popupRenderer,
     required this.mistake,
     required this.controller,
+    required this.mistakePosition,
+    this.maxHeight = double.infinity,
   });
 
   /// Renderer used to display this window.
@@ -54,6 +60,14 @@ class LanguageToolMistakePopup extends StatelessWidget {
   /// Controller of the text where mistake was found
   final ColoredTextEditingController controller;
 
+  /// An on-screen position of the mistake
+  final Offset mistakePosition;
+
+  /// A maximum height of the popup.
+  /// If infinity, the popup will use all the available height between the
+  /// [mistakePosition] and the furthest border of the layout constraints.
+  final double maxHeight;
+
   @override
   Widget build(BuildContext context) {
     const _borderRadius = 10.0;
@@ -61,53 +75,79 @@ class LanguageToolMistakePopup extends StatelessWidget {
     const _mistakeMessageFontSize = 15.0;
     const _replacementButtonsSpacing = 10.0;
 
+    const padding = 10.0;
+    const paddingCount = 4;
+    const paddingSum = padding * paddingCount;
+
+    final availableSpace = _calculateAvailableSpace(
+      context,
+      paddings: paddingSum,
+    );
+
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(padding),
       decoration: BoxDecoration(
         boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 20)],
         color: Colors.white,
         borderRadius: BorderRadius.circular(_borderRadius),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // mistake type
-          Text(
-            mistake.type.name,
-            style: TextStyle(
-              color: Colors.grey.shade700,
-              fontSize: _mistakeNameFontSize,
-              fontWeight: FontWeight.w500,
+      constraints: BoxConstraints(maxHeight: availableSpace),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // mistake type
+            Text(
+              mistake.type.name,
+              style: TextStyle(
+                color: Colors.grey.shade700,
+                fontSize: _mistakeNameFontSize,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
+            const SizedBox(height: padding),
 
-          // mistake message
-          Text(
-            mistake.message,
-            style: const TextStyle(fontSize: _mistakeMessageFontSize),
-          ),
-          const SizedBox(height: 10),
+            // mistake message
+            Text(
+              mistake.message,
+              style: const TextStyle(fontSize: _mistakeMessageFontSize),
+            ),
+            const SizedBox(height: padding),
 
-          // replacements
-          Wrap(
-            spacing: _replacementButtonsSpacing,
-            direction: Axis.horizontal,
-            children: mistake.replacements
-                .map(
-                  (replacement) => ElevatedButton(
-                    onPressed: () {
-                      controller.replaceMistake(mistake, replacement);
-                      popupRenderer.dismiss();
-                    },
-                    child: Text(replacement),
-                  ),
-                )
-                .toList(growable: false),
-          ),
-        ],
+            // replacements
+            Wrap(
+              spacing: _replacementButtonsSpacing,
+              runSpacing: _replacementButtonsSpacing,
+              direction: Axis.horizontal,
+              children: mistake.replacements
+                  .map(
+                    (replacement) => ElevatedButton(
+                      onPressed: () {
+                        controller.replaceMistake(mistake, replacement);
+                        popupRenderer.dismiss();
+                      },
+                      child: Text(replacement),
+                    ),
+                  )
+                  .toList(growable: false),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  double _calculateAvailableSpace(
+    BuildContext context, {
+    required double paddings,
+  }) {
+    final mediaQuery = MediaQuery.of(context);
+
+    final availableSpaceBottom =
+        mediaQuery.size.height - mistakePosition.dy - paddings;
+    final availableSpaceTop = mistakePosition.dy - paddings;
+
+    return min(max(availableSpaceBottom, availableSpaceTop), maxHeight);
   }
 }
