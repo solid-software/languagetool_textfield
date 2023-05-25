@@ -73,6 +73,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
     const _borderRadius = 10.0;
     const _mistakeNameFontSize = 13.0;
     const _mistakeMessageFontSize = 15.0;
+    const _replacementButtonsSpacing = 10.0;
 
     const padding = 10.0;
     const paddingCount = 4;
@@ -120,26 +121,22 @@ class LanguageToolMistakePopup extends StatelessWidget {
           ),
           SliverList.builder(
             itemCount: mistake.replacements.length,
-            itemBuilder: _suggestionsListBuilder,
+            itemBuilder: (context, index) {
+              final replacement = mistake.replacements[index];
+
+              return Padding(
+                padding: const EdgeInsets.all(_replacementButtonsSpacing / 2),
+                child: ElevatedButton(
+                  onPressed: () {
+                    controller.replaceMistake(mistake, replacement);
+                    popupRenderer.dismiss();
+                  },
+                  child: Text(replacement),
+                ),
+              );
+            },
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _suggestionsListBuilder(BuildContext _, int index) {
-    const replacementButtonsSpacing = 10.0;
-
-    final replacement = mistake.replacements[index];
-
-    return Padding(
-      padding: const EdgeInsets.all(replacementButtonsSpacing / 2),
-      child: ElevatedButton(
-        onPressed: () {
-          controller.replaceMistake(mistake, replacement);
-          popupRenderer.dismiss();
-        },
-        child: Text(replacement),
       ),
     );
   }
