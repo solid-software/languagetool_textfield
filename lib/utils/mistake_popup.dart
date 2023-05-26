@@ -76,12 +76,10 @@ class LanguageToolMistakePopup extends StatelessWidget {
     const _replacementButtonsSpacing = 10.0;
 
     const padding = 10.0;
-    const paddingCount = 4;
-    const paddingSum = padding * paddingCount;
 
     final availableSpace = _calculateAvailableSpace(
       context,
-      paddings: paddingSum,
+      paddings: defaultPopupVerticalPadding + defaultPopupHorizontalPadding,
     );
 
     return Container(

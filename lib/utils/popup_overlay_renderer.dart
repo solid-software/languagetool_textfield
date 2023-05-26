@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 const defaultPopupWidth = 250.0;
 
 /// defaultHorizontalPadding
-const defaultHorizontalPadding = 10.0;
+const defaultPopupHorizontalPadding = 10.0;
 
 /// defaultVerticalMargin
-const defaultVerticalPadding = 30.0;
+const defaultPopupVerticalPadding = 30.0;
 
 /// Renderer used to show popup window overlay
 class PopupOverlayRenderer {
@@ -79,8 +79,8 @@ class PopupOverlayLayoutDelegate extends SingleChildLayoutDelegate {
   const PopupOverlayLayoutDelegate(
     this.position, {
     this.width = defaultPopupWidth,
-    this.horizontalPadding = defaultHorizontalPadding,
-    this.verticalPadding = defaultVerticalPadding,
+    this.horizontalPadding = defaultPopupHorizontalPadding,
+    this.verticalPadding = defaultPopupVerticalPadding,
   });
 
   @override
