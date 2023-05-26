@@ -93,6 +93,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
       ),
       constraints: BoxConstraints(maxHeight: availableSpace),
       child: CustomScrollView(
+        shrinkWrap: true,
         slivers: [
           SliverToBoxAdapter(
             child: Column(
