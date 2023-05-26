@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
 
@@ -39,6 +41,14 @@ class _AppState extends State<App> {
         body: Column(
           mainAxisAlignment: alignments[currentAlignmentIndex],
           children: [
+            LanguageSelectDropdown(
+              languageFetchService: const CachingLangFetchService(
+                LangFetchService(),
+              ),
+              onSelected: (language) {
+                log('selected ${language.name} (${language.longCode})');
+              },
+            ),
             LanguageToolTextField(
               style: const TextStyle(),
               decoration: const InputDecoration(),

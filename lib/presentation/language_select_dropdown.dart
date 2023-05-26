@@ -1,0 +1,73 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
+import 'package:language_tool/language_tool.dart';
+import 'package:languagetool_textfield/domain/language_fetch_service.dart';
+import 'package:languagetool_textfield/domain/typedefs.dart';
+
+/// A DropdownButton which allows the user to select a language among the
+/// languages supported by the API.
+class LanguageSelectDropdown extends StatefulWidget {
+  /// A [LanguageFetchService] which will be used by this
+  /// [LanguageSelectDropdown] to fetch the supported language list.
+  final LanguageFetchService languageFetchService;
+
+  /// A callback which is called when a new
+  final LanguageSelectCallback onSelected;
+
+  /// Creates a new [LanguageSelectDropdown].
+  const LanguageSelectDropdown({
+    required this.languageFetchService,
+    required this.onSelected,
+    super.key,
+  });
+
+  @override
+  State<LanguageSelectDropdown> createState() => _LanguageSelectDropdownState();
+}
+
+class _LanguageSelectDropdownState extends State<LanguageSelectDropdown> {
+  static final _auto = Language(
+    name: 'Automatically',
+    code: 'auto',
+    longCode: 'auto',
+  );
+  final Set<Language> _languages = {_auto};
+  Language _selectedLanguage = _auto;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLanguages();
+  }
+
+  Future<void> _fetchLanguages() async {
+    final languages = await widget.languageFetchService.fetchLanguages();
+
+    if (!mounted) return;
+
+    setState(() => _languages.addAll(languages));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<Language>(
+      onChanged: _onLanguageSelected,
+      value: _selectedLanguage,
+      items: _languages
+          .map(
+            (language) => DropdownMenuItem(
+              value: language,
+              child: Text(language.name),
+            ),
+          )
+          .toList(growable: false),
+    );
+  }
+
+  void _onLanguageSelected(Language? language) {
+    if (language == null) return;
+    setState(() => _selectedLanguage = language);
+    widget.onSelected(language);
+  }
+}

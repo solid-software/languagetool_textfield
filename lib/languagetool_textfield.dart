@@ -11,6 +11,7 @@ export 'implementations/lang_fetch_service/lang_fetch_service.dart';
 export 'implementations/lang_tool_service/debounce_lang_tool_service.dart';
 export 'implementations/lang_tool_service/lang_tool_service.dart';
 export 'implementations/lang_tool_service/throttling_lang_tool_service.dart';
+export 'presentation/language_select_dropdown.dart';
 export 'presentation/language_tool_text_field.dart';
 export 'utils/mistake_popup.dart';
 export 'utils/popup_overlay_renderer.dart';
