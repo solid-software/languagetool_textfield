@@ -41,16 +41,6 @@ class MistakePopup {
 
 /// Default mistake window that looks similar to LanguageTool popup
 class LanguageToolMistakePopup extends StatelessWidget {
-  /// [LanguageToolMistakePopup] constructor
-  const LanguageToolMistakePopup({
-    super.key,
-    required this.popupRenderer,
-    required this.mistake,
-    required this.controller,
-    required this.mistakePosition,
-    this.maxHeight = double.infinity,
-  });
-
   /// Renderer used to display this window.
   final PopupOverlayRenderer popupRenderer;
 
@@ -67,6 +57,16 @@ class LanguageToolMistakePopup extends StatelessWidget {
   /// If infinity, the popup will use all the available height between the
   /// [mistakePosition] and the furthest border of the layout constraints.
   final double maxHeight;
+
+  /// [LanguageToolMistakePopup] constructor
+  const LanguageToolMistakePopup({
+    super.key,
+    required this.popupRenderer,
+    required this.mistake,
+    required this.controller,
+    required this.mistakePosition,
+    this.maxHeight = double.infinity,
+  });
 
   @override
   Widget build(BuildContext context) {
