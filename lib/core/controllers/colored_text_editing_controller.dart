@@ -56,6 +56,12 @@ class ColoredTextEditingController extends TextEditingController {
     );
   }
 
+  @override
+  void dispose() {
+    languageCheckService.dispose();
+    super.dispose();
+  }
+
   /// Replaces mistake with given replacement
   void replaceMistake(Mistake mistake, String replacement) {
     text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);

@@ -25,4 +25,10 @@ class DebounceLangToolService extends LanguageCheckService {
 
     return value ?? ErrorWrapper.success(<Mistake>[].toList(growable: true));
   }
+
+  @override
+  Future<void> dispose() async {
+    await debouncing.close();
+    await baseService.dispose();
+  }
 }
