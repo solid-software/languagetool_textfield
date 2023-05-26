@@ -31,21 +31,42 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
+  /// An error that may have occurred during the API fetch.
+  Object? _fetchError;
+
   @override
   void initState() {
     widget.coloredController.showPopup = widget.mistakePopup.show;
+    widget.coloredController.addListener(() {
+      if (mounted && widget.coloredController.fetchError != _fetchError) {
+        setState(() => _fetchError = widget.coloredController.fetchError);
+      }
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    // it would probably look much better if the error would be shown on a
+    // dedicated panel with field options
+    final httpErrorText = Text(
+      '$_fetchError',
+      style: TextStyle(
+        color: widget.coloredController.highlightStyle.misspellingMistakeColor,
+      ),
+    );
+
+    final inputDecoration = widget.decoration.copyWith(
+      suffix: _fetchError != null ? httpErrorText : null,
+    );
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Center(
         child: TextField(
           controller: widget.coloredController,
           style: widget.style,
-          decoration: widget.decoration,
+          decoration: inputDecoration,
         ),
       ),
     );

@@ -18,6 +18,9 @@ class ColoredTextEditingController extends TextEditingController {
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
 
+  /// An error that may have occurred during the API fetch.
+  Object? fetchError;
+
   /// List of that is used to dispose recognizers after mistakes rebuilt
   final List<TapGestureRecognizer> _recognizers = [];
 
@@ -75,8 +78,16 @@ class ColoredTextEditingController extends TextEditingController {
     }
     _recognizers.clear();
 
-    final mistakes = await languageCheckService.findMistakes(newText);
-    _mistakes = mistakes;
+    final mistakesWrapper = await languageCheckService.findMistakes(newText);
+
+    if (mistakesWrapper.hasResult) {
+      _mistakes = mistakesWrapper.result;
+      fetchError = null;
+    } else {
+      _mistakes = [];
+      fetchError = mistakesWrapper.error;
+    }
+
     notifyListeners();
   }
 

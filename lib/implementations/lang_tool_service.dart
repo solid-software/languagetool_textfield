@@ -1,10 +1,8 @@
-import 'dart:developer';
-
 import 'package:language_tool/language_tool.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/utils/mistakes_response_wrapper.dart';
+import 'package:languagetool_textfield/utils/error_wrapper.dart';
 
 /// An implementation of language check service with language tool service.
 class LangToolService extends LanguageCheckService {
@@ -15,27 +13,29 @@ class LangToolService extends LanguageCheckService {
   const LangToolService(this.languageTool);
 
   @override
-  Future<List<Mistake>> findMistakes(String text) async {
+  Future<ErrorWrapper<List<Mistake>>> findMistakes(String text) async {
     final writingMistakesWrapper = await languageTool
         .check(text)
-        .then(MistakesResponseWrapper.success)
-        .catchError(MistakesResponseWrapper.error);
+        .then(ErrorWrapper.success)
+        .catchError(ErrorWrapper<List<WritingMistake>>.error);
 
-    final writingMistakes = writingMistakesWrapper.mistakes;
-
-    final mistakes = writingMistakes.map(
-      (m) => Mistake(
-        message: m.message,
-        type: _stringToMistakeType(
-          m.issueType,
-        ),
-        offset: m.offset,
-        length: m.length,
-        replacements: m.replacements,
-      ),
+    final mistakesWrapper = writingMistakesWrapper.map(
+      (mistakes) => mistakes
+          .map(
+            (m) => Mistake(
+              message: m.message,
+              type: _stringToMistakeType(
+                m.issueType,
+              ),
+              offset: m.offset,
+              length: m.length,
+              replacements: m.replacements,
+            ),
+          )
+          .toList(),
     );
 
-    return mistakes.toList();
+    return mistakesWrapper;
   }
 
   MistakeType _stringToMistakeType(String issueType) {
