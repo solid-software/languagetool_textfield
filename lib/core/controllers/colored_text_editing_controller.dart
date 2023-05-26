@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
@@ -98,7 +100,7 @@ class ColoredTextEditingController extends TextEditingController {
       yield TextSpan(
         text: text.substring(
           currentOffset,
-          mistake.offset,
+          min(mistake.offset, text.length),
         ),
         style: style,
       );
@@ -119,7 +121,10 @@ class ColoredTextEditingController extends TextEditingController {
       yield TextSpan(
         children: [
           TextSpan(
-            text: text.substring(mistake.offset, mistake.endOffset),
+            text: text.substring(
+              mistake.offset,
+              min(mistake.endOffset, text.length),
+            ),
             mouseCursor: MaterialStateMouseCursor.clickable,
             style: style?.copyWith(
               backgroundColor: mistakeColor.withOpacity(
@@ -134,7 +139,7 @@ class ColoredTextEditingController extends TextEditingController {
         ],
       );
 
-      currentOffset = mistake.endOffset;
+      currentOffset = min(mistake.endOffset, text.length);
     }
 
     /// TextSpan after mistake
