@@ -164,7 +164,6 @@ class LanguageToolMistakePopup extends StatelessWidget {
   }
 
   double _calculateAvailableSpace(BuildContext context) {
-    // final margins = horizontalMargin * 2 + verticalMargin * 2;
     final mediaQuery = MediaQuery.of(context);
 
     final availableSpaceBottom = mediaQuery.size.height - mistakePosition.dy;
