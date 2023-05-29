@@ -17,9 +17,13 @@ class DebounceLangToolService extends LanguageCheckService {
   ) : debouncing = Debouncing(duration: debouncingDuration);
 
   @override
-  Future<List<Mistake>> findMistakes(String text) async {
+  Future<List<Mistake>> findMistakes(
+    String text, {
+    required String checkLanguage,
+    required bool isPicky,
+  }) async {
     final value = await debouncing.debounce(() {
-      return baseService.findMistakes(text);
+      return baseService.findMistakes(text, checkLanguage: checkLanguage, isPicky: isPicky);
     }) as List<Mistake>?;
 
     return value ?? [];

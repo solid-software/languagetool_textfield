@@ -1,10 +1,10 @@
-import 'package:language_tool/language_tool.dart';
+import 'package:languagetool_textfield/core/dataclasses/language/supported_language.dart';
 
 /// A language fetch service interface.
 abstract class LanguageFetchService {
   /// Creates a new [LanguageFetchService].
   const LanguageFetchService();
 
-  /// Returns a Future List of [Language]s that are supported by the API.
-  Future<List<Language>> fetchLanguages();
+  /// Returns a Future List of APIs [SupportedLanguage]s.
+  Future<List<SupportedLanguage>> fetchLanguages();
 }

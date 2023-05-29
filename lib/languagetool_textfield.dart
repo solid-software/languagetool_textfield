@@ -1,8 +1,10 @@
 library languagetool_textfield;
 
-export 'package:language_tool/language_tool.dart';
-
 export 'core/controllers/colored_text_editing_controller.dart';
+export 'core/dataclasses/language/supported_language.dart';
+export 'core/dataclasses/mistake_match.dart';
+export 'core/dataclasses/mistake_replacement.dart';
+export 'domain/api_request_service.dart';
 export 'domain/highlight_style.dart';
 export 'domain/language_check_service.dart';
 export 'domain/mistake.dart';

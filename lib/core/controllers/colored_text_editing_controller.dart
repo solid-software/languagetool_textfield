@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' show min;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +26,31 @@ class ColoredTextEditingController extends TextEditingController {
   /// Callback that will be executed after mistake clicked
   ShowPopupCallback? showPopup;
 
+  /// Currently set spellcheck language.
+  String _checkLanguage;
+
+  /// Current picky mode.
+  bool _isPicky;
+
+  /// The currently set spellcheck language of this controller.
+  String get checkLanguage => _checkLanguage;
+
+  /// Sets the given [languageCode] as a new check language and re-checks the
+  /// current text of this controller.
+  set checkLanguage(String languageCode) {
+    _checkLanguage = languageCode;
+    _handleTextChange(value.text, force: true);
+  }
+
+  /// Whether additional spellcheck rules are enabled.
+  bool get isPicky => _isPicky;
+
+  /// Sets the picky mode and re-checks the current text of this controller.
+  set isPicky(bool value) {
+    _isPicky = value;
+    _handleTextChange(this.value.text, force: true);
+  }
+
   @override
   set value(TextEditingValue newValue) {
     _handleTextChange(newValue.text);
@@ -36,7 +61,10 @@ class ColoredTextEditingController extends TextEditingController {
   ColoredTextEditingController({
     required this.languageCheckService,
     this.highlightStyle = const HighlightStyle(),
-  });
+    String checkLanguage = 'auto',
+    bool isPicky = false,
+  })  : _checkLanguage = checkLanguage,
+        _isPicky = isPicky;
 
   /// Generates TextSpan from Mistake list
   @override
@@ -72,10 +100,10 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
   /// via API
-  Future<void> _handleTextChange(String newText) async {
+  Future<void> _handleTextChange(String newText, {bool force = false}) async {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
-    if (newText == text) return;
+    if (newText == text && !force) return;
 
     _mistakes.clear();
     for (final recognizer in _recognizers) {
@@ -83,7 +111,12 @@ class ColoredTextEditingController extends TextEditingController {
     }
     _recognizers.clear();
 
-    final mistakes = await languageCheckService.findMistakes(newText);
+    final mistakes = await languageCheckService.findMistakes(
+      newText,
+      checkLanguage: checkLanguage,
+      isPicky: isPicky,
+    );
+
     _mistakes = mistakes;
     notifyListeners();
   }

@@ -1,7 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:language_tool/language_tool.dart';
+import 'package:languagetool_textfield/core/dataclasses/language/supported_language.dart';
 import 'package:languagetool_textfield/domain/language_fetch_service.dart';
 import 'package:languagetool_textfield/domain/typedefs.dart';
 
@@ -27,13 +25,13 @@ class LanguageSelectDropdown extends StatefulWidget {
 }
 
 class _LanguageSelectDropdownState extends State<LanguageSelectDropdown> {
-  static final _auto = Language(
+  static const SupportedLanguage _auto = SupportedLanguage(
     name: 'Automatically',
     code: 'auto',
     longCode: 'auto',
   );
-  final Set<Language> _languages = {_auto};
-  Language _selectedLanguage = _auto;
+  final Set<SupportedLanguage> _languages = {_auto};
+  SupportedLanguage _selectedLanguage = _auto;
 
   @override
   void initState() {
@@ -46,12 +44,22 @@ class _LanguageSelectDropdownState extends State<LanguageSelectDropdown> {
 
     if (!mounted) return;
 
-    setState(() => _languages.addAll(languages));
+    setState(
+      () => _languages
+        ..addAll(languages)
+        ..removeWhere(
+          (lang) =>
+              lang.code == lang.longCode &&
+              languages.any(
+                (e) => e.code == lang.code && e.longCode != lang.longCode,
+              ),
+        ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<Language>(
+    return DropdownButton<SupportedLanguage>(
       onChanged: _onLanguageSelected,
       value: _selectedLanguage,
       items: _languages
@@ -65,7 +73,7 @@ class _LanguageSelectDropdownState extends State<LanguageSelectDropdown> {
     );
   }
 
-  void _onLanguageSelected(Language? language) {
+  void _onLanguageSelected(SupportedLanguage? language) {
     if (language == null) return;
     setState(() => _selectedLanguage = language);
     widget.onSelected(language);
