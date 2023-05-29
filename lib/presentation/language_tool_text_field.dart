@@ -31,9 +31,6 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-  /// An error that may have occurred during the API fetch.
-  Object? _fetchError;
-
   @override
   void initState() {
     widget.coloredController.showPopup = widget.mistakePopup.show;
@@ -48,9 +45,6 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
       listenable: widget.coloredController,
       builder: (context, child) {
         final fetchError = widget.coloredController.fetchError;
-        if (_fetchError == fetchError && child != null) {
-          return child;
-        }
 
         // it would probably look much better if the error would be shown on a
         // dedicated panel with field options
@@ -66,47 +60,17 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           suffix: fetchError != null ? httpErrorText : null,
         );
 
-        return _PaddedLanguageToolTextField(
+        return Padding(
           padding: const EdgeInsets.all(_padding),
-          controller: widget.coloredController,
-          style: widget.style,
-          decoration: inputDecoration,
+          child: Center(
+            child: TextField(
+              controller: widget.coloredController,
+              style: widget.style,
+              decoration: inputDecoration,
+            ),
+          ),
         );
       },
-      child: _PaddedLanguageToolTextField(
-        padding: const EdgeInsets.all(_padding),
-        controller: widget.coloredController,
-        style: widget.style,
-        decoration: widget.decoration,
-      ),
-    );
-  }
-}
-
-class _PaddedLanguageToolTextField extends StatelessWidget {
-  final ColoredTextEditingController controller;
-  final EdgeInsetsGeometry padding;
-  final TextStyle? style;
-  final InputDecoration? decoration;
-
-  const _PaddedLanguageToolTextField({
-    required this.padding,
-    required this.controller,
-    this.style,
-    this.decoration,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: padding,
-      child: Center(
-        child: TextField(
-          controller: controller,
-          style: style,
-          decoration: decoration,
-        ),
-      ),
     );
   }
 }
