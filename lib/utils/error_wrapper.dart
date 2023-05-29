@@ -1,6 +1,6 @@
 /// A monad wrapping a non-nullable type [T] alongside the possible
 /// error.
-class ErrorWrapper<T> {
+class Result<T> {
   /// A wrapped object of type [T].
   /// If the error has occurred, it will be null.
   final T? _result;
