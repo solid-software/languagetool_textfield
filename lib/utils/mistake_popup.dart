@@ -41,6 +41,10 @@ class MistakePopup {
 
 /// Default mistake window that looks similar to LanguageTool popup
 class LanguageToolMistakePopup extends StatelessWidget {
+  static const double _defaultVerticalMargin = 25.0;
+  static const double _defaultHorizontalMargin = 10.0;
+  static const double _defaultMaxWidth = 250.0;
+
   /// Renderer used to display this window.
   final PopupOverlayRenderer popupRenderer;
 
@@ -53,10 +57,20 @@ class LanguageToolMistakePopup extends StatelessWidget {
   /// An on-screen position of the mistake
   final Offset mistakePosition;
 
+  /// A maximum width of the popup.
+  /// If infinity, the popup will use all the available horizontal space.
+  final double maxWidth;
+
   /// A maximum height of the popup.
   /// If infinity, the popup will use all the available height between the
   /// [mistakePosition] and the furthest border of the layout constraints.
   final double maxHeight;
+
+  /// Horizontal popup margin.
+  final double horizontalMargin;
+
+  /// Vertical popup margin.
+  final double verticalMargin;
 
   /// [LanguageToolMistakePopup] constructor
   const LanguageToolMistakePopup({
@@ -65,7 +79,10 @@ class LanguageToolMistakePopup extends StatelessWidget {
     required this.mistake,
     required this.controller,
     required this.mistakePosition,
+    this.maxWidth = _defaultMaxWidth,
     this.maxHeight = double.infinity,
+    this.horizontalMargin = _defaultHorizontalMargin,
+    this.verticalMargin = _defaultVerticalMargin,
   });
 
   @override
@@ -77,78 +94,81 @@ class LanguageToolMistakePopup extends StatelessWidget {
 
     const padding = 10.0;
 
-    final availableSpace = _calculateAvailableSpace(
-      context,
-      paddings: defaultPopupVerticalPadding + defaultPopupHorizontalPadding,
-    );
+    final availableSpace = _calculateAvailableSpace(context);
 
-    return Container(
-      padding: const EdgeInsets.all(padding),
-      decoration: BoxDecoration(
-        boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 20)],
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(_borderRadius),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: maxWidth,
+        maxHeight: availableSpace,
       ),
-      constraints: BoxConstraints(maxHeight: availableSpace),
-      child: CustomScrollView(
-        shrinkWrap: true,
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // mistake type
-                Text(
-                  mistake.type.name,
-                  style: TextStyle(
-                    color: Colors.grey.shade700,
-                    fontSize: _mistakeNameFontSize,
-                    fontWeight: FontWeight.w500,
+      child: Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: horizontalMargin,
+          vertical: verticalMargin,
+        ),
+        padding: const EdgeInsets.all(padding),
+        decoration: BoxDecoration(
+          boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 20)],
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(_borderRadius),
+        ),
+        child: CustomScrollView(
+          shrinkWrap: true,
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // mistake type
+                  Text(
+                    mistake.type.name,
+                    style: TextStyle(
+                      color: Colors.grey.shade700,
+                      fontSize: _mistakeNameFontSize,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const SizedBox(height: padding),
+                  const SizedBox(height: padding),
 
-                // mistake message
-                Text(
-                  mistake.message,
-                  style: const TextStyle(fontSize: _mistakeMessageFontSize),
-                ),
-                const SizedBox(height: padding),
-              ],
+                  // mistake message
+                  Text(
+                    mistake.message,
+                    style: const TextStyle(fontSize: _mistakeMessageFontSize),
+                  ),
+                  const SizedBox(height: padding),
+                ],
+              ),
             ),
-          ),
-          SliverList.builder(
-            itemCount: mistake.replacements.length,
-            itemBuilder: (context, index) {
-              final replacement = mistake.replacements[index];
+            SliverList.builder(
+              itemCount: mistake.replacements.length,
+              itemBuilder: (context, index) {
+                final replacement = mistake.replacements[index];
 
-              return Padding(
-                padding: const EdgeInsets.all(_replacementButtonsSpacing / 2),
-                child: ElevatedButton(
-                  onPressed: () {
-                    controller.replaceMistake(mistake, replacement);
-                    popupRenderer.dismiss();
-                  },
-                  child: Text(replacement),
-                ),
-              );
-            },
-          ),
-        ],
+                return Padding(
+                  padding: const EdgeInsets.all(_replacementButtonsSpacing / 2),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      controller.replaceMistake(mistake, replacement);
+                      popupRenderer.dismiss();
+                    },
+                    child: Text(replacement),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  double _calculateAvailableSpace(
-    BuildContext context, {
-    required double paddings,
-  }) {
+  double _calculateAvailableSpace(BuildContext context) {
+    // final margins = horizontalMargin * 2 + verticalMargin * 2;
     final mediaQuery = MediaQuery.of(context);
 
-    final availableSpaceBottom =
-        mediaQuery.size.height - mistakePosition.dy - paddings;
-    final availableSpaceTop = mistakePosition.dy - paddings;
+    final availableSpaceBottom = mediaQuery.size.height - mistakePosition.dy;
+    final availableSpaceTop = mistakePosition.dy;
 
     return min(max(availableSpaceBottom, availableSpaceTop), maxHeight);
   }
