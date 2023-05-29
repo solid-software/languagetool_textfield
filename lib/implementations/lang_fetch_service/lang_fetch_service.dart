@@ -1,9 +1,8 @@
 import 'dart:io';
 
+import 'package:languagetool_textfield/core/dataclasses/language/supported_language.dart';
 import 'package:languagetool_textfield/domain/api_request_service.dart';
 import 'package:languagetool_textfield/domain/language_fetch_service.dart';
-
-import '../../core/dataclasses/language/supported_language.dart';
 
 /// A class that provide the functionality to fetch the supported language list
 /// from the langtoolplus API and handles the errors occurred.

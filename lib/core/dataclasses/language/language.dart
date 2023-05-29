@@ -10,15 +10,14 @@ class Language {
   const Language({required this.name, required this.code});
 
   /// Reads a [Language] from the given [json].
-  factory Language.fromJson(Map<String, dynamic> json) =>
-      Language(
+  factory Language.fromJson(Map<String, dynamic> json) => Language(
         name: json['name'] as String,
         code: json['code'] as String,
       );
 
   /// Creates a Map<String, dynamic> json from this [Language].
   Map<String, dynamic> toJson() => {
-    'name': name,
-    'code': code,
-  };
+        'name': name,
+        'code': code,
+      };
 }

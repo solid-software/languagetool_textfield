@@ -23,7 +23,8 @@ class DebounceLangToolService extends LanguageCheckService {
     required bool isPicky,
   }) async {
     final value = await debouncing.debounce(() {
-      return baseService.findMistakes(text, checkLanguage: checkLanguage, isPicky: isPicky);
+      return baseService.findMistakes(text,
+          checkLanguage: checkLanguage, isPicky: isPicky,);
     }) as List<Mistake>?;
 
     return value ?? [];

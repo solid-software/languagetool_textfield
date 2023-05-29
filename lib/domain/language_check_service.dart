@@ -1,4 +1,3 @@
-import 'package:languagetool_textfield/domain/api_request_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 
 /// A base language check service.
