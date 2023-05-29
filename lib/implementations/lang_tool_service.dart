@@ -2,7 +2,7 @@ import 'package:language_tool/language_tool.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/utils/error_wrapper.dart';
+import 'package:languagetool_textfield/utils/result.dart';
 
 /// An implementation of language check service with language tool service.
 class LangToolService extends LanguageCheckService {
@@ -13,11 +13,11 @@ class LangToolService extends LanguageCheckService {
   const LangToolService(this.languageTool);
 
   @override
-  Future<ErrorWrapper<List<Mistake>>> findMistakes(String text) async {
+  Future<Result<List<Mistake>>> findMistakes(String text) async {
     final writingMistakesWrapper = await languageTool
         .check(text)
-        .then(ErrorWrapper.success)
-        .catchError(ErrorWrapper<List<WritingMistake>>.error);
+        .then(Result.success)
+        .catchError(Result<List<WritingMistake>>.error);
 
     final mistakesWrapper = writingMistakesWrapper.map(
       (mistakes) => mistakes

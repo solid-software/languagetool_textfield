@@ -30,18 +30,18 @@ class Result<T> {
   bool get hasResult => _result != null;
 
   /// Creates a new success [ErrorWrapper] with the given [result].
-  const ErrorWrapper.success(this._result) : error = null;
+  const Result.success(this._result) : error = null;
 
   /// Creates a new error [ErrorWrapper] with the given error.
-  const ErrorWrapper.error(Object this.error) : _result = null;
+  const Result.error(Object this.error) : _result = null;
 
   /// Maps this [ErrorWrapper] of type [T] to an ErrorWrapper of type [T1] with
   /// the given [mapper].
-  ErrorWrapper<T1> map<T1>(T1 Function(T) mapper) {
+  Result<T1> map<T1>(T1 Function(T) mapper) {
     if (hasResult) {
-      return ErrorWrapper.success(mapper(result));
+      return Result.success(mapper(result));
     }
 
-    return ErrorWrapper<T1>.error(error ?? 'Error was not specified');
+    return Result<T1>.error(error ?? 'Error was not specified');
   }
 }

@@ -1,6 +1,6 @@
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/utils/error_wrapper.dart';
+import 'package:languagetool_textfield/utils/result.dart';
 import 'package:throttling/throttling.dart';
 
 /// A language check service with debouncing.
@@ -19,9 +19,9 @@ class ThrottlingLangToolService extends LanguageCheckService {
   ) : throttling = Throttling(duration: throttlingDuration);
 
   @override
-  Future<ErrorWrapper<List<Mistake>>> findMistakes(String text) =>
+  Future<Result<List<Mistake>>> findMistakes(String text) =>
       throttling.throttle(() => baseService.findMistakes(text))
-          as Future<ErrorWrapper<List<Mistake>>>;
+          as Future<Result<List<Mistake>>>;
 
   @override
   Future<void> dispose() async {

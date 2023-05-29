@@ -1,5 +1,5 @@
 import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/utils/error_wrapper.dart';
+import 'package:languagetool_textfield/utils/result.dart';
 
 /// A base language check service.
 abstract class LanguageCheckService {
@@ -7,7 +7,7 @@ abstract class LanguageCheckService {
   const LanguageCheckService();
 
   /// Returns found mistakes in the given [text].
-  Future<ErrorWrapper<List<Mistake>>> findMistakes(String text);
+  Future<Result<List<Mistake>>> findMistakes(String text);
 
   /// Disposes resources of this [LanguageCheckService].
   Future<void> dispose() async {
