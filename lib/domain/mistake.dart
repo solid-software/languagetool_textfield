@@ -1,3 +1,4 @@
+import 'package:languagetool_textfield/core/dataclasses/mistake_match.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 
 /// A data model class that stores information about a single writing mistake.
@@ -30,4 +31,15 @@ class Mistake {
     required this.length,
     this.replacements = const [],
   });
+
+  /// Creates a new [Mistake] from the given [MistakeMatch] dataclass.
+  factory Mistake.fromMatch(MistakeMatch match) => Mistake(
+        message: match.message,
+        type: MistakeType.fromSting(match.issueType),
+        offset: match.offset,
+        length: match.length,
+        replacements: match.replacements.map((e) => e.value).toList(
+              growable: false,
+            ),
+      );
 }

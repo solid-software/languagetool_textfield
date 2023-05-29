@@ -19,5 +19,16 @@ enum MistakeType {
   style,
 
   /// Any other mistake type
-  other,
+  other;
+
+  factory MistakeType.fromSting(String issueType) {
+    if (issueType == 'non-conformance') {
+      return MistakeType.nonConformance;
+    }
+
+    return values.firstWhere(
+      (e) => e.name == issueType,
+      orElse: () => MistakeType.other,
+    );
+  }
 }
