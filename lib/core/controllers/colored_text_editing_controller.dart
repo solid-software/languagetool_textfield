@@ -20,12 +20,16 @@ class ColoredTextEditingController extends TextEditingController {
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
 
-
   /// List of that is used to dispose recognizers after mistakes rebuilt
   final List<TapGestureRecognizer> _recognizers = [];
 
   /// Callback that will be executed after mistake clicked
   ShowPopupCallback? showPopup;
+
+  Object? _fetchError;
+
+  /// An error that may have occurred during the API fetch.
+  Object? get fetchError => _fetchError;
 
   @override
   set value(TextEditingValue newValue) {
