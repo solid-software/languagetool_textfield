@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
 
@@ -13,13 +11,10 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  /// Initialize LanguageTool
-  static final LanguageTool _languageTool = LanguageTool();
-
   /// Initialize DebounceLangToolService
   static final DebounceLangToolService _debouncedLangService =
       DebounceLangToolService(
-    LangToolService(_languageTool),
+    const LangToolService(),
     const Duration(milliseconds: 500),
   );
 
@@ -32,22 +27,22 @@ class _AppState extends State<App> {
     MainAxisAlignment.start,
     MainAxisAlignment.end,
   ];
-  int currentAlignmentIndex = 0;
+
+  MainAxisAlignment currentAlignment = alignments.first;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       child: Scaffold(
         body: Column(
-          mainAxisAlignment: alignments[currentAlignmentIndex],
+          mainAxisAlignment: currentAlignment,
           children: [
             LanguageSelectDropdown(
               languageFetchService: const CachingLangFetchService(
                 LangFetchService(),
               ),
-              onSelected: (language) {
-                log('selected ${language.name} (${language.longCode})');
-              },
+              onSelected: (language) =>
+                  _controller.checkLanguage = language.longCode,
             ),
             LanguageToolTextField(
               style: const TextStyle(),
@@ -58,7 +53,8 @@ class _AppState extends State<App> {
             DropdownMenu(
               hintText: "Select alignment...",
               onSelected: (value) => setState(() {
-                currentAlignmentIndex = value ?? 0;
+                currentAlignment =
+                    value != null ? alignments[value] : currentAlignment;
               }),
               dropdownMenuEntries: const [
                 DropdownMenuEntry(value: 0, label: "Center alignment"),
