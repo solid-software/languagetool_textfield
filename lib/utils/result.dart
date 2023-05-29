@@ -20,7 +20,7 @@ class Result<T> {
 
   /// Returns a wrapped object of type [T], if the result is present.
   ///
-  /// **Check if [hasResult] before calling this getter.**
+  /// **Check if [hasResult] before calling this method.**
   /// If doesn't have the result, will throw a [StateError].
   T result() {
     final res = _result;

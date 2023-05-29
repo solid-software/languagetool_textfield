@@ -32,7 +32,7 @@ class LangToolService extends LanguageCheckService {
               replacements: m.replacements,
             ),
           )
-          .toList(),
+          .toList(growable: false),
     );
 
     return mistakesWrapper;

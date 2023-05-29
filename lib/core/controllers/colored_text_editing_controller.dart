@@ -90,7 +90,9 @@ class ColoredTextEditingController extends TextEditingController {
 
     final mistakesWrapper = await languageCheckService.findMistakes(newText);
 
-    _mistakes = mistakesWrapper.hasResult ? mistakesWrapper.result() : [];
+    _mistakes = List.from(
+      mistakesWrapper.hasResult ? mistakesWrapper.result() : [],
+    );
     _fetchError = mistakesWrapper.error;
 
     notifyListeners();
