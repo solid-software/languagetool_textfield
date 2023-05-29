@@ -19,12 +19,12 @@ class LanguageToolTextField extends StatefulWidget {
 
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
-    Key? key,
     required this.style,
     required this.decoration,
     required this.coloredController,
     required this.mistakePopup,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<LanguageToolTextField> createState() => _LanguageToolTextFieldState();
@@ -37,36 +37,74 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   @override
   void initState() {
     widget.coloredController.showPopup = widget.mistakePopup.show;
-    widget.coloredController.addListener(() {
-      if (mounted && widget.coloredController.fetchError != _fetchError) {
-        setState(() => _fetchError = widget.coloredController.fetchError);
-      }
-    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // it would probably look much better if the error would be shown on a
-    // dedicated panel with field options
-    final httpErrorText = Text(
-      '$_fetchError',
-      style: TextStyle(
-        color: widget.coloredController.highlightStyle.misspellingMistakeColor,
-      ),
-    );
+    const _padding = 24.0;
 
-    final inputDecoration = widget.decoration.copyWith(
-      suffix: _fetchError != null ? httpErrorText : null,
-    );
+    return ListenableBuilder(
+      listenable: widget.coloredController,
+      builder: (context, child) {
+        final fetchError = widget.coloredController.fetchError;
+        if (_fetchError == fetchError && child != null) {
+          return child;
+        }
 
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Center(
-        child: TextField(
+        // it would probably look much better if the error would be shown on a
+        // dedicated panel with field options
+        final httpErrorText = Text(
+          '$fetchError',
+          style: TextStyle(
+            color:
+                widget.coloredController.highlightStyle.misspellingMistakeColor,
+          ),
+        );
+
+        final inputDecoration = widget.decoration.copyWith(
+          suffix: fetchError != null ? httpErrorText : null,
+        );
+
+        return _PaddedLanguageToolTextField(
+          padding: const EdgeInsets.all(_padding),
           controller: widget.coloredController,
           style: widget.style,
           decoration: inputDecoration,
+        );
+      },
+      child: _PaddedLanguageToolTextField(
+        padding: const EdgeInsets.all(_padding),
+        controller: widget.coloredController,
+        style: widget.style,
+        decoration: widget.decoration,
+      ),
+    );
+  }
+}
+
+class _PaddedLanguageToolTextField extends StatelessWidget {
+  final ColoredTextEditingController controller;
+  final EdgeInsetsGeometry padding;
+  final TextStyle? style;
+  final InputDecoration? decoration;
+
+  const _PaddedLanguageToolTextField({
+    required this.padding,
+    required this.controller,
+    this.style,
+    this.decoration,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: padding,
+      child: Center(
+        child: TextField(
+          controller: controller,
+          style: style,
+          decoration: decoration,
         ),
       ),
     );
