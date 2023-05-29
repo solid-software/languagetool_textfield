@@ -17,14 +17,26 @@ class LanguageToolTextField extends StatefulWidget {
   /// Mistake popup window
   final MistakePopup mistakePopup;
 
+  /// The maximum number of lines to show at one time, wrapping if necessary.
+  final int? maxLines;
+
+  /// The minimum number of lines to occupy when the content spans fewer lines.
+  final int? minLines;
+
+  /// Whether this widget's height will be sized to fill its parent.
+  final bool expands;
+
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
-    Key? key,
     required this.style,
     required this.decoration,
     required this.coloredController,
     required this.mistakePopup,
-  }) : super(key: key);
+    this.maxLines = 1,
+    this.minLines,
+    this.expands = false,
+    super.key,
+  });
 
   @override
   State<LanguageToolTextField> createState() => _LanguageToolTextFieldState();
@@ -46,6 +58,9 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           controller: widget.coloredController,
           style: widget.style,
           decoration: widget.decoration,
+          minLines: widget.minLines,
+          maxLines: widget.maxLines,
+          expands: widget.expands,
         ),
       ),
     );
