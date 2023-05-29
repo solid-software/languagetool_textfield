@@ -19,9 +19,12 @@ class ThrottlingLangToolService extends LanguageCheckService {
   ) : throttling = Throttling(duration: throttlingDuration);
 
   @override
-  Future<Result<List<Mistake>>> findMistakes(String text) =>
-      throttling.throttle(() => baseService.findMistakes(text))
-          as Future<Result<List<Mistake>>>;
+  Future<Result<List<Mistake>>> findMistakes(String text) {
+    final future = throttling.throttle(() => baseService.findMistakes(text))
+        as Future<Result<List<Mistake>>?>;
+
+    return future.then((res) => res ?? Result.success(<Mistake>[].toList()));
+  }
 
   @override
   Future<void> dispose() async {
