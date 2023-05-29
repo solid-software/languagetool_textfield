@@ -4,11 +4,12 @@ import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:languagetool_textfield/utils/popup_overlay_renderer.dart';
 
 /// Callback used to build popup body
-typedef MistakeBuilderCallback = Widget Function(
-  PopupOverlayRenderer popupRenderer,
-  Mistake mistake,
-  ColoredTextEditingController controller,
-);
+typedef MistakeBuilderCallback = Widget Function({
+  required PopupOverlayRenderer popupRenderer,
+  required Mistake mistake,
+  required ColoredTextEditingController controller,
+  required Offset mistakePosition,
+});
 
 /// Function called after mistake was clicked
 typedef ShowPopupCallback = void Function(
