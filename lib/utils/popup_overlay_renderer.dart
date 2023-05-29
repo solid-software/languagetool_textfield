@@ -70,7 +70,7 @@ class PopupOverlayLayoutDelegate extends SingleChildLayoutDelegate {
     dx = max(0, dx);
     final rightBorderPosition = dx + childSize.width;
     final rightScreenBorderOverflow = rightBorderPosition - size.width;
-    if (rightScreenBorderOverflow >= 0) {
+    if (rightScreenBorderOverflow > 0) {
       dx -= rightScreenBorderOverflow;
     }
 
@@ -79,7 +79,7 @@ class PopupOverlayLayoutDelegate extends SingleChildLayoutDelegate {
     final bottomBorderPosition = dy + childSize.height;
     final bottomScreenBorderOverflow = bottomBorderPosition - size.height;
     // if not enough space underneath, rendering above the desired position
-    if (bottomScreenBorderOverflow >= 0) {
+    if (bottomScreenBorderOverflow > 0) {
       final newBottomBorderPosition = position.dy - childSize.height;
       dy = newBottomBorderPosition;
     }
