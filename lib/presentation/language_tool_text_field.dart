@@ -51,18 +51,41 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Center(
-        child: TextField(
-          controller: widget.coloredController,
-          style: widget.style,
-          decoration: widget.decoration,
-          minLines: widget.minLines,
-          maxLines: widget.maxLines,
-          expands: widget.expands,
-        ),
-      ),
+    const _padding = 24.0;
+
+    return ListenableBuilder(
+      listenable: widget.coloredController,
+      builder: (context, child) {
+        final fetchError = widget.coloredController.fetchError;
+
+        // it would probably look much better if the error would be shown on a
+        // dedicated panel with field options
+        final httpErrorText = Text(
+          '$fetchError',
+          style: TextStyle(
+            color:
+                widget.coloredController.highlightStyle.misspellingMistakeColor,
+          ),
+        );
+
+        final inputDecoration = widget.decoration.copyWith(
+          suffix: fetchError != null ? httpErrorText : null,
+        );
+
+        return Padding(
+          padding: const EdgeInsets.all(_padding),
+          child: Center(
+            child: TextField(
+              controller: widget.coloredController,
+              style: widget.style,
+              decoration: inputDecoration,
+              minLines: widget.minLines,
+              maxLines: widget.maxLines,
+              expands: widget.expands,
+            ),
+          ),
+        );
+      },
     );
   }
 }

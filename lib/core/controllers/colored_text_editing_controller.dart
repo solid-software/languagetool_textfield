@@ -26,6 +26,11 @@ class ColoredTextEditingController extends TextEditingController {
   /// Callback that will be executed after mistake clicked
   ShowPopupCallback? showPopup;
 
+  Object? _fetchError;
+
+  /// An error that may have occurred during the API fetch.
+  Object? get fetchError => _fetchError;
+
   @override
   set value(TextEditingValue newValue) {
     _handleTextChange(newValue.text);
@@ -83,8 +88,12 @@ class ColoredTextEditingController extends TextEditingController {
     }
     _recognizers.clear();
 
-    final mistakes = await languageCheckService.findMistakes(newText);
-    _mistakes = mistakes;
+    final mistakesWrapper = await languageCheckService.findMistakes(newText);
+
+    _mistakes =
+        mistakesWrapper.hasResult ? mistakesWrapper.result().toList() : [];
+    _fetchError = mistakesWrapper.error;
+
     notifyListeners();
   }
 
