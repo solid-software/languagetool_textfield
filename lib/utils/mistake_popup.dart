@@ -127,7 +127,12 @@ class LanguageToolMistakePopup extends StatelessWidget {
           borderRadius: BorderRadius.circular(_borderRadius),
           boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 8)],
         ),
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.only(
+          top: 8,
+          bottom: 4,
+          left: 4,
+          right: 4,
+        ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
