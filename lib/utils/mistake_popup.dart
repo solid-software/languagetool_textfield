@@ -73,7 +73,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
   /// Vertical popup margin.
   final double verticalMargin;
 
-  /// Vertical popup margin.
+  /// Mistake suggestion style.
   final ButtonStyle? mistakeStyle;
 
   ButtonStyle get _defaultMistakeStyle => ElevatedButton.styleFrom(
@@ -129,6 +129,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              /// Header-like part of dialog.
               Row(
                 children: [
                   const SizedBox(width: 2),
@@ -157,7 +158,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // mistake type
+                      /// Mistake type.
                       Text(
                         mistake.type.name.capitalize(),
                         style: TextStyle(
@@ -169,7 +170,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
                       ),
                       const SizedBox(height: _paddingBetweenTitle),
 
-                      // mistake message
+                      /// Mistake message.
                       Text(
                         mistake.message,
                         style: const TextStyle(
@@ -182,6 +183,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
                         runSpacing: _replacementButtonsSpacing,
                         children: mistake.replacements
                             .map(
+                              /// Mistake suggestion.
                               (replacement) => ElevatedButton(
                                 onPressed: () {
                                   controller.replaceMistake(
