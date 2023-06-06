@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/domain/typedefs.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
@@ -78,6 +79,8 @@ class LanguageToolMistakePopup extends StatelessWidget {
 
   ButtonStyle get _defaultMistakeStyle => ElevatedButton.styleFrom(
         elevation: 0,
+        minimumSize: const Size(40, 36),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
       );
 
   /// [LanguageToolMistakePopup] constructor
@@ -100,6 +103,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
     const _mistakeNameFontSize = 11.0;
     const _mistakeMessageFontSize = 13.0;
     const _replacementButtonsSpacing = 4.0;
+    const _replacementButtonsSpacingMobile = -6.0;
     const _paddingBetweenTitle = 14.0;
     const _titleLetterSpacing = 0.56;
     const _dismissSplashRadius = 2.0;
@@ -156,7 +160,6 @@ class LanguageToolMistakePopup extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
                     children: [
                       /// Mistake type.
                       Text(
@@ -180,18 +183,14 @@ class LanguageToolMistakePopup extends StatelessWidget {
                       const SizedBox(height: padding),
                       Wrap(
                         spacing: _replacementButtonsSpacing,
-                        runSpacing: _replacementButtonsSpacing,
+                        runSpacing: kIsWeb
+                            ? _replacementButtonsSpacing
+                            : _replacementButtonsSpacingMobile,
                         children: mistake.replacements
                             .map(
                               /// Mistake suggestion.
                               (replacement) => ElevatedButton(
-                                onPressed: () {
-                                  controller.replaceMistake(
-                                    mistake,
-                                    replacement,
-                                  );
-                                  popupRenderer.dismiss();
-                                },
+                                onPressed: () => _fixTheMistake(replacement),
                                 style: mistakeStyle ?? _defaultMistakeStyle,
                                 child: Text(replacement),
                               ),
@@ -219,6 +218,14 @@ class LanguageToolMistakePopup extends StatelessWidget {
   }
 
   void _dismissDialog() {
+    popupRenderer.dismiss();
+  }
+
+  void _fixTheMistake(String replacement) {
+    controller.replaceMistake(
+      mistake,
+      replacement,
+    );
     popupRenderer.dismiss();
   }
 }
