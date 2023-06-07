@@ -58,10 +58,11 @@ class ColoredTextEditingController extends TextEditingController {
     return TextSpan(
       children: [
         ...formattedTextSpans.toList(),
+
         /// Add an empty symbol, so that the last entered word's tappable area
         /// doesn't take all available space.
         const TextSpan(
-          text: '‎',
+          text: '\u2800',
         ),
       ],
     );
