@@ -1,11 +1,19 @@
 library languagetool_textfield;
 
-export 'package:language_tool/language_tool.dart';
-
+export 'beans/category.dart';
+export 'beans/context.dart';
+export 'beans/language_tool_answer_raw.dart';
+export 'beans/match.dart';
+export 'beans/replacement.dart';
+export 'beans/rule.dart';
+export 'beans/type.dart';
+export 'beans/warnings.dart';
 export 'core/controllers/colored_text_editing_controller.dart';
+export 'core/network/language_tool.dart';
 export 'domain/highlight_style.dart';
 export 'domain/language_check_service.dart';
 export 'domain/mistake.dart';
+export 'domain/writing_mistake.dart';
 export 'implementations/debounce_lang_tool_service.dart';
 export 'implementations/lang_tool_service.dart';
 export 'implementations/throttling_lang_tool_service.dart';

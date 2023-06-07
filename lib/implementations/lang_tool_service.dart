@@ -1,7 +1,8 @@
-import 'package:language_tool/language_tool.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
+import 'package:languagetool_textfield/core/network/language_tool.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
+import 'package:languagetool_textfield/domain/writing_mistake.dart';
 import 'package:languagetool_textfield/utils/result.dart';
 
 /// An implementation of language check service with language tool service.
@@ -20,9 +21,10 @@ class LangToolService extends LanguageCheckService {
         .catchError(Result<List<WritingMistake>>.error);
 
     final mistakesWrapper = writingMistakesWrapper.map(
-      (mistakes) => mistakes
-          .map(
-            (m) => Mistake(
+      (mistakes) {
+        return mistakes.map(
+          (m) {
+            return Mistake(
               message: m.message,
               type: _stringToMistakeType(
                 m.issueType,
@@ -30,9 +32,10 @@ class LangToolService extends LanguageCheckService {
               offset: m.offset,
               length: m.length,
               replacements: m.replacements,
-            ),
-          )
-          .toList(growable: false),
+            );
+          },
+        ).toList(growable: false);
+      },
     );
 
     return mistakesWrapper;
