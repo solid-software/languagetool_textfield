@@ -56,7 +56,14 @@ class ColoredTextEditingController extends TextEditingController {
     );
 
     return TextSpan(
-      children: formattedTextSpans.toList(),
+      children: [
+        ...formattedTextSpans.toList(),
+        /// Add an empty symbol, so that the last entered word's tappable area
+        /// doesn't take all available space.
+        const TextSpan(
+          text: '‎',
+        ),
+      ],
     );
   }
 
@@ -128,24 +135,20 @@ class ColoredTextEditingController extends TextEditingController {
 
       /// Mistake highlighted TextSpan
       yield TextSpan(
-        children: [
-          TextSpan(
-            text: text.substring(
-              mistake.offset,
-              min(mistake.endOffset, text.length),
-            ),
-            mouseCursor: MaterialStateMouseCursor.clickable,
-            style: style?.copyWith(
-              backgroundColor: mistakeColor.withOpacity(
-                highlightStyle.backgroundOpacity,
-              ),
-              decoration: highlightStyle.decoration,
-              decorationColor: mistakeColor,
-              decorationThickness: highlightStyle.mistakeLineThickness,
-            ),
-            recognizer: _onTap,
+        text: text.substring(
+          mistake.offset,
+          min(mistake.endOffset, text.length),
+        ),
+        mouseCursor: MaterialStateMouseCursor.clickable,
+        style: style?.copyWith(
+          backgroundColor: mistakeColor.withOpacity(
+            highlightStyle.backgroundOpacity,
           ),
-        ],
+          decoration: highlightStyle.decoration,
+          decorationColor: mistakeColor,
+          decorationThickness: highlightStyle.mistakeLineThickness,
+        ),
+        recognizer: _onTap,
       );
 
       currentOffset = min(mistake.endOffset, text.length);
