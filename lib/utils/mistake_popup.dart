@@ -173,13 +173,15 @@ class LanguageToolMistakePopup extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Text(
-                        mistake.message,
-                        style: const TextStyle(
-                          fontSize: _mistakeMessageFontSize,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: padding),
+                        child: Text(
+                          mistake.message,
+                          style: const TextStyle(
+                            fontSize: _mistakeMessageFontSize,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: padding),
                       Wrap(
                         spacing: _replacementButtonsSpacing,
                         runSpacing: kIsWeb
