@@ -5,7 +5,7 @@ import 'package:languagetool_textfield/beans/type.dart';
 
 ///
 class Match {
-  ///
+  /// The message about the error.
   String message;
 
   /// Shortened message (may be empty).
@@ -14,31 +14,31 @@ class Match {
   /// List of possible replacements
   List<Replacement> replacements;
 
-  ///
+  /// Offset to the word.
   int offset;
 
-  ///
+  /// Length of the word.
   int length;
 
-  ///
+  /// Context of the mistake.
   Context context;
 
-  ///
+  /// The whole sentence.
   String sentence;
 
-  ///
+  /// The type of the mistake.
   Type type;
 
-  ///
+  /// The mistake's rule.
   Rule rule;
 
-  ///
+  /// Flag that indicates if the mistake is because sentence is incomplete.
   bool ignoreForIncompleteSentence;
 
-  ///
+  /// Context for sure match (i.e. -1, 0, 1, etc).
   int contextForSureMatch;
 
-  ///
+  /// Creates a new instance of the [Match] class.
   Match({
     required this.message,
     required this.shortMessage,
@@ -53,7 +53,7 @@ class Match {
     required this.contextForSureMatch,
   });
 
-  ///
+  /// Parse [Match] from json.
   factory Match.fromJson(Map<String, dynamic> json) => Match(
         message: json['message'] as String,
         shortMessage: json['shortMessage'] as String,
@@ -73,7 +73,7 @@ class Match {
         contextForSureMatch: json['contextForSureMatch'] as int,
       );
 
-  ///
+  /// Get json from [Match].
   Map<String, dynamic> toJson() => {
         'message': message,
         'shortMessage': shortMessage,

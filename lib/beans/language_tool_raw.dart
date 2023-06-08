@@ -1,31 +1,28 @@
 import 'package:languagetool_textfield/languagetool_textfield.dart';
 
+/// The raw bean that is returned from the API call.
 ///
-class LanguageToolAnswerRaw {
-  ///
+/// It's possible to add software, language and warning information.
+class LanguageToolRaw {
+  /// The matched mistakes.
   List<Match> matches;
 
-  ///
-  Warnings warnings;
-
-  ///
-  LanguageToolAnswerRaw({
+  /// Creates a new instance of the [LanguageToolRaw] class.
+  LanguageToolRaw({
     required this.matches,
-    required this.warnings,
   });
 
-  ///
-  factory LanguageToolAnswerRaw.fromJson(Map<String, dynamic> json) =>
-      LanguageToolAnswerRaw(
+  /// Parse [LanguageToolRaw] from json.
+  factory LanguageToolRaw.fromJson(Map<String, dynamic> json) =>
+      LanguageToolRaw(
         matches: (json['matches'] as Iterable)
             .map<Match>(
               (e) => Match.fromJson(e as Map<String, dynamic>),
             )
             .toList(),
-        warnings: Warnings.fromJson(json['warnings'] as Map<String, dynamic>),
       );
 
-  ///
+  /// Get json from [LanguageToolRaw].
   Map<String, dynamic> toJson() => {
         'matches': List<dynamic>.from(matches.map((x) => x.toJson())),
       };

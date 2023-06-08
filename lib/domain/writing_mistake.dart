@@ -29,7 +29,7 @@ class WritingMistake {
   /// i.e. the error and some text to the left and to the left.
   final Context context;
 
-  /// Object that stores information about a single writing mistake.
+  /// Constructor for [WritingMistake].
   WritingMistake({
     required this.message,
     required this.offset,

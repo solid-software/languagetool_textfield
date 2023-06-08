@@ -6,7 +6,7 @@ class Category {
   /// Name field.
   String name;
 
-  /// Constructor for [Category]
+  /// Creates a new instance of the [Category] class.
   Category({
     required this.id,
     required this.name,

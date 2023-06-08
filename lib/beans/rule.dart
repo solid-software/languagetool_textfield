@@ -17,7 +17,7 @@ class Rule {
   /// The subscription status of the rule.
   bool isPremium;
 
-  ///
+  /// Creates a new instance of the [Rule] class.
   Rule({
     required this.id,
     required this.description,
@@ -26,7 +26,7 @@ class Rule {
     required this.isPremium,
   });
 
-  ///
+  /// Parse [Rule] from json.
   factory Rule.fromJson(Map<String, dynamic> json) => Rule(
         id: json['id'] as String,
         description: json['description'] as String,
@@ -35,7 +35,7 @@ class Rule {
         isPremium: json['isPremium'] as bool,
       );
 
-  ///
+  /// Get json from [Rule].
   Map<String, dynamic> toJson() => {
         'id': id,
         'description': description,

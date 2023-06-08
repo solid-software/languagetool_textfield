@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:languagetool_textfield/beans/language_tool_answer_raw.dart';
+import 'package:languagetool_textfield/beans/language_tool_raw.dart';
 import 'package:languagetool_textfield/domain/writing_mistake.dart';
 
 /// Class to interact with the LanguageTool API.
@@ -34,7 +34,7 @@ class LanguageTool {
       )
           .then(
         (value) {
-          final languageToolAnswer = LanguageToolAnswerRaw.fromJson(
+          final languageToolAnswer = LanguageToolRaw.fromJson(
             json.decode(utf8.decode(value.bodyBytes)) as Map<String, dynamic>,
           );
 
@@ -44,9 +44,9 @@ class LanguageTool {
         (error, stackTrace) => throw Exception(error),
       );
 
-  /// Converts a [LanguageToolAnswerRaw] in a [WritingMistake].
+  /// Converts a [LanguageToolRaw] in a [WritingMistake].
   List<WritingMistake> _parseRawAnswer(
-    LanguageToolAnswerRaw languageToolAnswer,
+    LanguageToolRaw languageToolAnswer,
   ) {
     final result = <WritingMistake>[];
     for (final match in languageToolAnswer.matches) {

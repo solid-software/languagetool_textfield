@@ -2,12 +2,11 @@ library languagetool_textfield;
 
 export 'beans/category.dart';
 export 'beans/context.dart';
-export 'beans/language_tool_answer_raw.dart';
+export 'beans/language_tool_raw.dart';
 export 'beans/match.dart';
 export 'beans/replacement.dart';
 export 'beans/rule.dart';
 export 'beans/type.dart';
-export 'beans/warnings.dart';
 export 'core/controllers/colored_text_editing_controller.dart';
 export 'core/network/language_tool.dart';
 export 'domain/highlight_style.dart';
