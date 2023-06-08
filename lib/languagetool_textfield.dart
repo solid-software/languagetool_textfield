@@ -4,7 +4,6 @@ export 'beans/category.dart';
 export 'beans/context.dart';
 export 'beans/language_tool_raw.dart';
 export 'beans/match.dart';
-export 'beans/mistake_type.dart';
 export 'beans/replacement.dart';
 export 'beans/rule.dart';
 export 'client/language_tool_client.dart';

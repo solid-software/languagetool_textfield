@@ -19,5 +19,25 @@ enum MistakeType {
   style,
 
   /// Any other mistake type
-  other,
+  other;
+
+  /// Getting the [MistakeType] from String.
+  static MistakeType fromString(String value) {
+    switch (value.toLowerCase()) {
+      case 'misspelling':
+        return MistakeType.misspelling;
+      case 'typographical':
+        return MistakeType.typographical;
+      case 'grammar':
+        return MistakeType.grammar;
+      case 'uncategorized':
+        return MistakeType.uncategorized;
+      case 'non-conformance':
+        return MistakeType.nonConformance;
+      case 'style':
+        return MistakeType.style;
+      default:
+        return MistakeType.other;
+    }
+  }
 }

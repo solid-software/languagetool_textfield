@@ -1,5 +1,4 @@
 import 'package:languagetool_textfield/client/language_tool_client.dart';
-import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:languagetool_textfield/domain/writing_mistake.dart';
@@ -26,9 +25,7 @@ class LangToolService extends LanguageCheckService {
           (m) {
             return Mistake(
               message: m.message,
-              type: _stringToMistakeType(
-                m.issueType,
-              ),
+              type: m.issueType,
               offset: m.offset,
               length: m.length,
               replacements: m.replacements,
@@ -39,24 +36,5 @@ class LangToolService extends LanguageCheckService {
     );
 
     return mistakesWrapper;
-  }
-
-  MistakeType _stringToMistakeType(String issueType) {
-    switch (issueType.toLowerCase()) {
-      case 'misspelling':
-        return MistakeType.misspelling;
-      case 'typographical':
-        return MistakeType.typographical;
-      case 'grammar':
-        return MistakeType.grammar;
-      case 'uncategorized':
-        return MistakeType.uncategorized;
-      case 'non-conformance':
-        return MistakeType.nonConformance;
-      case 'style':
-        return MistakeType.style;
-      default:
-        return MistakeType.other;
-    }
   }
 }

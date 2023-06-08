@@ -21,9 +21,4 @@ class LanguageToolRaw {
             )
             .toList(),
       );
-
-  /// Get json from [LanguageToolRaw].
-  Map<String, dynamic> toJson() => {
-        'matches': List<dynamic>.from(matches.map((x) => x.toJson())),
-      };
 }

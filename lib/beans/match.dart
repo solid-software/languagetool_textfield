@@ -1,5 +1,4 @@
 import 'package:languagetool_textfield/beans/context.dart';
-import 'package:languagetool_textfield/beans/mistake_type.dart';
 import 'package:languagetool_textfield/beans/replacement.dart';
 import 'package:languagetool_textfield/beans/rule.dart';
 
@@ -26,9 +25,6 @@ class Match {
   /// The whole sentence.
   final String sentence;
 
-  /// The type of the mistake.
-  final MistakeType type;
-
   /// The mistake's rule.
   final Rule rule;
 
@@ -47,7 +43,6 @@ class Match {
     required this.length,
     required this.context,
     required this.sentence,
-    required this.type,
     required this.rule,
     required this.ignoreForIncompleteSentence,
     required this.contextForSureMatch,
@@ -66,25 +61,9 @@ class Match {
         length: json['length'] as int,
         context: Context.fromJson(json['context'] as Map<String, dynamic>),
         sentence: json['sentence'] as String,
-        type: MistakeType.fromJson(json['type'] as Map<String, dynamic>),
         rule: Rule.fromJson(json['rule'] as Map<String, dynamic>),
         ignoreForIncompleteSentence:
             json['ignoreForIncompleteSentence'] as bool,
         contextForSureMatch: json['contextForSureMatch'] as int,
       );
-
-  /// Get json from [Match].
-  Map<String, dynamic> toJson() => {
-        'message': message,
-        'shortMessage': shortMessage,
-        'replacements': List<dynamic>.from(replacements.map((x) => x.toJson())),
-        'offset': offset,
-        'length': length,
-        'context': context.toJson(),
-        'sentence': sentence,
-        'type': type.toJson(),
-        'rule': rule.toJson(),
-        'ignoreForIncompleteSentence': ignoreForIncompleteSentence,
-        'contextForSureMatch': contextForSureMatch,
-      };
 }

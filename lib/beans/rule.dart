@@ -1,4 +1,5 @@
 import 'package:languagetool_textfield/beans/category.dart';
+import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 
 /// Object that stores information about the rule (description, type, etc).
 class Rule {
@@ -9,7 +10,7 @@ class Rule {
   final String description;
 
   /// The type of the error (spelling, typographical, etc).
-  final String issueType;
+  final MistakeType issueType;
 
   /// The category of the rule.
   final Category category;
@@ -30,17 +31,8 @@ class Rule {
   factory Rule.fromJson(Map<String, dynamic> json) => Rule(
         id: json['id'] as String,
         description: json['description'] as String,
-        issueType: json['issueType'] as String,
+        issueType: MistakeType.fromString(json['issueType'] as String),
         category: Category.fromJson(json['category'] as Map<String, dynamic>),
         isPremium: json['isPremium'] as bool,
       );
-
-  /// Get json from [Rule].
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'description': description,
-        'issueType': issueType,
-        'category': category.toJson(),
-        'isPremium': isPremium,
-      };
 }

@@ -1,4 +1,5 @@
 import 'package:languagetool_textfield/beans/context.dart';
+import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 
 /// Object that stores information about a single writing mistake.
 class WritingMistake {
@@ -9,7 +10,7 @@ class WritingMistake {
   final int length;
 
   /// The type of mistake.
-  final String issueType;
+  final MistakeType issueType;
 
   /// Description of the [issueType].
   final String issueDescription;
@@ -45,7 +46,7 @@ class WritingMistake {
   WritingMistake copyWith({
     required int offset,
     required int length,
-    required String issueType,
+    required MistakeType issueType,
     required String issueDescription,
     required String message,
     required List<String> replacements,
