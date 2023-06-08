@@ -7,7 +7,7 @@ import 'package:languagetool_textfield/domain/writing_mistake.dart';
 /// Class to interact with the LanguageTool API.
 ///
 /// Read more @ https://languagetool.org/http-api/swagger-ui/#/
-class LanguageTool {
+class LanguageToolClient {
   /// Url of LanguageTool API.
   static const _url = 'api.languagetoolplus.com';
 
@@ -20,29 +20,25 @@ class LanguageTool {
   /// A language code.
   final String language;
 
-  /// Constructor for [LanguageTool].
-  LanguageTool({
+  /// Constructor for [LanguageToolClient].
+  LanguageToolClient({
     this.language = 'auto',
   });
 
   /// Checks the errors in text.
-  Future<List<WritingMistake>> check(String text) => http
-          .post(
-        Uri.https(_url, 'v2/check'),
-        headers: _headers,
-        body: _getBodyForCheckRequest(text),
-      )
-          .then(
-        (value) {
-          final languageToolAnswer = LanguageToolRaw.fromJson(
-            json.decode(utf8.decode(value.bodyBytes)) as Map<String, dynamic>,
-          );
+  Future<List<WritingMistake>> check(String text) async {
+    final result = await http.post(
+      Uri.https(_url, 'v2/check'),
+      headers: _headers,
+      body: _getBodyForCheckRequest(text),
+    );
 
-          return _parseRawAnswer(languageToolAnswer);
-        },
-      ).onError(
-        (error, stackTrace) => throw Exception(error),
-      );
+    final languageToolAnswer = LanguageToolRaw.fromJson(
+      json.decode(utf8.decode(result.bodyBytes)) as Map<String, dynamic>,
+    );
+
+    return _parseRawAnswer(languageToolAnswer);
+  }
 
   /// Converts a [LanguageToolRaw] in a [WritingMistake].
   List<WritingMistake> _parseRawAnswer(
