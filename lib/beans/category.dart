@@ -1,4 +1,4 @@
-/// Category of the rule.
+/// Object that stores information about category of the rule.
 class Category {
   /// Id field.
   String id;

@@ -3,7 +3,7 @@ import 'package:languagetool_textfield/beans/replacement.dart';
 import 'package:languagetool_textfield/beans/rule.dart';
 import 'package:languagetool_textfield/beans/type.dart';
 
-///
+/// Object that stores information about matched mistakes.
 class Match {
   /// The message about the error.
   String message;

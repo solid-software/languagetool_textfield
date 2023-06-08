@@ -1,4 +1,4 @@
-///  A data model class that stores context of the error,
+/// A data model class that stores context of the error,
 /// i.e. the error and some text to the left and to the left.
 class Context {
   /// Text.

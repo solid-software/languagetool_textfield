@@ -1,6 +1,6 @@
 import 'package:languagetool_textfield/beans/category.dart';
 
-/// The rule description.
+/// Object that stores information about the rule (description, type, etc).
 class Rule {
   /// Id (i.e.UPPERCASE_SENTENCE_START).
   String id;

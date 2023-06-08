@@ -1,4 +1,4 @@
-/// Possible replacement.
+/// Object that stores information about possible replacement.
 class Replacement {
   /// The replacement word.
   String value;
