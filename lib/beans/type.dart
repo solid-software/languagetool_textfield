@@ -1,7 +1,7 @@
 /// Object that stores information about the type of the mistake.
 class Type {
   /// Indicates the mistake type (i.e. UnknownWord).
-  String typeName;
+  final String typeName;
 
   /// Creates a new instance of the [Type] class.
   Type({

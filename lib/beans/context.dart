@@ -2,13 +2,13 @@
 /// i.e. the error and some text to the left and to the left.
 class Context {
   /// Text.
-  String text;
+  final String text;
 
   /// Offset to the text.
-  int offset;
+  final int offset;
 
   /// Length of the sentence.
-  int length;
+  final int length;
 
   /// Creates a new instance of the [Context] class.
   Context({

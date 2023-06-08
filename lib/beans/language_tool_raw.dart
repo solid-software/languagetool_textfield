@@ -5,7 +5,7 @@ import 'package:languagetool_textfield/languagetool_textfield.dart';
 /// It's possible to add software, language and warning information.
 class LanguageToolRaw {
   /// The matched mistakes.
-  List<Match> matches;
+  final List<Match> matches;
 
   /// Creates a new instance of the [LanguageToolRaw] class.
   LanguageToolRaw({

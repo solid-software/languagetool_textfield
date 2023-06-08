@@ -1,10 +1,10 @@
 /// Object that stores information about category of the rule.
 class Category {
   /// Id field.
-  String id;
+  final String id;
 
   /// Name field.
-  String name;
+  final String name;
 
   /// Creates a new instance of the [Category] class.
   Category({

@@ -3,19 +3,19 @@ import 'package:languagetool_textfield/beans/category.dart';
 /// Object that stores information about the rule (description, type, etc).
 class Rule {
   /// Id (i.e.UPPERCASE_SENTENCE_START).
-  String id;
+  final String id;
 
   /// The description in the set language.
-  String description;
+  final String description;
 
   /// The type of the error (spelling, typographical, etc).
-  String issueType;
+  final String issueType;
 
   /// The category of the rule.
-  Category category;
+  final Category category;
 
   /// The subscription status of the rule.
-  bool isPremium;
+  final bool isPremium;
 
   /// Creates a new instance of the [Rule] class.
   Rule({

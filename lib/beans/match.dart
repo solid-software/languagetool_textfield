@@ -6,37 +6,37 @@ import 'package:languagetool_textfield/beans/type.dart';
 /// Object that stores information about matched mistakes.
 class Match {
   /// The message about the error.
-  String message;
+  final String message;
 
   /// Shortened message (may be empty).
-  String shortMessage;
+  final String shortMessage;
 
   /// List of possible replacements
-  List<Replacement> replacements;
+  final List<Replacement> replacements;
 
   /// Offset to the word.
-  int offset;
+  final int offset;
 
   /// Length of the word.
-  int length;
+  final int length;
 
   /// Context of the mistake.
-  Context context;
+  final Context context;
 
   /// The whole sentence.
-  String sentence;
+  final String sentence;
 
   /// The type of the mistake.
-  Type type;
+  final Type type;
 
   /// The mistake's rule.
-  Rule rule;
+  final Rule rule;
 
   /// Flag that indicates if the mistake is because sentence is incomplete.
-  bool ignoreForIncompleteSentence;
+  final bool ignoreForIncompleteSentence;
 
   /// Context for sure match (i.e. -1, 0, 1, etc).
-  int contextForSureMatch;
+  final int contextForSureMatch;
 
   /// Creates a new instance of the [Match] class.
   Match({
