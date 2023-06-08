@@ -123,7 +123,7 @@ class ColoredTextEditingController extends TextEditingController {
           showPopup?.call(context, mistake, details.globalPosition, this);
         };
 
-      // /// Adding recognizer to the list for future disposing
+      /// Adding recognizer to the list for future disposing
       _recognizers.add(_onTap);
 
       /// Mistake highlighted TextSpan

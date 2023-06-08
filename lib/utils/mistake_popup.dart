@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/domain/typedefs.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
+import 'package:languagetool_textfield/utils/extensions/string_extension.dart';
 
 /// Builder class that uses specified [popupRenderer] and [mistakeBuilder]
 /// to create mistake popup
@@ -72,6 +74,9 @@ class LanguageToolMistakePopup extends StatelessWidget {
   /// Vertical popup margin.
   final double verticalMargin;
 
+  /// Mistake suggestion style.
+  final ButtonStyle? mistakeStyle;
+
   /// [LanguageToolMistakePopup] constructor
   const LanguageToolMistakePopup({
     super.key,
@@ -83,14 +88,19 @@ class LanguageToolMistakePopup extends StatelessWidget {
     this.maxHeight = double.infinity,
     this.horizontalMargin = _defaultHorizontalMargin,
     this.verticalMargin = _defaultVerticalMargin,
+    this.mistakeStyle,
   });
 
   @override
   Widget build(BuildContext context) {
     const _borderRadius = 10.0;
-    const _mistakeNameFontSize = 13.0;
-    const _mistakeMessageFontSize = 15.0;
-    const _replacementButtonsSpacing = 10.0;
+    const _mistakeNameFontSize = 11.0;
+    const _mistakeMessageFontSize = 13.0;
+    const _replacementButtonsSpacing = 4.0;
+    const _replacementButtonsSpacingMobile = -6.0;
+    const _paddingBetweenTitle = 14.0;
+    const _titleLetterSpacing = 0.56;
+    const _dismissSplashRadius = 2.0;
 
     const padding = 10.0;
 
@@ -106,58 +116,102 @@ class LanguageToolMistakePopup extends StatelessWidget {
           horizontal: horizontalMargin,
           vertical: verticalMargin,
         ),
-        padding: const EdgeInsets.all(padding),
         decoration: BoxDecoration(
-          boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 20)],
-          color: Colors.white,
+          color: const Color.fromRGBO(241, 243, 248, 1.0),
           borderRadius: BorderRadius.circular(_borderRadius),
+          boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 8)],
         ),
-        child: CustomScrollView(
-          shrinkWrap: true,
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // mistake type
-                  Text(
-                    mistake.type.name,
-                    style: TextStyle(
-                      color: Colors.grey.shade700,
-                      fontSize: _mistakeNameFontSize,
-                      fontWeight: FontWeight.w500,
+        padding: const EdgeInsets.only(
+          top: 8,
+          bottom: 4,
+          left: 4,
+          right: 4,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 4),
+                child: Row(
+                  children: [
+                    const Expanded(child: Text('Correct')),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.close,
+                        size: 12,
+                      ),
+                      constraints: const BoxConstraints(),
+                      padding: EdgeInsets.zero,
+                      splashRadius: _dismissSplashRadius,
+                      onPressed: _dismissDialog,
                     ),
-                  ),
-                  const SizedBox(height: padding),
-
-                  // mistake message
-                  Text(
-                    mistake.message,
-                    style: const TextStyle(fontSize: _mistakeMessageFontSize),
-                  ),
-                  const SizedBox(height: padding),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SliverList.builder(
-              itemCount: mistake.replacements.length,
-              itemBuilder: (context, index) {
-                final replacement = mistake.replacements[index];
-
-                return Padding(
-                  padding: const EdgeInsets.all(_replacementButtonsSpacing / 2),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      controller.replaceMistake(mistake, replacement);
-                      popupRenderer.dismiss();
-                    },
-                    child: Text(replacement),
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.all(padding),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(_borderRadius),
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: _paddingBetweenTitle,
+                        ),
+                        child: Text(
+                          mistake.type.name.capitalize(),
+                          style: TextStyle(
+                            color: Colors.grey.shade700,
+                            fontSize: _mistakeNameFontSize,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: _titleLetterSpacing,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: padding),
+                        child: Text(
+                          mistake.message,
+                          style: const TextStyle(
+                            fontSize: _mistakeMessageFontSize,
+                          ),
+                        ),
+                      ),
+                      Wrap(
+                        spacing: _replacementButtonsSpacing,
+                        runSpacing: kIsWeb
+                            ? _replacementButtonsSpacing
+                            : _replacementButtonsSpacingMobile,
+                        children: mistake.replacements
+                            .map(
+                              (replacement) => ElevatedButton(
+                                onPressed: () => _fixTheMistake(replacement),
+                                style: mistakeStyle ??
+                                    ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      minimumSize: const Size(40, 36),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                    ),
+                                child: Text(replacement),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
-          ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -170,5 +224,17 @@ class LanguageToolMistakePopup extends StatelessWidget {
     final availableSpaceTop = mistakePosition.dy;
 
     return min(max(availableSpaceBottom, availableSpaceTop), maxHeight);
+  }
+
+  void _dismissDialog() {
+    popupRenderer.dismiss();
+  }
+
+  void _fixTheMistake(String replacement) {
+    controller.replaceMistake(
+      mistake,
+      replacement,
+    );
+    _dismissDialog();
   }
 }
