@@ -132,21 +132,23 @@ class LanguageToolMistakePopup extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  const SizedBox(width: 2),
-                  const Expanded(child: Text('Correct')),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.close,
-                      size: 12,
+              Padding(
+                padding: const EdgeInsets.only(left: 4),
+                child: Row(
+                  children: [
+                    const Expanded(child: Text('Correct')),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.close,
+                        size: 12,
+                      ),
+                      constraints: const BoxConstraints(),
+                      padding: EdgeInsets.zero,
+                      splashRadius: _dismissSplashRadius,
+                      onPressed: _dismissDialog,
                     ),
-                    constraints: const BoxConstraints(),
-                    padding: EdgeInsets.zero,
-                    splashRadius: _dismissSplashRadius,
-                    onPressed: _dismissDialog,
-                  ),
-                ],
+                  ],
+                ),
               ),
               Container(
                 margin: const EdgeInsets.only(top: 8),
