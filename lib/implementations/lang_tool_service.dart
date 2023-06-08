@@ -1,5 +1,5 @@
-import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/client/language_tool_client.dart';
+import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:languagetool_textfield/domain/writing_mistake.dart';

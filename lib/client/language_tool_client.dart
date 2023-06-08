@@ -17,20 +17,19 @@ class LanguageToolClient {
     'Accept': 'application/json',
   };
 
-  /// A language code.
-  final String language;
-
   /// Constructor for [LanguageToolClient].
-  LanguageToolClient({
-    this.language = 'auto',
-  });
+  LanguageToolClient();
 
   /// Checks the errors in text.
-  Future<List<WritingMistake>> check(String text) async {
+  Future<List<WritingMistake>> check(
+    String text, {
+    String language = 'auto',
+  }) async {
     final result = await http.post(
       Uri.https(_url, 'v2/check'),
       headers: _headers,
-      body: _getBodyForCheckRequest(text),
+      body: 'text=${text.replaceAll(' ', '%20')}&language=$language&'
+          'enabledOnly=false&level=default',
     );
 
     final languageToolAnswer = LanguageToolRaw.fromJson(
@@ -66,12 +65,5 @@ class LanguageToolClient {
     }
 
     return result;
-  }
-
-  /// Get the body of the request.
-  String _getBodyForCheckRequest(String uncheckedText) {
-    final text = uncheckedText.replaceAll(' ', '%20');
-
-    return 'text=$text&language=$language&enabledOnly=false&level=default';
   }
 }
