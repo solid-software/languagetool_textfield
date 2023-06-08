@@ -12,9 +12,4 @@ class Replacement {
   factory Replacement.fromJson(Map<String, dynamic> json) => Replacement(
         value: json['value'] as String,
       );
-
-  /// Get json from [Replacement].
-  Map<String, dynamic> toJson() => {
-        'value': value,
-      };
 }

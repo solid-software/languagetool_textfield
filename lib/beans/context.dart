@@ -23,11 +23,4 @@ class Context {
         offset: json['offset'] as int,
         length: json['length'] as int,
       );
-
-  /// Get json from [Context].
-  Map<String, dynamic> toJson() => {
-        'text': text,
-        'offset': offset,
-        'length': length,
-      };
 }

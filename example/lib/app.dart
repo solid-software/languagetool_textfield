@@ -11,7 +11,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  /// Initialize LanguageTool
+  /// Initialize LanguageToolClient
   static final LanguageToolClient _languageTool = LanguageToolClient();
 
   /// Initialize DebounceLangToolService

@@ -17,10 +17,4 @@ class Category {
         id: json['id'] as String,
         name: json['name'] as String,
       );
-
-  /// Get json from [Category].
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-      };
 }
