@@ -56,15 +56,7 @@ class ColoredTextEditingController extends TextEditingController {
     );
 
     return TextSpan(
-      children: [
-        ...formattedTextSpans.toList(),
-
-        /// Add an empty symbol, so that the last entered word's tappable area
-        /// doesn't take all available space.
-        const TextSpan(
-          text: '\u2800',
-        ),
-      ],
+      children: formattedTextSpans.toList(),
     );
   }
 
@@ -155,9 +147,13 @@ class ColoredTextEditingController extends TextEditingController {
       currentOffset = min(mistake.endOffset, text.length);
     }
 
+    final textAfterMistake = text.substring(currentOffset);
+
     /// TextSpan after mistake
     yield TextSpan(
-      text: text.substring(currentOffset),
+      // If the last item is empty TextSpan (or no TextSpan), the tappable
+      // area is messed up.
+      text: textAfterMistake.isEmpty ? ' ' : textAfterMistake,
       style: style,
     );
   }
