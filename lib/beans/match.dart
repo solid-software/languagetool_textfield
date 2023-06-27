@@ -1,4 +1,4 @@
-import 'package:languagetool_textfield/beans/context.dart';
+import 'package:languagetool_textfield/beans/mistake_context.dart';
 import 'package:languagetool_textfield/beans/replacement.dart';
 import 'package:languagetool_textfield/beans/rule.dart';
 
@@ -20,7 +20,7 @@ class Match {
   final int length;
 
   /// Context of the mistake.
-  final Context context;
+  final MistakeContext context;
 
   /// The whole sentence.
   final String sentence;
@@ -59,7 +59,8 @@ class Match {
             .toList(),
         offset: json['offset'] as int,
         length: json['length'] as int,
-        context: Context.fromJson(json['context'] as Map<String, dynamic>),
+        context:
+            MistakeContext.fromJson(json['context'] as Map<String, dynamic>),
         sentence: json['sentence'] as String,
         rule: Rule.fromJson(json['rule'] as Map<String, dynamic>),
         ignoreForIncompleteSentence:

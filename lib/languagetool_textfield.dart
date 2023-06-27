@@ -1,7 +1,7 @@
 library languagetool_textfield;
 
 export 'beans/category.dart';
-export 'beans/context.dart';
+export 'beans/mistake_context.dart';
 export 'beans/language_tool_raw.dart';
 export 'beans/match.dart';
 export 'beans/replacement.dart';

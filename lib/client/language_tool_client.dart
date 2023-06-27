@@ -25,15 +25,21 @@ class LanguageToolClient {
     String text, {
     String language = 'auto',
   }) async {
+    final encodedText = Uri.encodeQueryComponent(text);
+    final encodedLanguage = Uri.encodeQueryComponent(language);
+
     final result = await http.post(
-      Uri.https(_url, 'v2/check'),
+      Uri.https(_url, 'v2/check', {
+        'text': encodedText,
+        'language': encodedLanguage,
+        'enabledOnly': 'false',
+        'level': 'default',
+      }),
       headers: _headers,
-      body: 'text=${text.replaceAll(' ', '%20')}&language=$language&'
-          'enabledOnly=false&level=default',
     );
 
     final languageToolAnswer = LanguageToolRaw.fromJson(
-      json.decode(utf8.decode(result.bodyBytes)) as Map<String, dynamic>,
+      json.decode(result.body) as Map<String, dynamic>,
     );
 
     return _parseRawAnswer(languageToolAnswer);

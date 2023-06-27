@@ -1,4 +1,4 @@
-import 'package:languagetool_textfield/beans/context.dart';
+import 'package:languagetool_textfield/beans/mistake_context.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 
 /// Object that stores information about a single writing mistake.
@@ -28,7 +28,7 @@ class WritingMistake {
 
   /// Context of the error,
   /// i.e. the error and some text to the left and to the left.
-  final Context context;
+  final MistakeContext context;
 
   /// Constructor for [WritingMistake].
   WritingMistake({
@@ -51,7 +51,7 @@ class WritingMistake {
     required String message,
     required List<String> replacements,
     required String shortMessage,
-    required Context context,
+    required MistakeContext context,
   }) {
     return WritingMistake(
       offset: offset,
