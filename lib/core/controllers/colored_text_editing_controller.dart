@@ -121,6 +121,7 @@ class ColoredTextEditingController extends TextEditingController {
       final _onTap = TapGestureRecognizer()
         ..onTapDown = (details) {
           showPopup?.call(context, mistake, details.globalPosition, this);
+          _setCursorOnMistake(context, details: details, style: style);
         };
 
       /// Adding recognizer to the list for future disposing
@@ -128,20 +129,24 @@ class ColoredTextEditingController extends TextEditingController {
 
       /// Mistake highlighted TextSpan
       yield TextSpan(
-        text: text.substring(
-          mistake.offset,
-          min(mistake.endOffset, text.length),
-        ),
-        mouseCursor: MaterialStateMouseCursor.clickable,
-        style: style?.copyWith(
-          backgroundColor: mistakeColor.withOpacity(
-            highlightStyle.backgroundOpacity,
+        children: [
+          TextSpan(
+            text: text.substring(
+              mistake.offset,
+              min(mistake.endOffset, text.length),
+            ),
+            mouseCursor: MaterialStateMouseCursor.clickable,
+            style: style?.copyWith(
+              backgroundColor: mistakeColor.withOpacity(
+                highlightStyle.backgroundOpacity,
+              ),
+              decoration: highlightStyle.decoration,
+              decorationColor: mistakeColor,
+              decorationThickness: highlightStyle.mistakeLineThickness,
+            ),
+            recognizer: _onTap,
           ),
-          decoration: highlightStyle.decoration,
-          decorationColor: mistakeColor,
-          decorationThickness: highlightStyle.mistakeLineThickness,
-        ),
-        recognizer: _onTap,
+        ],
       );
 
       currentOffset = min(mistake.endOffset, text.length);
@@ -176,5 +181,25 @@ class ColoredTextEditingController extends TextEditingController {
       case MistakeType.other:
         return highlightStyle.otherMistakeColor;
     }
+  }
+
+  void _setCursorOnMistake(
+    BuildContext context, {
+    required TapDownDetails details,
+    TextStyle? style,
+  }) {
+    final renderBox = context.findRenderObject() as RenderBox?;
+    final localOffset = renderBox?.globalToLocal(details.globalPosition);
+
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+
+    final offset =
+        textPainter.getPositionForOffset(localOffset ?? Offset.zero).offset;
+
+    selection = TextSelection.collapsed(offset: offset);
   }
 }
