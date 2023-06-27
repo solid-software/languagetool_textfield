@@ -82,17 +82,17 @@ class ColoredTextEditingController extends TextEditingController {
     ///so this check avoid cleaning Mistake list when text wasn't really changed
     if (newText == text) return;
 
-    _mistakes.clear();
+    final previousMistakes = _mistakes;
+
+    final mistakesWrapper = await languageCheckService.findMistakes(newText);
+    final mistakes = mistakesWrapper?.result();
+    _fetchError = mistakesWrapper?.error;
+    _mistakes = mistakes ?? previousMistakes;
+
     for (final recognizer in _recognizers) {
       recognizer.dispose();
     }
     _recognizers.clear();
-
-    final mistakesWrapper = await languageCheckService.findMistakes(newText);
-
-    _mistakes =
-        mistakesWrapper.hasResult ? mistakesWrapper.result().toList() : [];
-    _fetchError = mistakesWrapper.error;
 
     notifyListeners();
   }
@@ -105,6 +105,9 @@ class ColoredTextEditingController extends TextEditingController {
     int currentOffset = 0; // enter index
 
     for (final Mistake mistake in _mistakes) {
+      final mistakeEndOffset = min(mistake.endOffset, text.length);
+      if (mistake.offset > mistakeEndOffset) continue;
+
       /// TextSpan before mistake
       yield TextSpan(
         text: text.substring(
@@ -130,10 +133,7 @@ class ColoredTextEditingController extends TextEditingController {
       yield TextSpan(
         children: [
           TextSpan(
-            text: text.substring(
-              mistake.offset,
-              min(mistake.endOffset, text.length),
-            ),
+            text: text.substring(mistake.offset, mistakeEndOffset),
             mouseCursor: MaterialStateMouseCursor.clickable,
             style: style?.copyWith(
               backgroundColor: mistakeColor.withOpacity(
