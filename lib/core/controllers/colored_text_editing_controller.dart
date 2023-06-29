@@ -167,7 +167,6 @@ class ColoredTextEditingController extends TextEditingController {
   List<Mistake> _filterMistakesOnChanged(String newText) {
     final newMistakes = <Mistake>[];
     for (final mistake in _mistakes) {
-      if (selection.start == 0 && selection.end == text.length) continue;
       if (selection.start <= mistake.offset &&
           selection.end >= mistake.endOffset) {
         continue;
