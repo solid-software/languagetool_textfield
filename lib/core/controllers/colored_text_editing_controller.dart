@@ -7,7 +7,6 @@ import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:languagetool_textfield/domain/typedefs.dart';
-import 'package:languagetool_textfield/utils/debouncer.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -21,11 +20,11 @@ class ColoredTextEditingController extends TextEditingController {
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
 
+  // Declare a flag to track ongoing language check requests
+  int _lastRequestId = 0;
+
   /// List of that is used to dispose recognizers after mistakes rebuilt
   final List<TapGestureRecognizer> _recognizers = [];
-
-  /// Create a debouncer instance with a debounce duration of 1200 milliseconds
-  final _debouncer = Debouncer(milliseconds: 1200);
 
   /// Callback that will be executed after mistake clicked
   ShowPopupCallback? showPopup;
@@ -96,21 +95,26 @@ class ColoredTextEditingController extends TextEditingController {
     }
     _recognizers.clear();
 
-    // Run the specified code block using the debouncer instance
-    _debouncer.run(() {
-      // Find mistakes in the new text using the language check service
-      languageCheckService.findMistakes(newText).then((value) {
-        // Retrieve the result and error information from the MistakesWrapper
-        final mistakesWrapper = value;
-        final mistakes = mistakesWrapper?.result();
-        _fetchError = mistakesWrapper?.error;
+    // Set the flag to indicate an ongoing request
+    // Increment the request ID to track the most recent request
+    final requestId = ++_lastRequestId;
 
-        // Update the mistakes list with the new mistakes
-        // or fallback to filteredMistakes
-        _mistakes = mistakes ?? filteredMistakes;
+    // Find mistakes in the new text using the language check service
+    languageCheckService.findMistakes(newText).then((value) {
+      // Retrieve the result and error information from the MistakesWrapper
+      final mistakesWrapper = value;
+      final mistakes = mistakesWrapper?.result();
+      _fetchError = mistakesWrapper?.error;
+      // Check if a newer request has been initiated during the API call
 
-        notifyListeners();
-      });
+      // Check if a newer request has been initiated during the API call
+      if (requestId != _lastRequestId) return;
+
+      // Update the mistakes list with the new mistakes
+      // or fallback to filteredMistakes
+      _mistakes = mistakes ?? filteredMistakes;
+
+      notifyListeners();
     });
   }
 
@@ -225,7 +229,7 @@ class ColoredTextEditingController extends TextEditingController {
       // than or equal to the original text
       else {
         // Skip the mistake if the selection is within the mistake boundaries
-        if (selection.base.offset > mistake.offset &&
+        if (selection.base.offset >= mistake.offset &&
             selection.base.offset <= mistake.endOffset) {
           continue;
         } else if (selection.end > mistake.offset &&
