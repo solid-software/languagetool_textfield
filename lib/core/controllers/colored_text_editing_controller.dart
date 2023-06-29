@@ -24,7 +24,7 @@ class ColoredTextEditingController extends TextEditingController {
   /// List of that is used to dispose recognizers after mistakes rebuilt
   final List<TapGestureRecognizer> _recognizers = [];
 
-  final _debouncer = Debouncer(milliseconds: 1000);
+  final _debouncer = Debouncer(milliseconds: 500);
 
   /// Callback that will be executed after mistake clicked
   ShowPopupCallback? showPopup;
@@ -84,7 +84,7 @@ class ColoredTextEditingController extends TextEditingController {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
     if (newText == text) return;
-    
+
     final filteredMistakes = _filterMistakesOnChanged(newText);
     _mistakes = filteredMistakes;
 
@@ -92,8 +92,8 @@ class ColoredTextEditingController extends TextEditingController {
       recognizer.dispose();
     }
     _recognizers.clear();
-    languageCheckService.findMistakes(newText).then((value) {
-      _debouncer.run(() {
+    _debouncer.run(() {
+      languageCheckService.findMistakes(newText).then((value) {
         final mistakesWrapper = value;
         final mistakes = mistakesWrapper?.result();
         _fetchError = mistakesWrapper?.error;
