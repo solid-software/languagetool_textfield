@@ -84,62 +84,9 @@ class ColoredTextEditingController extends TextEditingController {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
     if (newText == text) return;
-
-    final newMistakes = <Mistake>[];
-    final difference = newText.length - text.length;
-    for (final mistake in _mistakes) {
-      if (mistake.type == MistakeType.other) {
-        if (newText.length < text.length) {
-          if (selection.base.offset <= mistake.offset) {
-            newMistakes.add(
-              Mistake(
-                message: mistake.message,
-                type: mistake.type,
-                offset: mistake.offset + difference,
-                length: mistake.length,
-                replacements: mistake.replacements,
-              ),
-            );
-          } else if (selection.base.offset > mistake.offset &&
-              selection.base.offset <= mistake.endOffset) {
-            newMistakes.add(
-              Mistake(
-                message: mistake.message,
-                type: mistake.type,
-                offset: mistake.offset,
-                length: mistake.length + difference,
-                replacements: mistake.replacements,
-              ),
-            );
-          }
-        }
-      } else if (newText.length > text.length &&
-          selection.base.offset <= mistake.offset) {
-        newMistakes.add(
-          Mistake(
-            message: mistake.message,
-            type: mistake.type,
-            offset: mistake.offset + difference,
-            length: mistake.length,
-            replacements: mistake.replacements,
-          ),
-        );
-      } else if (newText.length < text.length &&
-          selection.base.offset <= mistake.offset) {
-        newMistakes.add(
-          Mistake(
-            message: mistake.message,
-            type: mistake.type,
-            offset: mistake.offset == 0 ? 0 : mistake.offset - 1,
-            length: mistake.length,
-            replacements: mistake.replacements,
-          ),
-        );
-      } else {
-        newMistakes.add(mistake);
-      }
-    }
-    _mistakes = newMistakes;
+    
+    final filteredMistakes = _filterMistakesOnChanged(newText);
+    _mistakes = filteredMistakes;
 
     for (final recognizer in _recognizers) {
       recognizer.dispose();
@@ -150,7 +97,7 @@ class ColoredTextEditingController extends TextEditingController {
         final mistakesWrapper = value;
         final mistakes = mistakesWrapper?.result();
         _fetchError = mistakesWrapper?.error;
-        _mistakes = mistakes ?? newMistakes;
+        _mistakes = mistakes ?? filteredMistakes;
         notifyListeners();
       });
     });
@@ -215,6 +162,66 @@ class ColoredTextEditingController extends TextEditingController {
       text: text.substring(currentOffset),
       style: style,
     );
+  }
+
+  List<Mistake> _filterMistakesOnChanged(String newText) {
+    final newMistakes = <Mistake>[];
+    for (final mistake in _mistakes) {
+      if (selection.start == 0 && selection.end == text.length) continue;
+      if (selection.start <= mistake.offset &&
+          selection.end >= mistake.endOffset) {
+        continue;
+      }
+
+      final lengthDiscrepancy = newText.length - text.length;
+      final newOffset = mistake.offset + lengthDiscrepancy;
+
+      if (newText.length > text.length) {
+        if (selection.base.offset > mistake.offset &&
+            selection.base.offset < mistake.endOffset) {
+          continue;
+        }
+        if (selection.base.offset <= mistake.offset) {
+          newMistakes.add(
+            Mistake(
+              message: mistake.message,
+              type: mistake.type,
+              offset: newOffset,
+              length: mistake.length,
+              replacements: mistake.replacements,
+            ),
+          );
+          continue;
+        }
+      } else {
+        if (selection.base.offset > mistake.offset &&
+            selection.base.offset <= mistake.endOffset) {
+          continue;
+        } else if (selection.end > mistake.offset &&
+            selection.end <= mistake.endOffset) {
+          continue;
+        } else if (selection.start > mistake.offset &&
+            selection.start <= mistake.endOffset) {
+          continue;
+        }
+
+        if (selection.base.offset <= mistake.offset) {
+          newMistakes.add(
+            Mistake(
+              message: mistake.message,
+              type: mistake.type,
+              offset: newOffset,
+              length: mistake.length,
+              replacements: mistake.replacements,
+            ),
+          );
+          continue;
+        }
+      }
+      newMistakes.add(mistake);
+    }
+
+    return newMistakes;
   }
 
   /// Returns color for mistake TextSpan style
