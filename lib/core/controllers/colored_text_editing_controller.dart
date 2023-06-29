@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/gestures.dart';
@@ -22,6 +23,8 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// List of that is used to dispose recognizers after mistakes rebuilt
   final List<TapGestureRecognizer> _recognizers = [];
+
+  final _debouncer = Debouncer(milliseconds: 1000);
 
   /// Callback that will be executed after mistake clicked
   ShowPopupCallback? showPopup;
@@ -77,24 +80,80 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
   /// via API
-  Future<void> _handleTextChange(String newText) async {
+  void _handleTextChange(String newText) {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
     if (newText == text) return;
 
-    final previousMistakes = _mistakes;
-
-    final mistakesWrapper = await languageCheckService.findMistakes(newText);
-    final mistakes = mistakesWrapper?.result();
-    _fetchError = mistakesWrapper?.error;
-    _mistakes = mistakes ?? previousMistakes;
+    final newMistakes = <Mistake>[];
+    final difference = newText.length - text.length;
+    for (final mistake in _mistakes) {
+      if (mistake.type == MistakeType.other) {
+        if (newText.length < text.length) {
+          if (selection.base.offset <= mistake.offset) {
+            newMistakes.add(
+              Mistake(
+                message: mistake.message,
+                type: mistake.type,
+                offset: mistake.offset + difference,
+                length: mistake.length,
+                replacements: mistake.replacements,
+              ),
+            );
+          } else if (selection.base.offset > mistake.offset &&
+              selection.base.offset <= mistake.endOffset) {
+            newMistakes.add(
+              Mistake(
+                message: mistake.message,
+                type: mistake.type,
+                offset: mistake.offset,
+                length: mistake.length + difference,
+                replacements: mistake.replacements,
+              ),
+            );
+          }
+        }
+      } else if (newText.length > text.length &&
+          selection.base.offset <= mistake.offset) {
+        newMistakes.add(
+          Mistake(
+            message: mistake.message,
+            type: mistake.type,
+            offset: mistake.offset + difference,
+            length: mistake.length,
+            replacements: mistake.replacements,
+          ),
+        );
+      } else if (newText.length < text.length &&
+          selection.base.offset <= mistake.offset) {
+        newMistakes.add(
+          Mistake(
+            message: mistake.message,
+            type: mistake.type,
+            offset: mistake.offset == 0 ? 0 : mistake.offset - 1,
+            length: mistake.length,
+            replacements: mistake.replacements,
+          ),
+        );
+      } else {
+        newMistakes.add(mistake);
+      }
+    }
+    _mistakes = newMistakes;
 
     for (final recognizer in _recognizers) {
       recognizer.dispose();
     }
     _recognizers.clear();
-
-    notifyListeners();
+    languageCheckService.findMistakes(newText).then((value) {
+      _debouncer.run(() {
+        final mistakesWrapper = value;
+        final mistakes = mistakesWrapper?.result();
+        _fetchError = mistakesWrapper?.error;
+        _mistakes = mistakes ?? newMistakes;
+        notifyListeners();
+      });
+    });
   }
 
   /// Generator function to create TextSpan instances
@@ -176,5 +235,20 @@ class ColoredTextEditingController extends TextEditingController {
       case MistakeType.other:
         return highlightStyle.otherMistakeColor;
     }
+  }
+}
+
+class Debouncer {
+  final int milliseconds;
+
+  Timer? _timer;
+
+  Debouncer({required this.milliseconds});
+
+  void run(VoidCallback action) {
+    _timer?.cancel();
+    _timer = Timer(Duration(milliseconds: milliseconds), () {
+      action.call();
+    });
   }
 }
