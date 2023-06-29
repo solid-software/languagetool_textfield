@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/gestures.dart';
@@ -8,6 +7,7 @@ import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:languagetool_textfield/domain/typedefs.dart';
+import 'package:languagetool_textfield/utils/debouncer.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -24,7 +24,8 @@ class ColoredTextEditingController extends TextEditingController {
   /// List of that is used to dispose recognizers after mistakes rebuilt
   final List<TapGestureRecognizer> _recognizers = [];
 
-  final _debouncer = Debouncer(milliseconds: 500);
+  /// Create a debouncer instance with a debounce duration of 1200 milliseconds
+  final _debouncer = Debouncer(milliseconds: 1200);
 
   /// Callback that will be executed after mistake clicked
   ShowPopupCallback? showPopup;
@@ -71,8 +72,10 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Replaces mistake with given replacement
   void replaceMistake(Mistake mistake, String replacement) {
+    final mistakes = List<Mistake>.from(_mistakes);
+    mistakes.remove(mistake);
+    _mistakes = mistakes;
     text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
-    _mistakes.remove(mistake);
     selection = TextSelection.fromPosition(
       TextPosition(offset: mistake.offset + replacement.length),
     );
@@ -92,12 +95,20 @@ class ColoredTextEditingController extends TextEditingController {
       recognizer.dispose();
     }
     _recognizers.clear();
+
+    // Run the specified code block using the debouncer instance
     _debouncer.run(() {
+      // Find mistakes in the new text using the language check service
       languageCheckService.findMistakes(newText).then((value) {
+        // Retrieve the result and error information from the MistakesWrapper
         final mistakesWrapper = value;
         final mistakes = mistakesWrapper?.result();
         _fetchError = mistakesWrapper?.error;
+
+        // Update the mistakes list with the new mistakes
+        // or fallback to filteredMistakes
         _mistakes = mistakes ?? filteredMistakes;
+
         notifyListeners();
       });
     });
@@ -164,23 +175,40 @@ class ColoredTextEditingController extends TextEditingController {
     );
   }
 
+  /// Filters the list of mistakes based on the changes 
+  /// in the text when it is changed.
   List<Mistake> _filterMistakesOnChanged(String newText) {
     final newMistakes = <Mistake>[];
+
+    // Iterate through the existing mistakes 
+    // and filter them based on the selection and text changes
     for (final mistake in _mistakes) {
+      // Skip the mistake if the selection encompasses the entire mistake
       if (selection.start <= mistake.offset &&
           selection.end >= mistake.endOffset) {
         continue;
       }
 
+      // Calculate the discrepancy in length between the new text 
+      // and the original text
       final lengthDiscrepancy = newText.length - text.length;
+
+      // Calculate the new offset for the mistake based 
+      // on the length discrepancy
       final newOffset = mistake.offset + lengthDiscrepancy;
 
+      // Handle cases where the new text is longer than the original text
       if (newText.length > text.length) {
+        // Skip the mistake if the selection is within the mistake boundaries
         if (selection.base.offset > mistake.offset &&
             selection.base.offset < mistake.endOffset) {
           continue;
+        } else if (selection.base.offset == mistake.offset ||
+            selection.base.offset == mistake.endOffset) {
+          continue;
         }
-        if (selection.base.offset <= mistake.offset) {
+
+        if (selection.base.offset < mistake.offset) {
           newMistakes.add(
             Mistake(
               message: mistake.message,
@@ -192,7 +220,11 @@ class ColoredTextEditingController extends TextEditingController {
           );
           continue;
         }
-      } else {
+      }
+      // Handle cases where the new text is shorter 
+      // than or equal to the original text
+      else {
+        // Skip the mistake if the selection is within the mistake boundaries
         if (selection.base.offset > mistake.offset &&
             selection.base.offset <= mistake.endOffset) {
           continue;
@@ -217,9 +249,13 @@ class ColoredTextEditingController extends TextEditingController {
           continue;
         }
       }
+
+      // If the mistake doesn't meet any of the skipping conditions, 
+      // add it to the new list
       newMistakes.add(mistake);
     }
 
+    // Return the filtered list of mistakes
     return newMistakes;
   }
 
@@ -241,20 +277,5 @@ class ColoredTextEditingController extends TextEditingController {
       case MistakeType.other:
         return highlightStyle.otherMistakeColor;
     }
-  }
-}
-
-class Debouncer {
-  final int milliseconds;
-
-  Timer? _timer;
-
-  Debouncer({required this.milliseconds});
-
-  void run(VoidCallback action) {
-    _timer?.cancel();
-    _timer = Timer(Duration(milliseconds: milliseconds), () {
-      action.call();
-    });
   }
 }
