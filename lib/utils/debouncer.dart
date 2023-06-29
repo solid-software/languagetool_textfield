@@ -19,7 +19,7 @@ class Debouncer {
     // Cancel any previously scheduled timer
     _timer?.cancel();
 
-    // Schedule a new timer that executes the [action] 
+    // Schedule a new timer that executes the [action]
     // after the specified duration
     _timer = Timer(Duration(milliseconds: milliseconds), () {
       action.call();

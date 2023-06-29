@@ -175,12 +175,12 @@ class ColoredTextEditingController extends TextEditingController {
     );
   }
 
-  /// Filters the list of mistakes based on the changes 
+  /// Filters the list of mistakes based on the changes
   /// in the text when it is changed.
   List<Mistake> _filterMistakesOnChanged(String newText) {
     final newMistakes = <Mistake>[];
 
-    // Iterate through the existing mistakes 
+    // Iterate through the existing mistakes
     // and filter them based on the selection and text changes
     for (final mistake in _mistakes) {
       // Skip the mistake if the selection encompasses the entire mistake
@@ -189,11 +189,11 @@ class ColoredTextEditingController extends TextEditingController {
         continue;
       }
 
-      // Calculate the discrepancy in length between the new text 
+      // Calculate the discrepancy in length between the new text
       // and the original text
       final lengthDiscrepancy = newText.length - text.length;
 
-      // Calculate the new offset for the mistake based 
+      // Calculate the new offset for the mistake based
       // on the length discrepancy
       final newOffset = mistake.offset + lengthDiscrepancy;
 
@@ -221,7 +221,7 @@ class ColoredTextEditingController extends TextEditingController {
           continue;
         }
       }
-      // Handle cases where the new text is shorter 
+      // Handle cases where the new text is shorter
       // than or equal to the original text
       else {
         // Skip the mistake if the selection is within the mistake boundaries
@@ -250,7 +250,7 @@ class ColoredTextEditingController extends TextEditingController {
         }
       }
 
-      // If the mistake doesn't meet any of the skipping conditions, 
+      // If the mistake doesn't meet any of the skipping conditions,
       // add it to the new list
       newMistakes.add(mistake);
     }
