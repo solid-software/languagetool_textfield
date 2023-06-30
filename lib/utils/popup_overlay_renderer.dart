@@ -12,13 +12,17 @@ class PopupOverlayRenderer {
   /// Render overlay entry on the screen with dismiss logic
   OverlayEntry render(
     BuildContext context, {
+    ValueChanged<TapDownDetails>? onClose,
     required Offset position,
     required WidgetBuilder popupBuilder,
   }) {
     final _createdEntry = OverlayEntry(
       builder: (context) => GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: dismiss,
+        onTapDown: (details) {
+          dismiss();
+          onClose?.call(details);
+        },
         child: Material(
           color: Colors.transparent,
           type: MaterialType.canvas,

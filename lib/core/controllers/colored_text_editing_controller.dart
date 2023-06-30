@@ -132,7 +132,18 @@ class ColoredTextEditingController extends TextEditingController {
       /// Create a gesture recognizer for mistake
       final _onTap = TapGestureRecognizer()
         ..onTapDown = (details) {
-          popupWidget?.show(context, mistake, details.globalPosition, this);
+          popupWidget?.show(
+            context,
+            mistake: mistake,
+            popupPosition: details.globalPosition,
+            controller: this,
+            onClose: (details) {
+              focusNode?.requestFocus();
+              Future.microtask.call(() {
+                _setCursorOnMistake(context, details: details, style: style);
+              });
+            },
+          );
           if (focusNode?.hasFocus ?? false) {
             _setCursorOnMistake(context, details: details, style: style);
           } else {
