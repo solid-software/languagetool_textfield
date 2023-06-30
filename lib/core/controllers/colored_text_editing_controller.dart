@@ -77,7 +77,7 @@ class ColoredTextEditingController extends TextEditingController {
     text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
     _mistakes.remove(mistake);
     focusNode?.requestFocus();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future.microtask.call(() {
       final newOffset = mistake.offset + replacement.length;
       selection = TextSelection.fromPosition(TextPosition(offset: newOffset));
     });
@@ -133,7 +133,14 @@ class ColoredTextEditingController extends TextEditingController {
       final _onTap = TapGestureRecognizer()
         ..onTapDown = (details) {
           popupWidget?.show(context, mistake, details.globalPosition, this);
-          _setCursorOnMistake(context, details: details, style: style);
+          if (focusNode?.hasFocus ?? false) {
+            _setCursorOnMistake(context, details: details, style: style);
+          } else {
+            focusNode?.requestFocus();
+            Future.microtask.call(() {
+              _setCursorOnMistake(context, details: details, style: style);
+            });
+          }
         };
 
       /// Adding recognizer to the list for future disposing
