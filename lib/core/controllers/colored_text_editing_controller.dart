@@ -77,9 +77,10 @@ class ColoredTextEditingController extends TextEditingController {
     text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
     _mistakes.remove(mistake);
     focusNode?.requestFocus();
-
-    final newOffset = mistake.offset + replacement.length;
-    selection = TextSelection.fromPosition(TextPosition(offset: newOffset));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final newOffset = mistake.offset + replacement.length;
+      selection = TextSelection.fromPosition(TextPosition(offset: newOffset));
+    });
   }
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
