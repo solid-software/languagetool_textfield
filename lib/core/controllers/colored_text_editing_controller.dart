@@ -309,4 +309,19 @@ class ColoredTextEditingController extends TextEditingController {
     // Get the offset within the text that corresponds to the local offset
     return textPainter.getPositionForOffset(localOffset).offset;
   }
+
+  /// The `onClosePopup` function is a callback method typically used
+  /// when a popup or overlay is closed. Its purpose is to ensure a smooth user
+  /// experience by handling the behavior when the popup is dismissed
+  void onClosePopup() {
+    // Retrieve the offset of the current text selection
+    final offset = selection.base.offset;
+
+    focusNode?.requestFocus();
+
+    // Delay the execution of the following code until the next microtask
+    Future.microtask(
+      () => selection = TextSelection.collapsed(offset: offset),
+    );
+  }
 }

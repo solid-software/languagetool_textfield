@@ -140,15 +140,17 @@ class LanguageToolMistakePopup extends StatelessWidget {
                   children: [
                     const Expanded(child: Text('Correct')),
                     IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        size: 12,
-                      ),
-                      constraints: const BoxConstraints(),
-                      padding: EdgeInsets.zero,
-                      splashRadius: _dismissSplashRadius,
-                      onPressed: _dismissDialog,
-                    ),
+                        icon: const Icon(
+                          Icons.close,
+                          size: 12,
+                        ),
+                        constraints: const BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                        splashRadius: _dismissSplashRadius,
+                        onPressed: () {
+                          _dismissDialog();
+                          controller.onClosePopup();
+                        }),
                   ],
                 ),
               ),
@@ -233,10 +235,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
   }
 
   void _fixTheMistake(String replacement) {
-    controller.replaceMistake(
-      mistake,
-      replacement,
-    );
+    controller.replaceMistake(mistake, replacement);
     _dismissDialog();
   }
 }
