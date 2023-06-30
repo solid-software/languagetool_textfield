@@ -105,10 +105,10 @@ class ColoredTextEditingController extends TextEditingController {
       final mistakesWrapper = value;
       final mistakes = mistakesWrapper?.result();
       _fetchError = mistakesWrapper?.error;
-      // Check if a newer request has been initiated during the API call
 
       // Check if a newer request has been initiated during the API call
       if (requestId != _lastRequestId) return;
+      _lastRequestId = 0;
 
       // Update the mistakes list with the new mistakes
       // or fallback to filteredMistakes
