@@ -154,7 +154,7 @@ class ColoredTextEditingController extends TextEditingController {
               mistake.offset,
               min(mistake.endOffset, text.length),
             ),
-            mouseCursor: MaterialStateMouseCursor.clickable,
+            mouseCursor: MaterialStateMouseCursor.textable,
             style: style?.copyWith(
               backgroundColor: mistakeColor.withOpacity(
                 highlightStyle.backgroundOpacity,
