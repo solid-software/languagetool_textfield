@@ -133,6 +133,7 @@ class ColoredTextEditingController extends TextEditingController {
       /// Create a gesture recognizer for mistake
       final _onTap = TapGestureRecognizer()
         ..onTapDown = (details) {
+          // Show the popup widget when tapped down
           popupWidget?.show(
             context,
             mistake: mistake,
@@ -144,6 +145,8 @@ class ColoredTextEditingController extends TextEditingController {
               style: style,
             ),
           );
+
+          // Set the cursor position on the mistake
           _setCursorOnMistake(
             context,
             globalPosition: details.globalPosition,
@@ -210,27 +213,48 @@ class ColoredTextEditingController extends TextEditingController {
     }
   }
 
+  /// Sets the cursor position on a mistake within the text field based
+  /// on the provided [globalPosition].
+  ///
+  /// The [context] is used to find the render object associated
+  /// with the text field.
+  /// The [style] is an optional parameter to customize the text style.
   void _setCursorOnMistake(
     BuildContext context, {
     required Offset globalPosition,
     TextStyle? style,
   }) {
+    // Get the valid text offset based on the global position
     final offset = _getValidTextOffset(
       context,
       globalPosition: globalPosition,
       style: style,
     );
+
+    // If the offset is null, return early
     if (offset == null) return;
+
+    // Request focus on the text field
     focusNode?.requestFocus();
+
+    // Delay setting the selection to the next microtask
+    // to ensure focus is properly established
     Future.microtask.call(
       () => selection = TextSelection.collapsed(offset: offset),
     );
+
+    // Find the mistake within the text that corresponds to the offset
     final mistake = _mistakes.firstWhereOrNull(
       (e) => e.offset <= offset && offset < e.endOffset,
     );
 
+    // If no mistake is found, return early
     if (mistake == null) return;
+
+    // Close any existing popup
     _closePopup();
+
+    // Show a popup widget with the mistake details
     popupWidget?.show(
       context,
       mistake: mistake,
@@ -244,24 +268,45 @@ class ColoredTextEditingController extends TextEditingController {
     );
   }
 
+  /// Returns a valid text offset based on the provided [globalPosition]
+  /// within the text field.
+  ///
+  /// The [context] is used to find the render object associated
+  /// with the text field.
+  /// The [style] is an optional parameter to customize the text style.
+  /// Returns the offset within the text if it falls within the vertical bounds
+  /// of the text field, otherwise returns null.
   int? _getValidTextOffset(
     BuildContext context, {
     required Offset globalPosition,
     TextStyle? style,
   }) {
+    // Find the render object associated with the text field
     final renderBox = context.findRenderObject() as RenderBox?;
+
+    // Convert the global position to local offset
     final localOffset = renderBox?.globalToLocal(globalPosition);
+
+    // If local offset is null, return early
     if (localOffset == null) return null;
+
+    // Get the height of the render box (text field)
     final elementHeight = renderBox?.size.height ?? 0;
+
+    // If local offset is outside the vertical bounds of the text field,
+    // return null
     if (localOffset.dy < 0 || localOffset.dy > elementHeight) return null;
 
+    // Create a text painter to measure the text layout
     final textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       textDirection: TextDirection.ltr,
     );
 
+    // Perform the text layout
     textPainter.layout();
 
+    // Get the offset within the text that corresponds to the local offset
     return textPainter.getPositionForOffset(localOffset).offset;
   }
 }
