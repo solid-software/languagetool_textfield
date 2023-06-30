@@ -138,11 +138,17 @@ class ColoredTextEditingController extends TextEditingController {
             mistake: mistake,
             popupPosition: details.globalPosition,
             controller: this,
-            onClose: (details) {
-              _setCursorOnMistake(context, details: details, style: style);
-            },
+            onClose: (details) => _setCursorOnMistake(
+              context,
+              globalPosition: details.globalPosition,
+              style: style,
+            ),
           );
-          _setCursorOnMistake(context, details: details, style: style);
+          _setCursorOnMistake(
+            context,
+            globalPosition: details.globalPosition,
+            style: style,
+          );
         };
 
       /// Adding recognizer to the list for future disposing
@@ -206,40 +212,45 @@ class ColoredTextEditingController extends TextEditingController {
 
   void _setCursorOnMistake(
     BuildContext context, {
-    required TapDownDetails details,
+    required Offset globalPosition,
     TextStyle? style,
   }) {
-    final offset = _getValidTextOffset(context, details: details, style: style);
+    final offset = _getValidTextOffset(
+      context,
+      globalPosition: globalPosition,
+      style: style,
+    );
     if (offset == null) return;
     focusNode?.requestFocus();
-    Future.microtask.call(() {
-      selection = TextSelection.collapsed(offset: offset);
+    Future.microtask.call(
+      () => selection = TextSelection.collapsed(offset: offset),
+    );
+    final mistake = _mistakes.firstWhereOrNull(
+      (e) => e.offset <= offset && offset < e.endOffset,
+    );
 
-      final mistake = _mistakes.firstWhereOrNull(
-        (e) => e.offset <= offset && offset < e.endOffset,
-      );
-
-      if (mistake == null) return;
-      _closePopup();
-      popupWidget?.show(
+    if (mistake == null) return;
+    _closePopup();
+    popupWidget?.show(
+      context,
+      mistake: mistake,
+      popupPosition: globalPosition,
+      controller: this,
+      onClose: (details) => _setCursorOnMistake(
         context,
-        mistake: mistake,
-        popupPosition: details.globalPosition,
-        controller: this,
-        onClose: (details) {
-          _setCursorOnMistake(context, details: details, style: style);
-        },
-      );
-    });
+        globalPosition: details.globalPosition,
+        style: style,
+      ),
+    );
   }
 
   int? _getValidTextOffset(
     BuildContext context, {
-    required TapDownDetails details,
+    required Offset globalPosition,
     TextStyle? style,
   }) {
     final renderBox = context.findRenderObject() as RenderBox?;
-    final localOffset = renderBox?.globalToLocal(details.globalPosition);
+    final localOffset = renderBox?.globalToLocal(globalPosition);
     if (localOffset == null) return null;
     final elementHeight = renderBox?.size.height ?? 0;
     if (localOffset.dy < 0 || localOffset.dy > elementHeight) return null;
