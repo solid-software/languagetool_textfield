@@ -6,6 +6,7 @@ import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
+import 'package:languagetool_textfield/utils/extensions/iterable_extension.dart';
 import 'package:languagetool_textfield/utils/mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
@@ -138,20 +139,10 @@ class ColoredTextEditingController extends TextEditingController {
             popupPosition: details.globalPosition,
             controller: this,
             onClose: (details) {
-              focusNode?.requestFocus();
-              Future.microtask.call(() {
-                _setCursorOnMistake(context, details: details, style: style);
-              });
+              _setCursorOnMistake(context, details: details, style: style);
             },
           );
-          if (focusNode?.hasFocus ?? false) {
-            _setCursorOnMistake(context, details: details, style: style);
-          } else {
-            focusNode?.requestFocus();
-            Future.microtask.call(() {
-              _setCursorOnMistake(context, details: details, style: style);
-            });
-          }
+          _setCursorOnMistake(context, details: details, style: style);
         };
 
       /// Adding recognizer to the list for future disposing
@@ -218,18 +209,48 @@ class ColoredTextEditingController extends TextEditingController {
     required TapDownDetails details,
     TextStyle? style,
   }) {
+    final offset = _getValidTextOffset(context, details: details, style: style);
+    if (offset == null) return;
+    focusNode?.requestFocus();
+    Future.microtask.call(() {
+      selection = TextSelection.collapsed(offset: offset);
+
+      final mistake = _mistakes.firstWhereOrNull(
+        (e) => e.offset <= offset && offset < e.endOffset,
+      );
+
+      if (mistake == null) return;
+      _closePopup();
+      popupWidget?.show(
+        context,
+        mistake: mistake,
+        popupPosition: details.globalPosition,
+        controller: this,
+        onClose: (details) {
+          _setCursorOnMistake(context, details: details, style: style);
+        },
+      );
+    });
+  }
+
+  int? _getValidTextOffset(
+    BuildContext context, {
+    required TapDownDetails details,
+    TextStyle? style,
+  }) {
     final renderBox = context.findRenderObject() as RenderBox?;
     final localOffset = renderBox?.globalToLocal(details.globalPosition);
+    if (localOffset == null) return null;
+    final elementHeight = renderBox?.size.height ?? 0;
+    if (localOffset.dy < 0 || localOffset.dy > elementHeight) return null;
 
     final textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       textDirection: TextDirection.ltr,
     );
+
     textPainter.layout();
 
-    final offset =
-        textPainter.getPositionForOffset(localOffset ?? Offset.zero).offset;
-
-    selection = TextSelection.collapsed(offset: offset);
+    return textPainter.getPositionForOffset(localOffset).offset;
   }
 }
