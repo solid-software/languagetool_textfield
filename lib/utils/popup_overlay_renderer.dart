@@ -43,6 +43,7 @@ class PopupOverlayRenderer {
   /// Remove popup
   void dismiss() {
     _overlayEntry?.remove();
+    _overlayEntry = null;
   }
 }
 

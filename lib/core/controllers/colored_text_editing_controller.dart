@@ -6,7 +6,7 @@ import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/domain/typedefs.dart';
+import 'package:languagetool_textfield/utils/mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -23,8 +23,11 @@ class ColoredTextEditingController extends TextEditingController {
   /// List of that is used to dispose recognizers after mistakes rebuilt
   final List<TapGestureRecognizer> _recognizers = [];
 
-  /// Callback that will be executed after mistake clicked
-  ShowPopupCallback? showPopup;
+  /// Reference to the popup widget
+  MistakePopup? popupWidget;
+
+  /// Reference to the focus of the LanguageTool TextField
+  FocusNode? focusNode;
 
   Object? _fetchError;
 
@@ -42,6 +45,9 @@ class ColoredTextEditingController extends TextEditingController {
     required this.languageCheckService,
     this.highlightStyle = const HighlightStyle(),
   });
+
+  /// Close the popup widget
+  void _closePopup() => popupWidget?.popupRenderer.dismiss();
 
   /// Generates TextSpan from Mistake list
   @override
@@ -70,9 +76,10 @@ class ColoredTextEditingController extends TextEditingController {
   void replaceMistake(Mistake mistake, String replacement) {
     text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
     _mistakes.remove(mistake);
-    selection = TextSelection.fromPosition(
-      TextPosition(offset: mistake.offset + replacement.length),
-    );
+    focusNode?.requestFocus();
+
+    final newOffset = mistake.offset + replacement.length;
+    selection = TextSelection.fromPosition(TextPosition(offset: newOffset));
   }
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
@@ -81,6 +88,10 @@ class ColoredTextEditingController extends TextEditingController {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
     if (newText == text) return;
+
+    // If we have a text change and we have a popup on hold
+    // it will close the popup
+    _closePopup();
 
     _mistakes.clear();
     for (final recognizer in _recognizers) {
@@ -120,7 +131,7 @@ class ColoredTextEditingController extends TextEditingController {
       /// Create a gesture recognizer for mistake
       final _onTap = TapGestureRecognizer()
         ..onTapDown = (details) {
-          showPopup?.call(context, mistake, details.globalPosition, this);
+          popupWidget?.show(context, mistake, details.globalPosition, this);
           _setCursorOnMistake(context, details: details, style: style);
         };
 
