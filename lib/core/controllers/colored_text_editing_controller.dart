@@ -7,6 +7,7 @@ import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:languagetool_textfield/domain/typedefs.dart';
+import 'package:languagetool_textfield/utils/extensions/selection_extension.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -181,23 +182,23 @@ class ColoredTextEditingController extends TextEditingController {
     final newMistakes = <Mistake>[];
 
     for (final mistake in _mistakes) {
-      if (_isSelectionEncompassingMistake(mistake)) continue;
+      if (selection.isEncompassingMistake(mistake)) continue;
 
       final lengthDiscrepancy = newText.length - text.length;
       final newOffset = mistake.offset + lengthDiscrepancy;
       final isTextLengthIncreased = newText.length > text.length;
 
       if (isTextLengthIncreased &&
-          _isSelectionBaseWithinAndAtMistakeBoundaries(mistake)) continue;
+          selection.isBaseWithinAndAtMistakeBoundaries(mistake)) continue;
 
       if (!isTextLengthIncreased &&
-          (_isSelectionBaseWithinAndAtMistakeBoundaries(mistake) ||
-              _isSelectionWithinMistake(mistake))) continue;
+          (selection.isBaseWithinAndAtMistakeBoundaries(mistake) ||
+              selection.isWithinMistake(mistake))) continue;
 
       final isTextLengthIncreasedAndBaseBeforeMistake =
-          isTextLengthIncreased && _isSelectionBaseBeforeMistake(mistake);
+          isTextLengthIncreased && selection.isBaseBeforeMistake(mistake);
       final isTextLengthNotIncreasedAndBaseBeforeOrAtMistake =
-          !isTextLengthIncreased && _isSelectionBaseBeforeOrAtMistake(mistake);
+          !isTextLengthIncreased && selection.isBaseBeforeOrAtMistake(mistake);
 
       isTextLengthIncreasedAndBaseBeforeMistake ||
               isTextLengthNotIncreasedAndBaseBeforeOrAtMistake
@@ -227,22 +228,4 @@ class ColoredTextEditingController extends TextEditingController {
         return highlightStyle.otherMistakeColor;
     }
   }
-
-  bool _isSelectionBaseBeforeMistake(Mistake mistake) =>
-      selection.base.offset < mistake.offset;
-
-  bool _isSelectionBaseBeforeOrAtMistake(Mistake mistake) =>
-      selection.base.offset <= mistake.offset;
-
-  bool _isSelectionWithinMistake(Mistake mistake) =>
-      (selection.end > mistake.offset && selection.end <= mistake.endOffset) ||
-      (selection.start > mistake.offset &&
-          selection.start <= mistake.endOffset);
-
-  bool _isSelectionBaseWithinAndAtMistakeBoundaries(Mistake mistake) =>
-      selection.base.offset >= mistake.offset &&
-      selection.base.offset <= mistake.endOffset;
-
-  bool _isSelectionEncompassingMistake(Mistake mistake) =>
-      selection.start <= mistake.offset && selection.end >= mistake.endOffset;
 }
