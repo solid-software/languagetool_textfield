@@ -21,9 +21,6 @@ class ColoredTextEditingController extends TextEditingController {
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
 
-  // Declare a flag to track ongoing language check requests
-  int _lastRequestId = 0;
-
   /// List of that is used to dispose recognizers after mistakes rebuilt
   final List<TapGestureRecognizer> _recognizers = [];
 
@@ -96,22 +93,13 @@ class ColoredTextEditingController extends TextEditingController {
     }
     _recognizers.clear();
 
-    // Set the flag to indicate an ongoing request
-    // Increment the request ID to track the most recent request
-    final requestId = ++_lastRequestId;
-
     final mistakesWrapper = await languageCheckService.findMistakes(newText);
     final mistakes = mistakesWrapper?.result();
     _fetchError = mistakesWrapper?.error;
 
-    // Check if a newer request has been initiated during the API call
-    if (requestId != _lastRequestId) return;
-    _lastRequestId = 0;
+    if (mistakes == null) return;
 
-    // Update the mistakes list with the new mistakes
-    // or fallback to filteredMistakes
-    _mistakes = mistakes ?? filteredMistakes;
-
+    _mistakes = mistakes;
     notifyListeners();
   }
 
