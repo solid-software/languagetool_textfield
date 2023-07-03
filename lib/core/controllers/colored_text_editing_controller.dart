@@ -99,9 +99,7 @@ class ColoredTextEditingController extends TextEditingController {
     // Increment the request ID to track the most recent request
     final requestId = ++_lastRequestId;
 
-    // Find mistakes in the new text using the language check service
     languageCheckService.findMistakes(newText).then((value) {
-      // Retrieve the result and error information from the MistakesWrapper
       final mistakesWrapper = value;
       final mistakes = mistakesWrapper?.result();
       _fetchError = mistakesWrapper?.error;
