@@ -82,7 +82,7 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
   /// via API
-  void _handleTextChange(String newText) {
+  Future<void> _handleTextChange(String newText) async {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
     if (newText == text) return;
@@ -99,21 +99,19 @@ class ColoredTextEditingController extends TextEditingController {
     // Increment the request ID to track the most recent request
     final requestId = ++_lastRequestId;
 
-    languageCheckService.findMistakes(newText).then((value) {
-      final mistakesWrapper = value;
-      final mistakes = mistakesWrapper?.result();
-      _fetchError = mistakesWrapper?.error;
+    final mistakesWrapper = await languageCheckService.findMistakes(newText);
+    final mistakes = mistakesWrapper?.result();
+    _fetchError = mistakesWrapper?.error;
 
-      // Check if a newer request has been initiated during the API call
-      if (requestId != _lastRequestId) return;
-      _lastRequestId = 0;
+    // Check if a newer request has been initiated during the API call
+    if (requestId != _lastRequestId) return;
+    _lastRequestId = 0;
 
-      // Update the mistakes list with the new mistakes
-      // or fallback to filteredMistakes
-      _mistakes = mistakes ?? filteredMistakes;
+    // Update the mistakes list with the new mistakes
+    // or fallback to filteredMistakes
+    _mistakes = mistakes ?? filteredMistakes;
 
-      notifyListeners();
-    });
+    notifyListeners();
   }
 
   /// Generator function to create TextSpan instances
