@@ -133,7 +133,6 @@ class ColoredTextEditingController extends TextEditingController {
       /// Create a gesture recognizer for mistake
       final _onTap = TapGestureRecognizer()
         ..onTapDown = (details) {
-          // Show the popup widget when tapped down
           popupWidget?.show(
             context,
             mistake: mistake,
@@ -186,9 +185,7 @@ class ColoredTextEditingController extends TextEditingController {
 
     /// TextSpan after mistake
     yield TextSpan(
-      // If the last item is empty TextSpan (or no TextSpan), the tappable
-      // area is messed up.
-      text: textAfterMistake.isEmpty ? ' ' : textAfterMistake,
+      text: textAfterMistake,
       style: style,
     );
   }
@@ -224,21 +221,15 @@ class ColoredTextEditingController extends TextEditingController {
     required Offset globalPosition,
     TextStyle? style,
   }) {
-    // Get the valid text offset based on the global position
     final offset = _getValidTextOffset(
       context,
       globalPosition: globalPosition,
       style: style,
     );
 
-    // If the offset is null, return early
     if (offset == null) return;
 
-    // Request focus on the text field
     focusNode?.requestFocus();
-
-    // Delay setting the selection to the next microtask
-    // to ensure focus is properly established
     Future.microtask.call(
       () => selection = TextSelection.collapsed(offset: offset),
     );
@@ -248,10 +239,8 @@ class ColoredTextEditingController extends TextEditingController {
       (e) => e.offset <= offset && offset < e.endOffset,
     );
 
-    // If no mistake is found, return early
     if (mistake == null) return;
 
-    // Close any existing popup
     _closePopup();
 
     // Show a popup widget with the mistake details
@@ -281,32 +270,26 @@ class ColoredTextEditingController extends TextEditingController {
     required Offset globalPosition,
     TextStyle? style,
   }) {
-    // Find the render object associated with the text field
-    final renderBox = context.findRenderObject() as RenderBox?;
+    final textFieldRenderBox = context.findRenderObject() as RenderBox?;
+    final localOffset = textFieldRenderBox?.globalToLocal(globalPosition);
 
-    // Convert the global position to local offset
-    final localOffset = renderBox?.globalToLocal(globalPosition);
-
-    // If local offset is null, return early
     if (localOffset == null) return null;
 
-    // Get the height of the render box (text field)
-    final elementHeight = renderBox?.size.height ?? 0;
+    final textBoxHeight = textFieldRenderBox?.size.height ?? 0;
 
     // If local offset is outside the vertical bounds of the text field,
     // return null
-    if (localOffset.dy < 0 || localOffset.dy > elementHeight) return null;
+    final isOffsetOutsideTextBox =
+        localOffset.dy < 0 || textBoxHeight < localOffset.dy;
+    if (isOffsetOutsideTextBox) return null;
 
-    // Create a text painter to measure the text layout
     final textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       textDirection: TextDirection.ltr,
     );
 
-    // Perform the text layout
     textPainter.layout();
 
-    // Get the offset within the text that corresponds to the local offset
     return textPainter.getPositionForOffset(localOffset).offset;
   }
 
@@ -314,9 +297,7 @@ class ColoredTextEditingController extends TextEditingController {
   /// when a popup or overlay is closed. Its purpose is to ensure a smooth user
   /// experience by handling the behavior when the popup is dismissed
   void onClosePopup() {
-    // Retrieve the offset of the current text selection
     final offset = selection.base.offset;
-
     focusNode?.requestFocus();
 
     // Delay the execution of the following code until the next microtask
