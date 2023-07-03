@@ -180,82 +180,31 @@ class ColoredTextEditingController extends TextEditingController {
   List<Mistake> _filterMistakesOnChanged(String newText) {
     final newMistakes = <Mistake>[];
 
-    // Iterate through the existing mistakes
-    // and filter them based on the selection and text changes
     for (final mistake in _mistakes) {
-      // Skip the mistake if the selection encompasses the entire mistake
-      if (selection.start <= mistake.offset &&
-          selection.end >= mistake.endOffset) {
-        continue;
-      }
+      if (_isSelectionEncompassingMistake(mistake)) continue;
 
-      // Calculate the discrepancy in length between the new text
-      // and the original text
       final lengthDiscrepancy = newText.length - text.length;
-
-      // Calculate the new offset for the mistake based
-      // on the length discrepancy
       final newOffset = mistake.offset + lengthDiscrepancy;
+      final isTextLengthIncreased = newText.length > text.length;
 
-      // Handle cases where the new text is longer than the original text
-      if (newText.length > text.length) {
-        // Skip the mistake if the selection is within the mistake boundaries
-        if (selection.base.offset > mistake.offset &&
-            selection.base.offset < mistake.endOffset) {
-          continue;
-        } else if (selection.base.offset == mistake.offset ||
-            selection.base.offset == mistake.endOffset) {
-          continue;
-        }
+      if (isTextLengthIncreased &&
+          _isSelectionBaseWithinAndAtMistakeBoundaries(mistake)) continue;
 
-        if (selection.base.offset < mistake.offset) {
-          newMistakes.add(
-            Mistake(
-              message: mistake.message,
-              type: mistake.type,
-              offset: newOffset,
-              length: mistake.length,
-              replacements: mistake.replacements,
-            ),
-          );
-          continue;
-        }
-      }
-      // Handle cases where the new text is shorter
-      // than or equal to the original text
-      else {
-        // Skip the mistake if the selection is within the mistake boundaries
-        if (selection.base.offset >= mistake.offset &&
-            selection.base.offset <= mistake.endOffset) {
-          continue;
-        } else if (selection.end > mistake.offset &&
-            selection.end <= mistake.endOffset) {
-          continue;
-        } else if (selection.start > mistake.offset &&
-            selection.start <= mistake.endOffset) {
-          continue;
-        }
+      if (!isTextLengthIncreased &&
+          (_isSelectionBaseWithinAndAtMistakeBoundaries(mistake) ||
+              _isSelectionWithinMistake(mistake))) continue;
 
-        if (selection.base.offset <= mistake.offset) {
-          newMistakes.add(
-            Mistake(
-              message: mistake.message,
-              type: mistake.type,
-              offset: newOffset,
-              length: mistake.length,
-              replacements: mistake.replacements,
-            ),
-          );
-          continue;
-        }
-      }
+      final isTextLengthIncreasedAndBaseBeforeMistake =
+          isTextLengthIncreased && _isSelectionBaseBeforeMistake(mistake);
+      final isTextLengthNotIncreasedAndBaseBeforeOrAtMistake =
+          !isTextLengthIncreased && _isSelectionBaseBeforeOrAtMistake(mistake);
 
-      // If the mistake doesn't meet any of the skipping conditions,
-      // add it to the new list
-      newMistakes.add(mistake);
+      isTextLengthIncreasedAndBaseBeforeMistake ||
+              isTextLengthNotIncreasedAndBaseBeforeOrAtMistake
+          ? newMistakes.add(mistake.copyWith(offset: newOffset))
+          : newMistakes.add(mistake);
     }
 
-    // Return the filtered list of mistakes
     return newMistakes;
   }
 
@@ -278,4 +227,22 @@ class ColoredTextEditingController extends TextEditingController {
         return highlightStyle.otherMistakeColor;
     }
   }
+
+  bool _isSelectionBaseBeforeMistake(Mistake mistake) =>
+      selection.base.offset < mistake.offset;
+
+  bool _isSelectionBaseBeforeOrAtMistake(Mistake mistake) =>
+      selection.base.offset <= mistake.offset;
+
+  bool _isSelectionWithinMistake(Mistake mistake) =>
+      (selection.end > mistake.offset && selection.end <= mistake.endOffset) ||
+      (selection.start > mistake.offset &&
+          selection.start <= mistake.endOffset);
+
+  bool _isSelectionBaseWithinAndAtMistakeBoundaries(Mistake mistake) =>
+      selection.base.offset >= mistake.offset &&
+      selection.base.offset <= mistake.endOffset;
+
+  bool _isSelectionEncompassingMistake(Mistake mistake) =>
+      selection.start <= mistake.offset && selection.end >= mistake.endOffset;
 }
