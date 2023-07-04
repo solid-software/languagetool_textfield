@@ -68,6 +68,7 @@ import 'package:language_tool_textfield/language_tool_textfield.dart';
 
 
 ## Quick Start
+To start using the plugin, copy this code or follow the example project in 'languagetool_textfield/example'
 
 ```dart
 import 'package:flutter/material.dart';
