@@ -98,7 +98,7 @@ class ColoredTextEditingController extends TextEditingController {
   Future<void> _handleTextChange(String newText) async {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
-    if (newText == text) return;
+    if (newText == text || newText.isEmpty) return;
 
     final filteredMistakes = _filterMistakesOnChanged(newText);
     _mistakes = filteredMistakes;
