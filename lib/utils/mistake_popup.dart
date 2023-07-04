@@ -20,17 +20,19 @@ class MistakePopup {
 
   /// Show popup at specified [popupPosition] with info about [mistake]
   void show(
-    BuildContext context,
-    Mistake mistake,
-    Offset popupPosition,
-    ColoredTextEditingController controller,
-  ) {
+    BuildContext context, {
+    required Mistake mistake,
+    required Offset popupPosition,
+    required ColoredTextEditingController controller,
+    ValueChanged<TapDownDetails>? onClose,
+  }) {
     final MistakeBuilderCallback builder =
         mistakeBuilder ?? LanguageToolMistakePopup.new;
 
     popupRenderer.render(
       context,
       position: popupPosition,
+      onClose: onClose,
       popupBuilder: (context) => builder.call(
         popupRenderer: popupRenderer,
         mistake: mistake,
@@ -145,7 +147,10 @@ class LanguageToolMistakePopup extends StatelessWidget {
                       constraints: const BoxConstraints(),
                       padding: EdgeInsets.zero,
                       splashRadius: _dismissSplashRadius,
-                      onPressed: _dismissDialog,
+                      onPressed: () {
+                        _dismissDialog();
+                        controller.onClosePopup();
+                      },
                     ),
                   ],
                 ),
@@ -231,10 +236,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
   }
 
   void _fixTheMistake(String replacement) {
-    controller.replaceMistake(
-      mistake,
-      replacement,
-    );
+    controller.replaceMistake(mistake, replacement);
     _dismissDialog();
   }
 }

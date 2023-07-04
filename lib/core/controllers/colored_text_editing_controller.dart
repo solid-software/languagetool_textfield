@@ -1,14 +1,15 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/domain/typedefs.dart';
 import 'package:languagetool_textfield/implementations/keep_latest_response_service.dart';
 import 'package:languagetool_textfield/utils/closed_range.dart';
+import 'package:languagetool_textfield/utils/mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -29,8 +30,11 @@ class ColoredTextEditingController extends TextEditingController {
   /// List of that is used to dispose recognizers after mistakes rebuilt
   final List<TapGestureRecognizer> _recognizers = [];
 
-  /// Callback that will be executed after mistake clicked
-  ShowPopupCallback? showPopup;
+  /// Reference to the popup widget
+  MistakePopup? popupWidget;
+
+  /// Reference to the focus of the LanguageTool TextField
+  FocusNode? focusNode;
 
   Object? _fetchError;
 
@@ -48,6 +52,9 @@ class ColoredTextEditingController extends TextEditingController {
     required this.languageCheckService,
     this.highlightStyle = const HighlightStyle(),
   });
+
+  /// Close the popup widget
+  void _closePopup() => popupWidget?.popupRenderer.dismiss();
 
   /// Generates TextSpan from Mistake list
   @override
@@ -78,9 +85,12 @@ class ColoredTextEditingController extends TextEditingController {
     mistakes.remove(mistake);
     _mistakes = mistakes;
     text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
-    selection = TextSelection.fromPosition(
-      TextPosition(offset: mistake.offset + replacement.length),
-    );
+    _mistakes.remove(mistake);
+    focusNode?.requestFocus();
+    Future.microtask.call(() {
+      final newOffset = mistake.offset + replacement.length;
+      selection = TextSelection.fromPosition(TextPosition(offset: newOffset));
+    });
   }
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
@@ -92,6 +102,10 @@ class ColoredTextEditingController extends TextEditingController {
 
     final filteredMistakes = _filterMistakesOnChanged(newText);
     _mistakes = filteredMistakes;
+
+    // If we have a text change and we have a popup on hold
+    // it will close the popup
+    _closePopup();
 
     for (final recognizer in _recognizers) {
       recognizer.dispose();
@@ -136,7 +150,24 @@ class ColoredTextEditingController extends TextEditingController {
       /// Create a gesture recognizer for mistake
       final _onTap = TapGestureRecognizer()
         ..onTapDown = (details) {
-          showPopup?.call(context, mistake, details.globalPosition, this);
+          popupWidget?.show(
+            context,
+            mistake: mistake,
+            popupPosition: details.globalPosition,
+            controller: this,
+            onClose: (details) => _setCursorOnMistake(
+              context,
+              globalPosition: details.globalPosition,
+              style: style,
+            ),
+          );
+
+          // Set the cursor position on the mistake
+          _setCursorOnMistake(
+            context,
+            globalPosition: details.globalPosition,
+            style: style,
+          );
         };
 
       /// Adding recognizer to the list for future disposing
@@ -146,8 +177,11 @@ class ColoredTextEditingController extends TextEditingController {
       yield TextSpan(
         children: [
           TextSpan(
-            text: text.substring(mistake.offset, mistakeEndOffset),
-            mouseCursor: MaterialStateMouseCursor.clickable,
+            text: text.substring(
+              mistake.offset,
+              min(mistake.endOffset, text.length),
+            ),
+            mouseCursor: MaterialStateMouseCursor.textable,
             style: style?.copyWith(
               backgroundColor: mistakeColor.withOpacity(
                 highlightStyle.backgroundOpacity,
@@ -164,9 +198,11 @@ class ColoredTextEditingController extends TextEditingController {
       currentOffset = min(mistake.endOffset, text.length);
     }
 
+    final textAfterMistake = text.substring(currentOffset);
+
     /// TextSpan after mistake
     yield TextSpan(
-      text: text.substring(currentOffset),
+      text: textAfterMistake,
       style: style,
     );
   }
@@ -228,5 +264,101 @@ class ColoredTextEditingController extends TextEditingController {
       case MistakeType.other:
         return highlightStyle.otherMistakeColor;
     }
+  }
+
+  /// Sets the cursor position on a mistake within the text field based
+  /// on the provided [globalPosition].
+  ///
+  /// The [context] is used to find the render object associated
+  /// with the text field.
+  /// The [style] is an optional parameter to customize the text style.
+  void _setCursorOnMistake(
+    BuildContext context, {
+    required Offset globalPosition,
+    TextStyle? style,
+  }) {
+    final offset = _getValidTextOffset(
+      context,
+      globalPosition: globalPosition,
+      style: style,
+    );
+
+    if (offset == null) return;
+
+    focusNode?.requestFocus();
+    Future.microtask.call(
+      () => selection = TextSelection.collapsed(offset: offset),
+    );
+
+    // Find the mistake within the text that corresponds to the offset
+    final mistake = _mistakes.firstWhereOrNull(
+      (e) => e.offset <= offset && offset < e.endOffset,
+    );
+
+    if (mistake == null) return;
+
+    _closePopup();
+
+    // Show a popup widget with the mistake details
+    popupWidget?.show(
+      context,
+      mistake: mistake,
+      popupPosition: globalPosition,
+      controller: this,
+      onClose: (details) => _setCursorOnMistake(
+        context,
+        globalPosition: details.globalPosition,
+        style: style,
+      ),
+    );
+  }
+
+  /// Returns a valid text offset based on the provided [globalPosition]
+  /// within the text field.
+  ///
+  /// The [context] is used to find the render object associated
+  /// with the text field.
+  /// The [style] is an optional parameter to customize the text style.
+  /// Returns the offset within the text if it falls within the vertical bounds
+  /// of the text field, otherwise returns null.
+  int? _getValidTextOffset(
+    BuildContext context, {
+    required Offset globalPosition,
+    TextStyle? style,
+  }) {
+    final textFieldRenderBox = context.findRenderObject() as RenderBox?;
+    final localOffset = textFieldRenderBox?.globalToLocal(globalPosition);
+
+    if (localOffset == null) return null;
+
+    final textBoxHeight = textFieldRenderBox?.size.height ?? 0;
+
+    // If local offset is outside the vertical bounds of the text field,
+    // return null
+    final isOffsetOutsideTextBox =
+        localOffset.dy < 0 || textBoxHeight < localOffset.dy;
+    if (isOffsetOutsideTextBox) return null;
+
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainter.layout();
+
+    return textPainter.getPositionForOffset(localOffset).offset;
+  }
+
+  /// The `onClosePopup` function is a callback method typically used
+  /// when a popup or overlay is closed. Its purpose is to ensure a smooth user
+  /// experience by handling the behavior when the popup is dismissed
+  void onClosePopup() {
+    final offset = selection.base.offset;
+    focusNode?.requestFocus();
+
+    // Delay the execution of the following code until the next microtask
+    Future.microtask(
+      () => selection = TextSelection.collapsed(offset: offset),
+    );
   }
 }
