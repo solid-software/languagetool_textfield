@@ -7,7 +7,7 @@ import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:languagetool_textfield/domain/typedefs.dart';
-import 'package:languagetool_textfield/utils/extensions/selection_extension.dart';
+import 'package:languagetool_textfield/utils/closed_range.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -168,25 +168,31 @@ class ColoredTextEditingController extends TextEditingController {
   /// in the text when it is changed.
   List<Mistake> _filterMistakesOnChanged(String newText) {
     final newMistakes = <Mistake>[];
+    final selectionRange = ClosedRange(selection.start, selection.end);
 
     for (final mistake in _mistakes) {
-      if (selection.isEncompassingMistake(mistake)) continue;
+      final mistakeRange = ClosedRange(mistake.offset, mistake.endOffset);
+
+      if (selectionRange.containsRange(mistakeRange)) continue;
+
+      final isLengthIncreased = newText.length > text.length;
+      final baseOffset = selection.base.offset;
+
+      if (isLengthIncreased && mistakeRange.contains(baseOffset)) {
+        continue;
+      }
+
+      if (!isLengthIncreased &&
+          (mistakeRange.contains(baseOffset) ||
+              mistakeRange.overlapsWith(selectionRange))) continue;
+
+      final isTextLengthIncreasedAndBaseBeforeMistake =
+          isLengthIncreased && mistakeRange.isBefore(baseOffset);
+      final isTextLengthNotIncreasedAndBaseBeforeOrAtMistake =
+          !isLengthIncreased && mistakeRange.isBeforeOrAt(baseOffset);
 
       final lengthDiscrepancy = newText.length - text.length;
       final newOffset = mistake.offset + lengthDiscrepancy;
-      final isTextLengthIncreased = newText.length > text.length;
-
-      if (isTextLengthIncreased &&
-          selection.isBaseWithinAndAtMistakeBoundaries(mistake)) continue;
-
-      if (!isTextLengthIncreased &&
-          (selection.isBaseWithinAndAtMistakeBoundaries(mistake) ||
-              selection.isWithinMistake(mistake))) continue;
-
-      final isTextLengthIncreasedAndBaseBeforeMistake =
-          isTextLengthIncreased && selection.isBaseBeforeMistake(mistake);
-      final isTextLengthNotIncreasedAndBaseBeforeOrAtMistake =
-          !isTextLengthIncreased && selection.isBaseBeforeOrAtMistake(mistake);
 
       isTextLengthIncreasedAndBaseBeforeMistake ||
               isTextLengthNotIncreasedAndBaseBeforeOrAtMistake
