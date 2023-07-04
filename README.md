@@ -34,27 +34,13 @@ It's particularly useful for apps that require precise text input, like chat or 
 
 ## Getting started
 
-1. Open your Flutter project in your preferred code editor.
-
-2. Open the ```pubspec.yaml``` file in your project's root directory.
-
-3. Add the following line under the dependencies section:
+1. Add dependency:
 
 ```dart
-language_tool_textfield: latest
+flutter pub add language_tool_textfield
 ```
 
-4. Save the pubspec.yaml file to fetch the package.
-
-5. In your terminal or command prompt, navigate to your project's root directory.
-
-6. Run the following command to fetch the package:
-
-```dart
-flutter pub get
-```
-
-7. Import the package in your Dart code file:
+2. Import the package:
 
 ```dart
 import 'package:language_tool_textfield/language_tool_textfield.dart';
@@ -65,77 +51,30 @@ import 'package:language_tool_textfield/language_tool_textfield.dart';
 To start using the plugin, copy this code or follow the example project in 'languagetool_textfield/example'
 
 ```dart
-import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/languagetool_textfield.dart';
+// Create a base API client
+final _languageTool = LanguageTool();
 
-/// Example App main page
-class App extends StatefulWidget {
-  /// Example app constructor
-  const App({super.key});
+// Add input debouncing
+final _debouncedLangService = DebounceLangToolService(
+  LangToolService(_languageTool),
+  const Duration(milliseconds: 500),
+);
 
-  @override
-  State<App> createState() => _AppState();
-}
+// Create a text controller for the Widget
+final _controller = ColoredTextEditingController(
+    languageCheckService: _debouncedLangService
+);
 
-class _AppState extends State<App> {
-  /// Initialize LanguageTool
-  static final LanguageTool _languageTool = LanguageTool();
+// Use the text field widget in your layout
+child: LanguageToolTextField(
+  style: const TextStyle(),
+  decoration: const InputDecoration(),
+  coloredController: _controller,
+  mistakePopup: MistakePopup(popupRenderer: PopupOverlayRenderer()),
+);
 
-  /// Initialize DebounceLangToolService
-  static final DebounceLangToolService _debouncedLangService =
-      DebounceLangToolService(
-    LangToolService(_languageTool),
-    const Duration(milliseconds: 500),
-  );
-
-  /// Initialize ColoredTextEditingController
-  final ColoredTextEditingController _controller =
-      ColoredTextEditingController(languageCheckService: _debouncedLangService);
-
-  static const List<MainAxisAlignment> alignments = [
-    MainAxisAlignment.center,
-    MainAxisAlignment.start,
-    MainAxisAlignment.end,
-  ];
-  int currentAlignmentIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: Scaffold(
-        body: Column(
-          mainAxisAlignment: alignments[currentAlignmentIndex],
-          children: [
-            LanguageToolTextField(
-              style: const TextStyle(),
-              decoration: const InputDecoration(),
-              coloredController: _controller,
-              mistakePopup: MistakePopup(popupRenderer: PopupOverlayRenderer()),
-            ),
-            DropdownMenu(
-              hintText: "Select alignment...",
-              onSelected: (value) => setState(() {
-                currentAlignmentIndex = value ?? 0;
-              }),
-              dropdownMenuEntries: const [
-                DropdownMenuEntry(value: 0, label: "Center alignment"),
-                DropdownMenuEntry(value: 1, label: "Top alignment"),
-                DropdownMenuEntry(value: 2, label: "Bottom alignment"),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-}
-
+// Don't forget to dispose the controller
+_controller.dispose();
 ```
 
 ## Current issues
