@@ -1,12 +1,12 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/utils/extensions/iterable_extension.dart';
 import 'package:languagetool_textfield/utils/mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
