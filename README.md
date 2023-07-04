@@ -15,21 +15,15 @@ and the Flutter guide for
 
 Providing powerful spell checking and grammar correction capabilities.
 
-<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/8c03c23f-8369-49ef-b16a-dd16094eb29a" width="310" height="667">
+<div>
+<img src="https://raw.githubusercontent.com/solid-software/languagetool_textfield/task/master/languagetool_textfield/doc/misspeling_langtool.png" width="310" height="667">
 &nbsp
 &nbsp
-<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/cbdb44b2-3e1c-47d7-afce-707aba749ac7" width="310" height="667">
+<img src="https://raw.githubusercontent.com/solid-software/languagetool_textfield/master/languagetool_textfield/doc/typo_langtool.png" width="310" height="667">
 &nbsp
 &nbsp
-<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/45281141-689b-44f9-b0fe-463c71029533" width="310" height="667">
-
-<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/913306f4-edca-419c-8884-f0a07ce7683c" width="310" height="667">
-&nbsp
-&nbsp
-<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/ce87ecf9-1d1f-459c-b67d-d4c8593b1b2b" width="310" height="667">
-&nbsp
-&nbsp
-<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/e6226fed-e5ae-43a2-af74-3c0755a8dd32" width="310" height="667">
+<img src="https://raw.githubusercontent.com/solid-software/languagetool_textfield/master/languagetool_textfield/doc/uncategorized_langtool.png" width="310" height="667">
+</div>
 
 ## Features
 
