@@ -10,7 +10,7 @@ dependencies:
   collection: ^1.17.1
   flutter:
     sdk: flutter
-  language_tool: ^2.1.1
+  http: 1.0.0
   throttling: ^1.0.0
 
 dev_dependencies:

@@ -1,23 +1,38 @@
 ///Enumerate several mistake types
 enum MistakeType {
   /// Misspelling mistake type
-  misspelling,
+  misspelling('misspelling'),
 
   /// Typographical mistake type
-  typographical,
+  typographical('typographical'),
 
   /// Grammar mistake type
-  grammar,
+  grammar('grammar'),
 
   /// Uncategorized mistake type
-  uncategorized,
+  uncategorized('uncategorized'),
 
   /// NonConformance mistake type
-  nonConformance,
+  nonConformance('nonconformance'),
 
   /// Style mistake type
-  style,
+  style('style'),
 
   /// Any other mistake type
-  other,
+  other('other');
+
+  /// The string value associated with the MistakeType variant
+  final String value;
+
+  const MistakeType(this.value);
+
+  /// Getting the [MistakeType] from String.
+  static MistakeType fromString(String value) {
+    final lowercasedValue = value.toLowerCase();
+
+    return MistakeType.values.firstWhere(
+      (type) => type.value == lowercasedValue,
+      orElse: () => MistakeType.other,
+    );
+  }
 }
