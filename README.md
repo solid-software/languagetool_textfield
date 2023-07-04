@@ -15,15 +15,27 @@ and the Flutter guide for
 
 Providing powerful spell checking and grammar correction capabilities.
 
+<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/8c03c23f-8369-49ef-b16a-dd16094eb29a" width="310" height="667">
+&nbsp
+&nbsp
+<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/cbdb44b2-3e1c-47d7-afce-707aba749ac7" width="310" height="667">
+&nbsp
+&nbsp
+<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/45281141-689b-44f9-b0fe-463c71029533" width="310" height="667">
+
+<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/913306f4-edca-419c-8884-f0a07ce7683c" width="310" height="667">
+&nbsp
+&nbsp
+<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/ce87ecf9-1d1f-459c-b67d-d4c8593b1b2b" width="310" height="667">
+&nbsp
+&nbsp
+<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/e6226fed-e5ae-43a2-af74-3c0755a8dd32" width="310" height="667">
+
 ## Features
 
 The LanguageTool TextField package is a spell-checker designed for Flutter apps. It integrates with the LanguageTool API to offer real-time spell-checking capabilities. This package will enhance text input accuracy by automatically detecting and highlighting spelling errors as users type. 
 
 It's particularly useful for apps that require precise text input, like chat or note-taking apps. By using the LanguageTool TextField package, developers can improve the user experience by providing an intuitive and reliable spell-checking feature.
-
-<img src="https://github.com/solid-software/languagetool_textfield/assets/113029066/2cf68088-695a-4263-a82a-df805c4f4b12" width="375" height="667">
-
-<img width="280" alt="Снимок экрана 2023-07-03 в 21 20 06" src="https://github.com/solid-software/languagetool_textfield/assets/113029066/03616b50-da54-4bc2-b4fe-a0db7d638915">
 
 
 ## Getting started
@@ -133,8 +145,6 @@ class _AppState extends State<App> {
 
 ## Current issues
 
-Current issues list [is here](https://github.com/solid-software/languagetool_textfield/issues).
+Current issues list [is here](https://github.com/solid-software/languagetool_textfield/issues).\
 Found a bug? [Open the issue](https://github.com/solid-software/languagetool_textfield/issues/new).
 
-
-![languagetool popup presentation](readme/languagetool.gif)
