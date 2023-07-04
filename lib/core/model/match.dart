@@ -1,6 +1,5 @@
-import 'package:languagetool_textfield/beans/mistake_context.dart';
-import 'package:languagetool_textfield/beans/replacement.dart';
-import 'package:languagetool_textfield/beans/rule.dart';
+import 'package:languagetool_textfield/core/model/replacement.dart';
+import 'package:languagetool_textfield/core/model/rule.dart';
 
 /// Object that stores information about matched mistakes.
 class Match {
@@ -18,9 +17,6 @@ class Match {
 
   /// Length of the word.
   final int length;
-
-  /// Context of the mistake.
-  final MistakeContext context;
 
   /// The whole sentence.
   final String sentence;
@@ -41,7 +37,6 @@ class Match {
     required this.replacements,
     required this.offset,
     required this.length,
-    required this.context,
     required this.sentence,
     required this.rule,
     required this.ignoreForIncompleteSentence,
@@ -59,8 +54,6 @@ class Match {
             .toList(),
         offset: json['offset'] as int,
         length: json['length'] as int,
-        context:
-            MistakeContext.fromJson(json['context'] as Map<String, dynamic>),
         sentence: json['sentence'] as String,
         rule: Rule.fromJson(json['rule'] as Map<String, dynamic>),
         ignoreForIncompleteSentence:

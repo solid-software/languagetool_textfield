@@ -1,13 +1,12 @@
 library languagetool_textfield;
 
-export 'beans/category.dart';
-export 'beans/mistake_context.dart';
-export 'beans/language_tool_raw.dart';
-export 'beans/match.dart';
-export 'beans/replacement.dart';
-export 'beans/rule.dart';
 export 'client/language_tool_client.dart';
 export 'core/controllers/colored_text_editing_controller.dart';
+export 'core/model/category.dart';
+export 'core/model/language_tool_raw.dart';
+export 'core/model/match.dart';
+export 'core/model/replacement.dart';
+export 'core/model/rule.dart';
 export 'domain/highlight_style.dart';
 export 'domain/language_check_service.dart';
 export 'domain/mistake.dart';

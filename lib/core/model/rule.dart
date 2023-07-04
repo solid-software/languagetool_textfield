@@ -1,5 +1,5 @@
-import 'package:languagetool_textfield/beans/category.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
+import 'package:languagetool_textfield/core/model/category.dart';
 
 /// Object that stores information about the rule (description, type, etc).
 class Rule {
