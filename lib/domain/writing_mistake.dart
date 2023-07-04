@@ -35,25 +35,4 @@ class WritingMistake {
     required this.replacements,
     required this.shortMessage,
   });
-
-  /// Copies the object with the specified values changed.
-  WritingMistake copyWith({
-    required int offset,
-    required int length,
-    required MistakeType issueType,
-    required String issueDescription,
-    required String message,
-    required List<String> replacements,
-    required String shortMessage,
-  }) {
-    return WritingMistake(
-      offset: offset,
-      length: length,
-      issueType: issueType,
-      issueDescription: issueDescription,
-      message: message,
-      replacements: replacements,
-      shortMessage: shortMessage,
-    );
-  }
 }
