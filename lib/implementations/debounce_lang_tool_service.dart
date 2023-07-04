@@ -5,7 +5,6 @@ import 'package:throttling/throttling.dart';
 
 /// A language check service with debouncing.
 class DebounceLangToolService extends LanguageCheckService {
-
   /// A base language check service.
   final LanguageCheckService baseService;
 

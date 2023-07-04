@@ -1,6 +1,6 @@
 import 'dart:math';
 
-/// The [ClosedRange] class represents a closed range of integers, defined 
+/// The [ClosedRange] class represents a closed range of integers, defined
 /// by a starting point and an ending point.
 /// The start and end properties represent the bounds of the range.
 class ClosedRange {
