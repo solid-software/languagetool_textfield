@@ -10,7 +10,7 @@ class LangToolService extends LanguageCheckService {
   final LanguageTool languageTool;
 
   /// Creates a new instance of the [LangToolService].
-  const LangToolService(this.languageTool);
+  LangToolService(this.languageTool);
 
   @override
   Future<Result<List<Mistake>>> findMistakes(String text) async {

@@ -7,6 +7,7 @@ import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:languagetool_textfield/domain/typedefs.dart';
+import 'package:languagetool_textfield/implementations/keep_latest_response_service.dart';
 import 'package:languagetool_textfield/utils/closed_range.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
@@ -17,6 +18,10 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Language tool API index
   final LanguageCheckService languageCheckService;
+
+  /// Create an instance of [KeepLatestResponseService]
+  ///  to handle asynchronous operations
+  final latestResponseService = KeepLatestResponseService();
 
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
@@ -93,7 +98,9 @@ class ColoredTextEditingController extends TextEditingController {
     }
     _recognizers.clear();
 
-    final mistakesWrapper = await languageCheckService.findMistakes(newText);
+    final mistakesWrapper = await latestResponseService.processLatestOperation(
+      () => languageCheckService.findMistakes(newText),
+    );
     final mistakes = mistakesWrapper?.result();
     _fetchError = mistakesWrapper?.error;
 
