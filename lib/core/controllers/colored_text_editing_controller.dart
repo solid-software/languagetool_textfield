@@ -260,7 +260,7 @@ class ColoredTextEditingController extends TextEditingController {
 
     if (shouldSkipOffsetAdjustment) return null;
 
-    final shouldAdjustOffset = selectionRange.isAfter(mistake.offset);
+    final shouldAdjustOffset = selectionRange.isAfterOrAt(mistake.offset);
     final newOffset = mistake.offset + lengthDiscrepancy;
 
     return shouldAdjustOffset ? mistake.copyWith(offset: newOffset) : mistake;

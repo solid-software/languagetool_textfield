@@ -13,14 +13,10 @@ class ClosedRange {
   /// Constructor for creating a ClosedRange object
   const ClosedRange(this.start, this.end);
 
-  /// Checks if the given point is before the range
-  bool isBefore(int point) => point < min(start, end);
-
   /// Checks if the given point is before or at the range
   bool isBeforeOrAt(int point) => point <= min(start, end);
 
-  bool isAfter(int point) => point > max(start, end);
-
+  /// Checks if the given point is after or at the range
   bool isAfterOrAt(int point) => point >= max(start, end);
 
   /// Checks if the range contains the given point
