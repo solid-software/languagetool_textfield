@@ -9,8 +9,9 @@ class KeepLatestResponseService {
   /// Only the results of the most recent operation are returned,
   /// discarding any previous ongoing operations.
   Future<T?> processLatestOperation<T>(Future<T> Function() action) async {
+    final newOperation = CancelableOperation<T>.fromFuture(action());
     await _currentOperation?.cancel();
-    _currentOperation = CancelableOperation<T>.fromFuture(action());
+    _currentOperation = newOperation;
 
     return _currentOperation?.value as Future<T>?;
   }
