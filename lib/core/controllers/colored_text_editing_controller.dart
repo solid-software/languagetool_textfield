@@ -101,7 +101,7 @@ class ColoredTextEditingController extends TextEditingController {
     if (newText == text || newText.isEmpty) return;
 
     final filteredMistakes = _filterMistakesOnChanged(newText);
-    _mistakes = filteredMistakes;
+    _mistakes = filteredMistakes.toList();
 
     // If we have a text change and we have a popup on hold
     // it will close the popup
@@ -209,8 +209,7 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Filters the list of mistakes based on the changes
   /// in the text when it is changed.
-  List<Mistake> _filterMistakesOnChanged(String newText) {
-    final newMistakes = <Mistake>[];
+  Iterable<Mistake> _filterMistakesOnChanged(String newText) sync* {
     final selectionRange = ClosedRange(selection.start, selection.end);
 
     for (final mistake in _mistakes) {
@@ -237,13 +236,11 @@ class ColoredTextEditingController extends TextEditingController {
       final lengthDiscrepancy = newText.length - text.length;
       final newOffset = mistake.offset + lengthDiscrepancy;
 
-      isTextLengthIncreasedAndBaseBeforeMistake ||
+      yield isTextLengthIncreasedAndBaseBeforeMistake ||
               isTextLengthNotIncreasedAndBaseBeforeOrAtMistake
-          ? newMistakes.add(mistake.copyWith(offset: newOffset))
-          : newMistakes.add(mistake);
+          ? mistake.copyWith(offset: newOffset)
+          : mistake;
     }
-
-    return newMistakes;
   }
 
   /// Returns color for mistake TextSpan style
