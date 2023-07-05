@@ -85,7 +85,6 @@ class ColoredTextEditingController extends TextEditingController {
     mistakes.remove(mistake);
     _mistakes = mistakes;
     text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
-    _mistakes.remove(mistake);
     focusNode?.requestFocus();
     Future.microtask.call(() {
       final newOffset = mistake.offset + replacement.length;
