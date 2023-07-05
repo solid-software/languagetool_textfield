@@ -210,28 +210,26 @@ class ColoredTextEditingController extends TextEditingController {
   /// in the text when it is changed.
   Iterable<Mistake> _filterMistakesOnChanged(String newText) sync* {
     final isSelectionRangeEmpty = selection.end == selection.start;
+    final lengthDiscrepancy = newText.length - text.length;
 
     for (final mistake in _mistakes) {
-      final lengthDiscrepancy = newText.length - text.length;
+      Mistake? newMistake;
 
-      if (isSelectionRangeEmpty) {
-        final newMistake = _adjustMistakeOffsetWithCaretCursor(
-          mistake: mistake,
-          lengthDiscrepancy: lengthDiscrepancy,
-        );
-        if (newMistake == null) continue;
-        yield newMistake;
-      } else {
-        final newMistake = _adjustMistakeOffsetWithSelectionRange(
-          mistake: mistake,
-          lengthDiscrepancy: lengthDiscrepancy,
-        );
-        if (newMistake == null) continue;
-        yield newMistake;
-      }
+      newMistake = isSelectionRangeEmpty
+          ? _adjustMistakeOffsetWithCaretCursor(
+              mistake: mistake,
+              lengthDiscrepancy: lengthDiscrepancy,
+            )
+          : _adjustMistakeOffsetWithSelectionRange(
+              mistake: mistake,
+              lengthDiscrepancy: lengthDiscrepancy,
+            );
+
+      if (newMistake != null) yield newMistake;
     }
   }
 
+  /// Adjusts the mistake offset when the selection is a caret cursor.
   Mistake? _adjustMistakeOffsetWithCaretCursor({
     required Mistake mistake,
     required int lengthDiscrepancy,
@@ -248,6 +246,7 @@ class ColoredTextEditingController extends TextEditingController {
     return shouldAdjustOffset ? mistake.copyWith(offset: newOffset) : mistake;
   }
 
+  /// Adjusts the mistake offset when the selection is a range.
   Mistake? _adjustMistakeOffsetWithSelectionRange({
     required Mistake mistake,
     required int lengthDiscrepancy,
