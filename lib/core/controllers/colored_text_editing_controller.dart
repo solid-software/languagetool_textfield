@@ -217,15 +217,18 @@ class ColoredTextEditingController extends TextEditingController {
       if (selectionRange.containsRange(mistakeRange)) continue;
 
       final isLengthIncreased = newText.length > text.length;
+
+      if (!isLengthIncreased && mistakeRange.overlapsWith(selectionRange)) {
+        continue;
+      }
+
       final baseOffset = selection.base.offset;
 
       if (isLengthIncreased && mistakeRange.contains(baseOffset)) {
         continue;
       }
 
-      if (!isLengthIncreased &&
-          (mistakeRange.contains(baseOffset) ||
-              mistakeRange.overlapsWith(selectionRange))) continue;
+      if (!isLengthIncreased && (mistakeRange.contains(baseOffset))) continue;
 
       final isTextLengthIncreasedAndBaseBeforeMistake =
           isLengthIncreased && mistakeRange.isBefore(baseOffset);
