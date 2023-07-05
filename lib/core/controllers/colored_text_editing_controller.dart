@@ -209,40 +209,62 @@ class ColoredTextEditingController extends TextEditingController {
   /// Filters the list of mistakes based on the changes
   /// in the text when it is changed.
   Iterable<Mistake> _filterMistakesOnChanged(String newText) sync* {
-    final selectionRange = ClosedRange(selection.start, selection.end);
+    final isSelectionRangeEmpty = selection.end == selection.start;
 
     for (final mistake in _mistakes) {
-      final mistakeRange = ClosedRange(mistake.offset, mistake.endOffset);
-
-      if (selectionRange.containsRange(mistakeRange)) continue;
-
-      final isLengthIncreased = newText.length > text.length;
-
-      if (!isLengthIncreased && mistakeRange.overlapsWith(selectionRange)) {
-        continue;
-      }
-
-      final baseOffset = selection.base.offset;
-
-      if (isLengthIncreased && mistakeRange.contains(baseOffset)) {
-        continue;
-      }
-
-      if (!isLengthIncreased && (mistakeRange.contains(baseOffset))) continue;
-
-      final isTextLengthIncreasedAndBaseBeforeMistake =
-          isLengthIncreased && mistakeRange.isBefore(baseOffset);
-      final isTextLengthNotIncreasedAndBaseBeforeOrAtMistake =
-          !isLengthIncreased && mistakeRange.isBeforeOrAt(baseOffset);
-
       final lengthDiscrepancy = newText.length - text.length;
-      final newOffset = mistake.offset + lengthDiscrepancy;
 
-      yield isTextLengthIncreasedAndBaseBeforeMistake ||
-              isTextLengthNotIncreasedAndBaseBeforeOrAtMistake
-          ? mistake.copyWith(offset: newOffset)
-          : mistake;
+      if (isSelectionRangeEmpty) {
+        final newMistake = _adjustMistakeOffsetWithCaretCursor(
+          mistake: mistake,
+          lengthDiscrepancy: lengthDiscrepancy,
+        );
+        if (newMistake == null) continue;
+        yield newMistake;
+      } else {
+        final newMistake = _adjustMistakeOffsetWithSelectionRange(
+          mistake: mistake,
+          lengthDiscrepancy: lengthDiscrepancy,
+        );
+        if (newMistake == null) continue;
+        yield newMistake;
+      }
     }
+  }
+
+  Mistake? _adjustMistakeOffsetWithCaretCursor({
+    required Mistake mistake,
+    required int lengthDiscrepancy,
+  }) {
+    final mistakeRange = ClosedRange(mistake.offset, mistake.endOffset);
+    final baseOffset = selection.base.offset;
+    final shouldSkipOffsetAdjustment = mistakeRange.contains(baseOffset);
+
+    if (shouldSkipOffsetAdjustment) return null;
+
+    final shouldAdjustOffset = mistakeRange.isBeforeOrAt(baseOffset);
+    final newOffset = mistake.offset + lengthDiscrepancy;
+
+    return shouldAdjustOffset ? mistake.copyWith(offset: newOffset) : mistake;
+  }
+
+  Mistake? _adjustMistakeOffsetWithSelectionRange({
+    required Mistake mistake,
+    required int lengthDiscrepancy,
+  }) {
+    final selectionRange = ClosedRange(selection.start, selection.end);
+    final mistakeRange = ClosedRange(mistake.offset, mistake.endOffset);
+
+    final shouldSkipOffsetAdjustment =
+        selectionRange.containsRange(mistakeRange) ||
+            selectionRange.overlapsWith(mistakeRange);
+
+    if (shouldSkipOffsetAdjustment) return null;
+
+    final shouldAdjustOffset = selectionRange.isAfter(mistake.offset);
+    final newOffset = mistake.offset + lengthDiscrepancy;
+
+    return shouldAdjustOffset ? mistake.copyWith(offset: newOffset) : mistake;
   }
 
   /// Returns color for mistake TextSpan style

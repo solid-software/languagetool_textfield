@@ -19,6 +19,10 @@ class ClosedRange {
   /// Checks if the given point is before or at the range
   bool isBeforeOrAt(int point) => point <= min(start, end);
 
+  bool isAfter(int point) => point > max(start, end);
+
+  bool isAfterOrAt(int point) => point >= max(start, end);
+
   /// Checks if the range contains the given point
   bool contains(int point) {
     return start <= point && point <= end;
