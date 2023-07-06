@@ -8,8 +8,8 @@ import 'package:languagetool_textfield/domain/writing_mistake.dart';
 ///
 /// Read more @ https://languagetool.org/http-api/swagger-ui/#/
 class LanguageToolClient {
-  /// A language code like en-US, de-DE, fr, 
-  /// or auto to guess the language automatically 
+  /// A language code like en-US, de-DE, fr,
+  /// or auto to guess the language automatically
   final String language;
 
   /// Url of LanguageTool API.
@@ -27,13 +27,14 @@ class LanguageToolClient {
   /// Checks the errors in text.
   Future<List<WritingMistake>> check(String text) async {
     final result = await http.post(
-      Uri.https(_url, 'v2/check', {
+      Uri.https(_url, 'v2/check'),
+      headers: _headers,
+      body: {
         'text': text,
         'language': language,
         'enabledOnly': 'false',
         'level': 'default',
-      }),
-      headers: _headers,
+      },
     );
 
     final languageToolAnswer = LanguageToolRaw.fromJson(
