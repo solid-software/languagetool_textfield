@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:languagetool_textfield/core/langtool_images.dart';
 import 'package:languagetool_textfield/domain/typedefs.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
 import 'package:languagetool_textfield/utils/extensions/string_extension.dart';
@@ -48,6 +49,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
   static const double _defaultVerticalMargin = 25.0;
   static const double _defaultHorizontalMargin = 10.0;
   static const double _defaultMaxWidth = 250.0;
+  static const _iconSize = 25.0;
 
   /// Renderer used to display this window.
   final PopupOverlayRenderer popupRenderer;
@@ -138,7 +140,22 @@ class LanguageToolMistakePopup extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 4),
                 child: Row(
                   children: [
-                    const Expanded(child: Text('Correct')),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5.0),
+                            child: Image.asset(
+                              LangToolImages.logo,
+                              width: _iconSize,
+                              height: _iconSize,
+                              package: 'languagetool_textfield',
+                            ),
+                          ),
+                          const Text('Correct'),
+                        ],
+                      ),
+                    ),
                     IconButton(
                       icon: const Icon(
                         Icons.close,
