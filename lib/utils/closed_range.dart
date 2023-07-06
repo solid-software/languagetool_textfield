@@ -24,11 +24,6 @@ class ClosedRange {
     return start <= point && point <= end;
   }
 
-  /// Checks if the encompasses the entire range
-  bool containsRange(ClosedRange other) {
-    return contains(other.start) && contains(other.end);
-  }
-
   /// Checks if the this range is within the boundaries of the another range
   bool overlapsWith(ClosedRange other) {
     return contains(other.start) || contains(other.end);

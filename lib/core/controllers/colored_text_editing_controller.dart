@@ -7,8 +7,8 @@ import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/implementations/keep_latest_response_service.dart';
 import 'package:languagetool_textfield/utils/closed_range.dart';
+import 'package:languagetool_textfield/utils/keep_latest_response_service.dart';
 import 'package:languagetool_textfield/utils/mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
@@ -235,12 +235,14 @@ class ColoredTextEditingController extends TextEditingController {
     required int lengthDiscrepancy,
   }) {
     final mistakeRange = ClosedRange(mistake.offset, mistake.endOffset);
-    final baseOffset = selection.base.offset;
-    final shouldSkipOffsetAdjustment = mistakeRange.contains(baseOffset);
+    final caretLocation = selection.base.offset;
+    final isCaretOnMistake = mistakeRange.contains(caretLocation);
 
-    if (shouldSkipOffsetAdjustment) return null;
+    // Don't highlight mistakes on changed text
+    // until we get an update from the API.
+    if (isCaretOnMistake) return null;
 
-    final shouldAdjustOffset = mistakeRange.isBeforeOrAt(baseOffset);
+    final shouldAdjustOffset = mistakeRange.isBeforeOrAt(caretLocation);
     final newOffset = mistake.offset + lengthDiscrepancy;
 
     return shouldAdjustOffset ? mistake.copyWith(offset: newOffset) : mistake;
@@ -253,12 +255,9 @@ class ColoredTextEditingController extends TextEditingController {
   }) {
     final selectionRange = ClosedRange(selection.start, selection.end);
     final mistakeRange = ClosedRange(mistake.offset, mistake.endOffset);
+    final hasSelectedTextChanged = selectionRange.overlapsWith(mistakeRange);
 
-    final shouldSkipOffsetAdjustment =
-        selectionRange.containsRange(mistakeRange) ||
-            selectionRange.overlapsWith(mistakeRange);
-
-    if (shouldSkipOffsetAdjustment) return null;
+    if (hasSelectedTextChanged) return null;
 
     final shouldAdjustOffset = selectionRange.isAfterOrAt(mistake.offset);
     final newOffset = mistake.offset + lengthDiscrepancy;
