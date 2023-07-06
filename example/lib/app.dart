@@ -40,25 +40,11 @@ class _AppState extends State<App> {
           mainAxisAlignment: alignments[currentAlignmentIndex],
           children: [
             LanguageToolTextField(
-                  // scrollPadding: EdgeInsets.all(20.0),
-                  // keyboardType: TextInputType.multiline,
-                  maxLines: 99999,
-                  style: const TextStyle(),
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.blueGrey),),
-                          focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.blueGrey),),
-                          ),
-                      
-                  coloredController: _controller,
-                  mistakePopup: MistakePopup(
-                    popupRenderer: PopupOverlayRenderer(),
-                  ),
-                ),
-              
+              style: const TextStyle(),
+              decoration: const InputDecoration(),
+              coloredController: _controller,
+              mistakePopup: MistakePopup(popupRenderer: PopupOverlayRenderer()),
+            ),
             DropdownMenu(
               hintText: "Select alignment...",
               onSelected: (value) => setState(() {
