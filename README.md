@@ -52,7 +52,7 @@ To start using the plugin, copy this code or follow the example project in 'lang
 
 ```dart
 // Create a base API client
-final _languageTool = LanguageTool();
+final _languageTool = LanguageToolClient();
 
 // Add input debouncing
 final _debouncedLangService = DebounceLangToolService(
