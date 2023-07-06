@@ -9,12 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  languagetool_textfield:
+    path: ../
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  languagetool_textfield:
-    path: ../
   solid_lints: ^0.0.14
 
 flutter:

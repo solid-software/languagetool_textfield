@@ -43,10 +43,13 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
+  final focusNode = FocusNode();
+
   @override
   void initState() {
-    widget.coloredController.showPopup = widget.mistakePopup.show;
     super.initState();
+    widget.coloredController.focusNode = focusNode;
+    widget.coloredController.popupWidget = widget.mistakePopup;
   }
 
   @override
@@ -76,6 +79,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           padding: const EdgeInsets.all(_padding),
           child: Center(
             child: TextField(
+              focusNode: focusNode,
               controller: widget.coloredController,
               style: widget.style,
               decoration: inputDecoration,
