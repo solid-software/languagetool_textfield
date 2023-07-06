@@ -305,9 +305,7 @@ class ColoredTextEditingController extends TextEditingController {
     if (offset == null) return;
 
     focusNode?.requestFocus();
-    Future.microtask.call(
-      () => selection = TextSelection.collapsed(offset: offset),
-    );
+    Future.microtask(() => selection = TextSelection.collapsed(offset: offset));
 
     // Find the mistake within the text that corresponds to the offset
     final mistake = _mistakes.firstWhereOrNull(
@@ -362,8 +360,9 @@ class ColoredTextEditingController extends TextEditingController {
       text: TextSpan(text: text, style: style),
       textDirection: TextDirection.ltr,
     );
+    final textFieldWidth = textFieldRenderBox?.size.width ?? 0;
 
-    textPainter.layout();
+    textPainter.layout(maxWidth: textFieldWidth);
 
     return textPainter.getPositionForOffset(localOffset).offset;
   }
