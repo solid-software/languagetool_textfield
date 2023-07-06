@@ -11,31 +11,74 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-![languagetool popup presentation](readme/languagetool.gif)
+# LanguageTool TextField
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Providing powerful spell checking and grammar correction capabilities.
+
+<div>
+<img src="doc/misspeling_langtool.png" width="310" height="667">
+&nbsp
+&nbsp
+<img src="doc/typo_langtool.png" width="310" height="667">
+&nbsp
+&nbsp
+<img src="doc/uncategorized_langtool.png" width="310" height="667">
+</div>
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+The LanguageTool TextField package is a spell-checker designed for Flutter apps. It integrates with the LanguageTool API to offer real-time spell-checking capabilities. This package will enhance text input accuracy by automatically detecting and highlighting spelling errors as users type. 
+
+It's particularly useful for apps that require precise text input, like chat or note-taking apps. By using the LanguageTool TextField package, developers can improve the user experience by providing an intuitive and reliable spell-checking feature.
+
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+1. Add dependency:
 
 ```dart
-const like = 'sample';
+flutter pub add language_tool_textfield
 ```
 
-## Additional information
+2. Import the package:
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```dart
+import 'package:language_tool_textfield/language_tool_textfield.dart';
+```
+
+
+## Quick Start
+To start using the plugin, copy this code or follow the example project in 'languagetool_textfield/example'
+
+```dart
+// Create a base API client
+final _languageTool = LanguageToolClient();
+
+// Add input debouncing
+final _debouncedLangService = DebounceLangToolService(
+  LangToolService(_languageTool),
+  const Duration(milliseconds: 500),
+);
+
+// Create a text controller for the Widget
+final _controller = ColoredTextEditingController(
+    languageCheckService: _debouncedLangService
+);
+
+// Use the text field widget in your layout
+child: LanguageToolTextField(
+  style: const TextStyle(),
+  decoration: const InputDecoration(),
+  coloredController: _controller,
+  mistakePopup: MistakePopup(popupRenderer: PopupOverlayRenderer()),
+);
+
+// Don't forget to dispose the controller
+_controller.dispose();
+```
+
+## Current issues
+
+Current issues list [is here](https://github.com/solid-software/languagetool_textfield/issues).\
+Found a bug? [Open the issue](https://github.com/solid-software/languagetool_textfield/issues/new).
+
