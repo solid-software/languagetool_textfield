@@ -19,11 +19,11 @@ class DebounceLangToolService extends LanguageCheckService {
 
   @override
   Future<Result<List<Mistake>>> findMistakes(String text) async {
-    final value = await debouncing.debounce(() {
-      return baseService.findMistakes(text);
-    }) as Result<List<Mistake>>?;
+    final value =
+        await debouncing.debounce(() => baseService.findMistakes(text))
+            as Result<List<Mistake>>;
 
-    return value ?? const Result.success(<Mistake>[]);
+    return value;
   }
 
   @override

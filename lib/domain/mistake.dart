@@ -30,4 +30,21 @@ class Mistake {
     required this.length,
     this.replacements = const [],
   });
+
+  /// Creates a copy of this mistake with optional parameter values overridden.
+  Mistake copyWith({
+    String? message,
+    MistakeType? type,
+    int? offset,
+    int? length,
+    List<String>? replacements,
+  }) {
+    return Mistake(
+      message: message ?? this.message,
+      type: type ?? this.type,
+      offset: offset ?? this.offset,
+      length: length ?? this.length,
+      replacements: replacements ?? this.replacements,
+    );
+  }
 }

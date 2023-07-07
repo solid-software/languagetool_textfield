@@ -7,6 +7,8 @@ import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
+import 'package:languagetool_textfield/utils/closed_range.dart';
+import 'package:languagetool_textfield/utils/keep_latest_response_service.dart';
 import 'package:languagetool_textfield/utils/mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
@@ -17,6 +19,10 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Language tool API index
   final LanguageCheckService languageCheckService;
+
+  /// Create an instance of [KeepLatestResponseService]
+  ///  to handle asynchronous operations
+  final latestResponseService = KeepLatestResponseService();
 
   /// List which contains Mistake objects spans are built from
   List<Mistake> _mistakes = [];
@@ -75,8 +81,10 @@ class ColoredTextEditingController extends TextEditingController {
 
   /// Replaces mistake with given replacement
   void replaceMistake(Mistake mistake, String replacement) {
+    final mistakes = List<Mistake>.from(_mistakes);
+    mistakes.remove(mistake);
+    _mistakes = mistakes;
     text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
-    _mistakes.remove(mistake);
     focusNode?.requestFocus();
     Future.microtask.call(() {
       final newOffset = mistake.offset + replacement.length;
@@ -89,24 +97,29 @@ class ColoredTextEditingController extends TextEditingController {
   Future<void> _handleTextChange(String newText) async {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
-    if (newText == text) return;
+    if (newText == text || newText.isEmpty) return;
+
+    final filteredMistakes = _filterMistakesOnChanged(newText);
+    _mistakes = filteredMistakes.toList();
 
     // If we have a text change and we have a popup on hold
     // it will close the popup
     _closePopup();
 
-    _mistakes.clear();
     for (final recognizer in _recognizers) {
       recognizer.dispose();
     }
     _recognizers.clear();
 
-    final mistakesWrapper = await languageCheckService.findMistakes(newText);
+    final mistakesWrapper = await latestResponseService.processLatestOperation(
+      () => languageCheckService.findMistakes(newText),
+    );
+    final mistakes = mistakesWrapper?.result();
+    _fetchError = mistakesWrapper?.error;
 
-    _mistakes =
-        mistakesWrapper.hasResult ? mistakesWrapper.result().toList() : [];
-    _fetchError = mistakesWrapper.error;
+    if (mistakes == null) return;
 
+    _mistakes = mistakes;
     notifyListeners();
   }
 
@@ -118,6 +131,9 @@ class ColoredTextEditingController extends TextEditingController {
     int currentOffset = 0; // enter index
 
     for (final Mistake mistake in _mistakes) {
+      final mistakeEndOffset = min(mistake.endOffset, text.length);
+      if (mistake.offset > mistakeEndOffset) continue;
+
       /// TextSpan before mistake
       yield TextSpan(
         text: text.substring(
@@ -188,6 +204,69 @@ class ColoredTextEditingController extends TextEditingController {
       text: textAfterMistake,
       style: style,
     );
+  }
+
+  /// Filters the list of mistakes based on the changes
+  /// in the text when it is changed.
+  Iterable<Mistake> _filterMistakesOnChanged(String newText) sync* {
+    final isSelectionRangeEmpty = selection.end == selection.start;
+    final lengthDiscrepancy = newText.length - text.length;
+
+    for (final mistake in _mistakes) {
+      Mistake? newMistake;
+
+      newMistake = isSelectionRangeEmpty
+          ? _adjustMistakeOffsetWithCaretCursor(
+              mistake: mistake,
+              lengthDiscrepancy: lengthDiscrepancy,
+            )
+          : _adjustMistakeOffsetWithSelectionRange(
+              mistake: mistake,
+              lengthDiscrepancy: lengthDiscrepancy,
+            );
+
+      if (newMistake != null) yield newMistake;
+    }
+  }
+
+  /// Adjusts the mistake offset when the selection is a caret cursor.
+  Mistake? _adjustMistakeOffsetWithCaretCursor({
+    required Mistake mistake,
+    required int lengthDiscrepancy,
+  }) {
+    final mistakeRange = ClosedRange(mistake.offset, mistake.endOffset);
+    final caretLocation = selection.base.offset;
+
+    // Don't highlight mistakes on changed text
+    // until we get an update from the API.
+    final isCaretOnMistake = mistakeRange.contains(caretLocation);
+    if (isCaretOnMistake) return null;
+
+    final shouldAdjustOffset = mistakeRange.isBeforeOrAt(caretLocation);
+    if (!shouldAdjustOffset) return mistake;
+
+    final newOffset = mistake.offset + lengthDiscrepancy;
+
+    return mistake.copyWith(offset: newOffset);
+  }
+
+  /// Adjusts the mistake offset when the selection is a range.
+  Mistake? _adjustMistakeOffsetWithSelectionRange({
+    required Mistake mistake,
+    required int lengthDiscrepancy,
+  }) {
+    final selectionRange = ClosedRange(selection.start, selection.end);
+    final mistakeRange = ClosedRange(mistake.offset, mistake.endOffset);
+
+    final hasSelectedTextChanged = selectionRange.overlapsWith(mistakeRange);
+    if (hasSelectedTextChanged) return null;
+
+    final shouldAdjustOffset = selectionRange.isAfterOrAt(mistake.offset);
+    if (!shouldAdjustOffset) return mistake;
+
+    final newOffset = mistake.offset + lengthDiscrepancy;
+
+    return mistake.copyWith(offset: newOffset);
   }
 
   /// Returns color for mistake TextSpan style
