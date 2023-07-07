@@ -236,16 +236,18 @@ class ColoredTextEditingController extends TextEditingController {
   }) {
     final mistakeRange = ClosedRange(mistake.offset, mistake.endOffset);
     final caretLocation = selection.base.offset;
-    final isCaretOnMistake = mistakeRange.contains(caretLocation);
 
     // Don't highlight mistakes on changed text
     // until we get an update from the API.
+    final isCaretOnMistake = mistakeRange.contains(caretLocation);
     if (isCaretOnMistake) return null;
 
     final shouldAdjustOffset = mistakeRange.isBeforeOrAt(caretLocation);
+    if (!shouldAdjustOffset) return mistake;
+
     final newOffset = mistake.offset + lengthDiscrepancy;
 
-    return shouldAdjustOffset ? mistake.copyWith(offset: newOffset) : mistake;
+    return mistake.copyWith(offset: newOffset);
   }
 
   /// Adjusts the mistake offset when the selection is a range.
@@ -255,14 +257,16 @@ class ColoredTextEditingController extends TextEditingController {
   }) {
     final selectionRange = ClosedRange(selection.start, selection.end);
     final mistakeRange = ClosedRange(mistake.offset, mistake.endOffset);
-    final hasSelectedTextChanged = selectionRange.overlapsWith(mistakeRange);
 
+    final hasSelectedTextChanged = selectionRange.overlapsWith(mistakeRange);
     if (hasSelectedTextChanged) return null;
 
     final shouldAdjustOffset = selectionRange.isAfterOrAt(mistake.offset);
+    if (!shouldAdjustOffset) return mistake;
+
     final newOffset = mistake.offset + lengthDiscrepancy;
 
-    return shouldAdjustOffset ? mistake.copyWith(offset: newOffset) : mistake;
+    return mistake.copyWith(offset: newOffset);
   }
 
   /// Returns color for mistake TextSpan style
