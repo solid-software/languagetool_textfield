@@ -117,6 +117,9 @@ class ColoredTextEditingController extends TextEditingController {
   }) sync* {
     int currentOffset = 0; // enter index
 
+    // Sort mistakes by offset
+    _mistakes.sort((a, b) => a.offset.compareTo(b.offset));
+
     for (final Mistake mistake in _mistakes) {
       /// TextSpan before mistake
       yield TextSpan(
