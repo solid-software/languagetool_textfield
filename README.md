@@ -13,7 +13,7 @@ and the Flutter guide for
 
 # LanguageTool TextField
 
-Providing powerful spell checking and grammar correction capabilities.
+Providing powerful spell-checking and grammar correction capabilities.
 
 <div>
 <img src="doc/misspeling_langtool.png" width="310" height="667">
