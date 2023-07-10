@@ -130,6 +130,8 @@ class ColoredTextEditingController extends TextEditingController {
   }) sync* {
     int currentOffset = 0; // enter index
 
+    _mistakes.sort((a, b) => a.offset.compareTo(b.offset));
+
     for (final Mistake mistake in _mistakes) {
       final mistakeEndOffset = min(mistake.endOffset, text.length);
       if (mistake.offset > mistakeEndOffset) continue;
