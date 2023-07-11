@@ -44,7 +44,6 @@ class _AppState extends State<App> {
               decoration: const InputDecoration(),
               coloredController: _controller,
               mistakePopup: MistakePopup(popupRenderer: PopupOverlayRenderer()),
-              maxLines: null,
             ),
             DropdownMenu(
               hintText: "Select alignment...",
