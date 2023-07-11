@@ -19,10 +19,7 @@ class PopupOverlayRenderer {
     final _createdEntry = OverlayEntry(
       builder: (context) => GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTapDown: (details) {
-          dismiss();
-          onClose?.call(details);
-        },
+        onTapDown: onClose,
         child: Material(
           color: Colors.transparent,
           type: MaterialType.canvas,
@@ -30,7 +27,10 @@ class PopupOverlayRenderer {
             children: [
               CustomSingleChildLayout(
                 delegate: PopupOverlayLayoutDelegate(position),
-                child: popupBuilder(context),
+                child: TapRegion(
+                  onTapOutside: (_) => dismiss(),
+                  child: popupBuilder(context),
+                ),
               ),
             ],
           ),
