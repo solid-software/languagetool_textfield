@@ -43,13 +43,15 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-  final focusNode = FocusNode();
+  final _focusNode = FocusNode();
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    widget.coloredController.focusNode = focusNode;
+    widget.coloredController.focusNode = _focusNode;
     widget.coloredController.popupWidget = widget.mistakePopup;
+    widget.coloredController.addListener(_textControllerListener);
   }
 
   @override
@@ -79,7 +81,8 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           padding: const EdgeInsets.all(_padding),
           child: Center(
             child: TextField(
-              focusNode: focusNode,
+              scrollController: _scrollController,
+              focusNode: _focusNode,
               controller: widget.coloredController,
               style: widget.style,
               decoration: inputDecoration,
@@ -91,5 +94,15 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
         );
       },
     );
+  }
+
+  void _textControllerListener() =>
+      widget.coloredController.scrollOffset = _scrollController.offset;
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 }

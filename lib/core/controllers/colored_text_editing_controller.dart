@@ -36,6 +36,9 @@ class ColoredTextEditingController extends TextEditingController {
   /// Reference to the focus of the LanguageTool TextField
   FocusNode? focusNode;
 
+  /// Represents the scroll offset value of the LanguageTool TextField.
+  double? scrollOffset;
+
   Object? _fetchError;
 
   /// An error that may have occurred during the API fetch.
@@ -367,10 +370,17 @@ class ColoredTextEditingController extends TextEditingController {
       textDirection: TextDirection.ltr,
     );
     final textFieldWidth = textFieldRenderBox?.size.width ?? 0;
+    final scrollOffset = this.scrollOffset ?? 0;
 
-    textPainter.layout(maxWidth: textFieldWidth);
+    double maxWidth = double.infinity;
+    if (scrollOffset == 0) maxWidth = textFieldWidth;
 
-    return textPainter.getPositionForOffset(localOffset).offset;
+    textPainter.layout(minWidth: textFieldWidth, maxWidth: maxWidth);
+
+    final adjustedOffset =
+        Offset(localOffset.dx + scrollOffset, localOffset.dy);
+
+    return textPainter.getPositionForOffset(adjustedOffset).offset;
   }
 
   /// The `onClosePopup` function is a callback method typically used
