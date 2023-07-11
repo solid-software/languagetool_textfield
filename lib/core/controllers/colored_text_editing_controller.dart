@@ -370,10 +370,12 @@ class ColoredTextEditingController extends TextEditingController {
       textDirection: TextDirection.ltr,
     );
     final textFieldWidth = textFieldRenderBox?.size.width ?? 0;
-
-    textPainter.layout(minWidth: textFieldWidth);
-
     final scrollOffset = this.scrollOffset ?? 0;
+
+    double maxWidth = double.infinity;
+    if (scrollOffset == 0) maxWidth = textFieldWidth;
+
+    textPainter.layout(minWidth: textFieldWidth, maxWidth: maxWidth);
 
     final adjustedOffset =
         Offset(localOffset.dx + scrollOffset, localOffset.dy);
