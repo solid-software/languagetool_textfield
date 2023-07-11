@@ -101,6 +101,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
 
   @override
   void dispose() {
+    _focusNode.dispose();
     _scrollController.dispose();
     super.dispose();
   }

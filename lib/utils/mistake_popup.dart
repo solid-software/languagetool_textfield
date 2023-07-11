@@ -213,17 +213,20 @@ class LanguageToolMistakePopup extends StatelessWidget {
                             : _replacementButtonsSpacingMobile,
                         children: mistake.replacements
                             .map(
-                              (replacement) => ElevatedButton(
-                                onPressed: () => _fixTheMistake(replacement),
-                                style: mistakeStyle ??
-                                    ElevatedButton.styleFrom(
-                                      elevation: 0,
-                                      minimumSize: const Size(40, 36),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
+                              (replacement) => MouseRegion(
+                                cursor: MaterialStateMouseCursor.clickable,
+                                child: ElevatedButton(
+                                  onPressed: () => _fixTheMistake(replacement),
+                                  style: mistakeStyle ??
+                                      ElevatedButton.styleFrom(
+                                        elevation: 0,
+                                        minimumSize: const Size(40, 36),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
                                       ),
-                                    ),
-                                child: Text(replacement),
+                                  child: Text(replacement),
+                                ),
                               ),
                             )
                             .toList(),
