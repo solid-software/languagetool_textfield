@@ -52,7 +52,12 @@ To start using the plugin, copy this code or follow the example project in 'lang
 
 ```dart
 // Create a base API client
-final _languageTool = LanguageToolClient();
+final _languageTool = LanguageToolClient(
+  // A language code like en-US, de-DE, fr, or auto to guess
+  // the language automatically.
+  // language = 'auto' by default.
+  language: 'en-US',
+);
 
 // Add input debouncing
 final _debouncedLangService = DebounceLangToolService(
