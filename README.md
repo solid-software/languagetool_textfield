@@ -16,13 +16,13 @@ and the Flutter guide for
 Providing powerful spell-checking and grammar correction capabilities.
 
 <div>
-<img src="doc/misspeling_langtool.png" width="310" height="667">
+<img src="https://raw.githubusercontent.com/solid-software/languagetool_textfield/master/doc/misspeling_langtool.png" width="310" height="667">
 &nbsp
 &nbsp
-<img src="doc/typo_langtool.png" width="310" height="667">
+<img src="https://raw.githubusercontent.com/solid-software/languagetool_textfield/master/doc/typo_langtool.png" width="310" height="667">
 &nbsp
 &nbsp
-<img src="doc/uncategorized_langtool.png" width="310" height="667">
+<img src="https://raw.githubusercontent.com/solid-software/languagetool_textfield/master/doc/uncategorized_langtool.png" width="310" height="667">
 </div>
 
 ## Features
