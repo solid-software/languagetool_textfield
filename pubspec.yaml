@@ -1,5 +1,5 @@
 name: languagetool_textfield
-description: Languagetool text field.
+description: The LanguageTool TextField package is a spell-checker designed for Flutter apps.
 version: 0.0.4
 homepage: https://github.com/solid-software/languagetool_textfield/
 
