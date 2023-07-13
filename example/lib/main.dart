@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
 
-
 void main() {
   runApp(
     const MaterialApp(
@@ -23,8 +22,8 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   /// Initialize LanguageToolClient
   static final LanguageToolClient _languageTool = LanguageToolClient(
-    // A language code like en-US, de-DE, fr, or auto to guess 
-    // the language automatically. 
+    // A language code like en-US, de-DE, fr, or auto to guess
+    // the language automatically.
     // language = 'auto' by default.
     language: 'en-US',
   );
