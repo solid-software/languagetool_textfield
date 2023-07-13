@@ -21,7 +21,7 @@ class ColoredTextEditingController extends TextEditingController {
   final LanguageCheckService languageCheckService;
 
   /// Create an instance of [KeepLatestResponseService]
-  ///  to handle asynchronous operations
+  /// to handle asynchronous operations
   final latestResponseService = KeepLatestResponseService();
 
   /// List which contains Mistake objects spans are built from
@@ -51,8 +51,8 @@ class ColoredTextEditingController extends TextEditingController {
   }
 
   /// Controller constructor
-  ColoredTextEditingController({
-    required this.languageCheckService,
+  ColoredTextEditingController(
+    this.languageCheckService, {
     this.highlightStyle = const HighlightStyle(),
   });
 
