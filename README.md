@@ -77,6 +77,11 @@ child: LanguageToolTextField(
 _controller.dispose();
 ```
 
+## Legal
+
+This is an unofficial plugin. We are not affiliated with LanguageTool.
+All logos are of their respected owners.
+
 ## Current issues
 
 Current issues list [is here](https://github.com/solid-software/languagetool_textfield/issues).\
