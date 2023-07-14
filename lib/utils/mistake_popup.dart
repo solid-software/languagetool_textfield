@@ -24,7 +24,7 @@ class MistakePopup {
     BuildContext context, {
     required Mistake mistake,
     required Offset popupPosition,
-    required ColoredTextEditingController controller,
+    required LanguageToolTextEditingController controller,
     ValueChanged<TapDownDetails>? onClose,
   }) {
     final MistakeBuilderCallback builder =
@@ -58,7 +58,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
   final Mistake mistake;
 
   /// Controller of the text where mistake was found
-  final ColoredTextEditingController controller;
+  final LanguageToolTextEditingController controller;
 
   /// An on-screen position of the mistake
   final Offset mistakePosition;

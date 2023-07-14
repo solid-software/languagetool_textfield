@@ -20,24 +20,9 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  /// Initialize LanguageToolClient
-  static final LanguageToolClient _languageTool = LanguageToolClient(
-    // A language code like en-US, de-DE, fr, or auto to guess
-    // the language automatically.
-    // language = 'auto' by default.
-    language: 'en-US',
-  );
-
-  /// Initialize DebounceLangToolService
-  static final DebounceLangToolService _debouncedLangService =
-      DebounceLangToolService(
-    LangToolService(_languageTool),
-    const Duration(milliseconds: 500),
-  );
-
-  /// Initialize ColoredTextEditingController
-  final ColoredTextEditingController _controller =
-      ColoredTextEditingController(languageCheckService: _debouncedLangService);
+  /// Initialize LanguageToolTextEditingController
+  final LanguageToolTextEditingController _controller =
+      LanguageToolTextEditingController();
 
   static const List<MainAxisAlignment> alignments = [
     MainAxisAlignment.center,
@@ -54,10 +39,12 @@ class _AppState extends State<App> {
           mainAxisAlignment: alignments[currentAlignmentIndex],
           children: [
             LanguageToolTextField(
-              style: const TextStyle(),
-              decoration: const InputDecoration(),
               coloredController: _controller,
-              mistakePopup: MistakePopup(popupRenderer: PopupOverlayRenderer()),
+
+              /// A language code like en-US, de-DE, fr, or auto to guess
+              /// the language automatically.
+              /// language = 'auto' by default.
+              language: 'en-US',
             ),
             DropdownMenu(
               hintText: "Select alignment...",
@@ -69,7 +56,7 @@ class _AppState extends State<App> {
                 DropdownMenuEntry(value: 1, label: "Top alignment"),
                 DropdownMenuEntry(value: 2, label: "Bottom alignment"),
               ],
-            )
+            ),
           ],
         ),
       ),

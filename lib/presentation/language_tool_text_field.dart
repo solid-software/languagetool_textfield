@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/core/controllers/colored_text_editing_controller.dart';
-import 'package:languagetool_textfield/core/enums/delay_type.dart';
-import 'package:languagetool_textfield/languagetool_textfield.dart';
+import 'package:languagetool_textfield/core/controllers/language_tool_text_editing_controller.dart';
 import 'package:languagetool_textfield/utils/mistake_popup.dart';
+import 'package:languagetool_textfield/utils/popup_overlay_renderer.dart';
 
 /// A TextField widget that checks the grammar using the given
 /// [coloredController]
 class LanguageToolTextField extends StatefulWidget {
   /// A style to use for the text being edited.
-  final TextStyle style;
+  final TextStyle? style;
 
   /// A decoration of this [TextField].
   final InputDecoration decoration;
 
   /// Color scheme to highlight mistakes
-  final ColoredTextEditingController coloredController;
+  final LanguageToolTextEditingController coloredController;
 
   /// Mistake popup window
-  final MistakePopup mistakePopup;
+  final MistakePopup? mistakePopup;
 
   /// The maximum number of lines to show at one time, wrapping if necessary.
   final int? maxLines;
@@ -28,23 +27,21 @@ class LanguageToolTextField extends StatefulWidget {
   /// Whether this widget's height will be sized to fill its parent.
   final bool expands;
 
-  ///
-  final Duration delay;
-
-  ///
-  final DelayType delayType;
+  /// A language code like en-US, de-DE, fr, or auto to guess
+  /// the language automatically.
+  /// ```language``` = 'auto' by default.
+  final String language;
 
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
-    required this.style,
-    required this.decoration,
     required this.coloredController,
-    required this.mistakePopup,
+    this.style,
+    this.decoration = const InputDecoration(),
+    this.language = 'auto',
+    this.mistakePopup,
     this.maxLines = 1,
     this.minLines,
     this.expands = false,
-    this.delay = Duration.zero,
-    this.delayType = DelayType.debouncing,
     super.key,
   });
 
@@ -53,34 +50,30 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
+  static const _padding = 24.0;
+
   final _focusNode = FocusNode();
   final _scrollController = ScrollController();
-  ColoredTextEditingController? _langtoolController;
-  static final LanguageToolClient _languageToolClient = LanguageToolClient(
-    // A language code like en-US, de-DE, fr, or auto to guess
-    // the language automatically.
-    // language = 'auto' by default.
-    language: 'en-US',
-  );
 
   @override
   void initState() {
     super.initState();
-    _langtoolController = ColoredTextEditingController(
-        DebounceLangToolService(LangToolService(_languageToolClient), widget.delay));
-    _langtoolController?.focusNode = _focusNode;
-    _langtoolController?.popupWidget = widget.mistakePopup;
-    _langtoolController?.addListener(_textControllerListener);
+    final controller = widget.coloredController;
+
+    controller.focusNode = _focusNode;
+    controller.language = widget.language;
+    final defaultPopup = MistakePopup(popupRenderer: PopupOverlayRenderer());
+    controller.popupWidget = widget.mistakePopup ?? defaultPopup;
+
+    controller.addListener(_textControllerListener);
   }
 
   @override
   Widget build(BuildContext context) {
-    const _padding = 24.0;
-
     return ListenableBuilder(
-      listenable: _langtoolController!,
-      builder: (context, child) {
-        final fetchError = _langtoolController?.fetchError;
+      listenable: widget.coloredController,
+      builder: (_, __) {
+        final fetchError = widget.coloredController.fetchError;
 
         // it would probably look much better if the error would be shown on a
         // dedicated panel with field options
@@ -100,14 +93,14 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           padding: const EdgeInsets.all(_padding),
           child: Center(
             child: TextField(
-              scrollController: _scrollController,
               focusNode: _focusNode,
-              controller: _langtoolController,
-              style: widget.style,
+              controller: widget.coloredController,
+              scrollController: _scrollController,
               decoration: inputDecoration,
               minLines: widget.minLines,
               maxLines: widget.maxLines,
               expands: widget.expands,
+              style: widget.style,
             ),
           ),
         );
