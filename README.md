@@ -68,6 +68,23 @@ child: LanguageToolTextField(
 _controller.dispose();
 ```
 
+## Using Debounce and Throttle in LanguageTool TextField
+
+To incorporate the debounce or throttle functionality into the `LanguageTool TextField`, follow these steps:
+
+Create a `LanguageToolTextEditingController` and provide the desired debounce/throttle delay duration and delay type:
+   ```dart
+   final _controller = LanguageToolTextEditingController(
+     // If the delay value is [Duration.zero], no delay is applied.
+     delay: Duration(milliseconds: 500), // Set the debounce/throttle delay duration here
+     delayType: DelayType.debouncing, // Choose either DelayType.debouncing or DelayType.throttling
+   );
+```
+
+  `DelayType.debouncing` - Calls a function when a user hasn't carried out the event in a specific amount of time.
+
+  `DelayType.throttling` - Calls a function at intervals of a specified amount of time while the user is carrying out the event.
+
 ## Legal
 
 This is an unofficial plugin. We are not affiliated with LanguageTool.
