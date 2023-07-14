@@ -41,9 +41,9 @@ class _AppState extends State<App> {
             LanguageToolTextField(
               coloredController: _controller,
 
-              /// A language code like en-US, de-DE, fr, or auto to guess
-              /// the language automatically.
-              /// language = 'auto' by default.
+              // A language code like en-US, de-DE, fr, or auto to guess
+              // the language automatically.
+              // language = 'auto' by default.
               language: 'en-US',
             ),
             DropdownMenu(

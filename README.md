@@ -51,31 +51,17 @@ import 'package:language_tool_textfield/language_tool_textfield.dart';
 To start using the plugin, copy this code or follow the example project in 'languagetool_textfield/example'
 
 ```dart
-// Create a base API client
-final _languageTool = LanguageToolClient(
+// Create a text controller for the Widget
+final _controller = ColoredTextEditingController();
+
+// Use the text field widget in your layout
+child: LanguageToolTextField(
+  coloredController: _controller,
+
   // A language code like en-US, de-DE, fr, or auto to guess
   // the language automatically.
   // language = 'auto' by default.
   language: 'en-US',
-);
-
-// Add input debouncing
-final _debouncedLangService = DebounceLangToolService(
-  LangToolService(_languageTool),
-  const Duration(milliseconds: 500),
-);
-
-// Create a text controller for the Widget
-final _controller = ColoredTextEditingController(
-    languageCheckService: _debouncedLangService
-);
-
-// Use the text field widget in your layout
-child: LanguageToolTextField(
-  style: const TextStyle(),
-  decoration: const InputDecoration(),
-  coloredController: _controller,
-  mistakePopup: MistakePopup(popupRenderer: PopupOverlayRenderer()),
 );
 
 // Don't forget to dispose the controller
