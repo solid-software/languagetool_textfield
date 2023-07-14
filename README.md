@@ -52,11 +52,11 @@ To start using the plugin, copy this code or follow the example project in 'lang
 
 ```dart
 // Create a text controller for the Widget
-final _controller = ColoredTextEditingController();
+final _controller = LanguageToolController();
 
 // Use the text field widget in your layout
 child: LanguageToolTextField(
-  coloredController: _controller,
+  controller: _controller,
 
   // A language code like en-US, de-DE, fr, or auto to guess
   // the language automatically.
@@ -72,9 +72,9 @@ _controller.dispose();
 
 To incorporate the debounce or throttle functionality into the `LanguageTool TextField`, follow these steps:
 
-Create a `LanguageToolTextEditingController` and provide the desired debounce/throttle delay duration and delay type:
+Create a `LanguageToolController` and provide the desired debounce/throttle delay duration and delay type:
    ```dart
-   final _controller = LanguageToolTextEditingController(
+   final _controller = LanguageToolController(
      // If the delay value is [Duration.zero], no delay is applied.
      delay: Duration(milliseconds: 500), // Set the debounce/throttle delay duration here
      delayType: DelayType.debouncing, // Choose either DelayType.debouncing or DelayType.throttling

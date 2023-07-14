@@ -18,7 +18,7 @@ import 'package:languagetool_textfield/utils/mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
-class LanguageToolTextEditingController extends TextEditingController {
+class LanguageToolController extends TextEditingController {
   /// Color scheme to highlight mistakes
   final HighlightStyle highlightStyle;
 
@@ -83,7 +83,7 @@ class LanguageToolTextEditingController extends TextEditingController {
   }
 
   /// Controller constructor
-  LanguageToolTextEditingController({
+  LanguageToolController({
     this.highlightStyle = const HighlightStyle(),
     this.delay = Duration.zero,
     this.delayType = DelayType.debouncing,

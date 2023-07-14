@@ -1,7 +1,7 @@
 library languagetool_textfield;
 
 export 'client/language_tool_client.dart';
-export 'core/controllers/language_tool_text_editing_controller.dart';
+export 'core/controllers/language_tool_controller.dart';
 export 'core/enums/delay_type.dart';
 export 'core/model/category.dart';
 export 'core/model/language_tool_raw.dart';

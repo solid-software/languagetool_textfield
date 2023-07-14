@@ -21,8 +21,7 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   /// Initialize LanguageToolTextEditingController
-  final LanguageToolTextEditingController _controller =
-      LanguageToolTextEditingController();
+  final LanguageToolController _controller = LanguageToolController();
 
   static const List<MainAxisAlignment> alignments = [
     MainAxisAlignment.center,
@@ -39,7 +38,7 @@ class _AppState extends State<App> {
           mainAxisAlignment: alignments[currentAlignmentIndex],
           children: [
             LanguageToolTextField(
-              coloredController: _controller,
+              controller: _controller,
 
               // A language code like en-US, de-DE, fr, or auto to guess
               // the language automatically.

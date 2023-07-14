@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/core/controllers/language_tool_text_editing_controller.dart';
+import 'package:languagetool_textfield/core/controllers/language_tool_controller.dart';
 import 'package:languagetool_textfield/utils/mistake_popup.dart';
 import 'package:languagetool_textfield/utils/popup_overlay_renderer.dart';
 
 /// A TextField widget that checks the grammar using the given
-/// [coloredController]
+/// [LanguageToolController]
 class LanguageToolTextField extends StatefulWidget {
   /// A style to use for the text being edited.
   final TextStyle? style;
@@ -13,7 +13,7 @@ class LanguageToolTextField extends StatefulWidget {
   final InputDecoration decoration;
 
   /// Color scheme to highlight mistakes
-  final LanguageToolTextEditingController coloredController;
+  final LanguageToolController controller;
 
   /// Mistake popup window
   final MistakePopup? mistakePopup;
@@ -34,7 +34,7 @@ class LanguageToolTextField extends StatefulWidget {
 
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
-    required this.coloredController,
+    required this.controller,
     this.style,
     this.decoration = const InputDecoration(),
     this.language = 'auto',
@@ -58,7 +58,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   @override
   void initState() {
     super.initState();
-    final controller = widget.coloredController;
+    final controller = widget.controller;
 
     controller.focusNode = _focusNode;
     controller.language = widget.language;
@@ -71,17 +71,16 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: widget.coloredController,
+      listenable: widget.controller,
       builder: (_, __) {
-        final fetchError = widget.coloredController.fetchError;
+        final fetchError = widget.controller.fetchError;
 
         // it would probably look much better if the error would be shown on a
         // dedicated panel with field options
         final httpErrorText = Text(
           '$fetchError',
           style: TextStyle(
-            color:
-                widget.coloredController.highlightStyle.misspellingMistakeColor,
+            color: widget.controller.highlightStyle.misspellingMistakeColor,
           ),
         );
 
@@ -94,7 +93,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           child: Center(
             child: TextField(
               focusNode: _focusNode,
-              controller: widget.coloredController,
+              controller: widget.controller,
               scrollController: _scrollController,
               decoration: inputDecoration,
               minLines: widget.minLines,
@@ -109,7 +108,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   }
 
   void _textControllerListener() =>
-      widget.coloredController.scrollOffset = _scrollController.offset;
+      widget.controller.scrollOffset = _scrollController.offset;
 
   @override
   void dispose() {
