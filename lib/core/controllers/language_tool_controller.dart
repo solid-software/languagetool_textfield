@@ -3,43 +3,75 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:languagetool_textfield/client/language_tool_client.dart';
+import 'package:languagetool_textfield/core/enums/delay_type.dart';
 import 'package:languagetool_textfield/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/domain/highlight_style.dart';
 import 'package:languagetool_textfield/domain/language_check_service.dart';
 import 'package:languagetool_textfield/domain/mistake.dart';
+import 'package:languagetool_textfield/implementations/debounce_lang_tool_service.dart';
+import 'package:languagetool_textfield/implementations/lang_tool_service.dart';
+import 'package:languagetool_textfield/implementations/throttling_lang_tool_service.dart';
 import 'package:languagetool_textfield/utils/closed_range.dart';
 import 'package:languagetool_textfield/utils/keep_latest_response_service.dart';
 import 'package:languagetool_textfield/utils/mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
-class ColoredTextEditingController extends TextEditingController {
+class LanguageToolController extends TextEditingController {
   /// Color scheme to highlight mistakes
   final HighlightStyle highlightStyle;
 
-  /// Language tool API index
-  final LanguageCheckService languageCheckService;
+  /// Represents the type of delay for language checking.
+  ///
+  /// [DelayType.debouncing] - Calls a function when a user hasn't carried out
+  /// the event in a specific amount of time.
+  ///
+  /// [DelayType.throttling] - Calls a function at intervals of a specified
+  /// amount of time while the user is carrying out the event.
+  final DelayType delayType;
+
+  /// Represents the duration of the delay for language checking.
+  ///
+  /// If the delay is [Duration.zero], no delaying is applied.
+  final Duration delay;
+
+  /// Create an instance of [LanguageToolClient] instance
+  final _languageToolClient = LanguageToolClient();
 
   /// Create an instance of [KeepLatestResponseService]
-  ///  to handle asynchronous operations
-  final latestResponseService = KeepLatestResponseService();
-
-  /// List which contains Mistake objects spans are built from
-  List<Mistake> _mistakes = [];
+  /// to handle asynchronous operations
+  final _latestResponseService = KeepLatestResponseService();
 
   /// List of that is used to dispose recognizers after mistakes rebuilt
   final List<TapGestureRecognizer> _recognizers = [];
 
-  /// Reference to the popup widget
-  MistakePopup? popupWidget;
+  /// Language tool API index
+  LanguageCheckService? _languageCheckService;
 
   /// Reference to the focus of the LanguageTool TextField
   FocusNode? focusNode;
+
+  /// List which contains Mistake objects spans are built from
+  List<Mistake> _mistakes = [];
+
+  /// Reference to the popup widget
+  MistakePopup? popupWidget;
 
   /// Represents the scroll offset value of the LanguageTool TextField.
   double? scrollOffset;
 
   Object? _fetchError;
+
+  /// The language used for spellchecking in the text field.
+  ///
+  /// A language code like en-US, de-DE, fr, or auto to guess
+  /// the language automatically.
+  String get language => _languageToolClient.language;
+
+  set language(String language) {
+    _languageToolClient.language = language;
+  }
 
   /// An error that may have occurred during the API fetch.
   Object? get fetchError => _fetchError;
@@ -51,10 +83,26 @@ class ColoredTextEditingController extends TextEditingController {
   }
 
   /// Controller constructor
-  ColoredTextEditingController({
-    required this.languageCheckService,
+  LanguageToolController({
     this.highlightStyle = const HighlightStyle(),
-  });
+    this.delay = Duration.zero,
+    this.delayType = DelayType.debouncing,
+  }) {
+    _languageCheckService = _getLanguageCheckService();
+  }
+
+  LanguageCheckService _getLanguageCheckService() {
+    final languageToolService = LangToolService(_languageToolClient);
+
+    if (delay == Duration.zero) return languageToolService;
+
+    switch (delayType) {
+      case DelayType.debouncing:
+        return DebounceLangToolService(languageToolService, delay);
+      case DelayType.throttling:
+        return ThrottlingLangToolService(languageToolService, delay);
+    }
+  }
 
   /// Close the popup widget
   void _closePopup() => popupWidget?.popupRenderer.dismiss();
@@ -78,7 +126,7 @@ class ColoredTextEditingController extends TextEditingController {
 
   @override
   void dispose() {
-    languageCheckService.dispose();
+    _languageCheckService?.dispose();
     super.dispose();
   }
 
@@ -114,8 +162,8 @@ class ColoredTextEditingController extends TextEditingController {
     }
     _recognizers.clear();
 
-    final mistakesWrapper = await latestResponseService.processLatestOperation(
-      () => languageCheckService.findMistakes(newText),
+    final mistakesWrapper = await _latestResponseService.processLatestOperation(
+      () => _languageCheckService?.findMistakes(newText) ?? Future(() => null),
     );
     final mistakes = mistakesWrapper?.result();
     _fetchError = mistakesWrapper?.error;

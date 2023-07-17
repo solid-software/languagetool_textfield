@@ -2,10 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:languagetool_textfield/core/controllers/language_tool_controller.dart';
 import 'package:languagetool_textfield/core/langtool_images.dart';
+import 'package:languagetool_textfield/domain/mistake.dart';
 import 'package:languagetool_textfield/domain/typedefs.dart';
-import 'package:languagetool_textfield/languagetool_textfield.dart';
 import 'package:languagetool_textfield/utils/extensions/string_extension.dart';
+import 'package:languagetool_textfield/utils/popup_overlay_renderer.dart';
 
 /// Builder class that uses specified [popupRenderer] and [mistakeBuilder]
 /// to create mistake popup
@@ -24,7 +26,7 @@ class MistakePopup {
     BuildContext context, {
     required Mistake mistake,
     required Offset popupPosition,
-    required ColoredTextEditingController controller,
+    required LanguageToolController controller,
     ValueChanged<TapDownDetails>? onClose,
   }) {
     final MistakeBuilderCallback builder =
@@ -58,7 +60,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
   final Mistake mistake;
 
   /// Controller of the text where mistake was found
-  final ColoredTextEditingController controller;
+  final LanguageToolController controller;
 
   /// An on-screen position of the mistake
   final Offset mistakePosition;

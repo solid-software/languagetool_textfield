@@ -51,36 +51,39 @@ import 'package:language_tool_textfield/language_tool_textfield.dart';
 To start using the plugin, copy this code or follow the example project in 'languagetool_textfield/example'
 
 ```dart
-// Create a base API client
-final _languageTool = LanguageToolClient(
+// Create a text controller for the Widget
+final _controller = LanguageToolController();
+
+// Use the text field widget in your layout
+child: LanguageToolTextField(
+  controller: _controller,
+
   // A language code like en-US, de-DE, fr, or auto to guess
   // the language automatically.
   // language = 'auto' by default.
   language: 'en-US',
 );
 
-// Add input debouncing
-final _debouncedLangService = DebounceLangToolService(
-  LangToolService(_languageTool),
-  const Duration(milliseconds: 500),
-);
-
-// Create a text controller for the Widget
-final _controller = ColoredTextEditingController(
-    languageCheckService: _debouncedLangService
-);
-
-// Use the text field widget in your layout
-child: LanguageToolTextField(
-  style: const TextStyle(),
-  decoration: const InputDecoration(),
-  coloredController: _controller,
-  mistakePopup: MistakePopup(popupRenderer: PopupOverlayRenderer()),
-);
-
 // Don't forget to dispose the controller
 _controller.dispose();
 ```
+
+## Using Debounce and Throttle in LanguageTool TextField
+
+To incorporate the debounce or throttle functionality into the `LanguageTool TextField`, follow these steps:
+
+Create a `LanguageToolController` and provide the desired debounce/throttle delay duration and delay type:
+   ```dart
+   final _controller = LanguageToolController(
+     // If the delay value is [Duration.zero], no delay is applied.
+     delay: Duration(milliseconds: 500), // Set the debounce/throttle delay duration here
+     delayType: DelayType.debouncing, // Choose either DelayType.debouncing or DelayType.throttling
+   );
+```
+
+  `DelayType.debouncing` - Calls a function when a user hasn't carried out the event in a specific amount of time.
+
+  `DelayType.throttling` - Calls a function at intervals of a specified amount of time while the user is carrying out the event.
 
 ## Legal
 

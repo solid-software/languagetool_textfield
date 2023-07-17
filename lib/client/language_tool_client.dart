@@ -8,10 +8,6 @@ import 'package:languagetool_textfield/domain/writing_mistake.dart';
 ///
 /// Read more @ https://languagetool.org/http-api/swagger-ui/#/
 class LanguageToolClient {
-  /// A language code like en-US, de-DE, fr,
-  /// or auto to guess the language automatically
-  final String language;
-
   /// Url of LanguageTool API.
   static const _url = 'api.languagetoolplus.com';
 
@@ -20,6 +16,10 @@ class LanguageToolClient {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Accept': 'application/json',
   };
+
+  /// A language code like en-US, de-DE, fr,
+  /// or auto to guess the language automatically
+  String language;
 
   /// Constructor for [LanguageToolClient].
   LanguageToolClient({this.language = 'auto'});

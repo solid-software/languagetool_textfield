@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/core/controllers/colored_text_editing_controller.dart';
+import 'package:languagetool_textfield/core/controllers/language_tool_controller.dart';
 import 'package:languagetool_textfield/utils/mistake_popup.dart';
+import 'package:languagetool_textfield/utils/popup_overlay_renderer.dart';
 
 /// A TextField widget that checks the grammar using the given
-/// [coloredController]
+/// [LanguageToolController]
 class LanguageToolTextField extends StatefulWidget {
   /// A style to use for the text being edited.
-  final TextStyle style;
+  final TextStyle? style;
 
   /// A decoration of this [TextField].
   final InputDecoration decoration;
 
   /// Color scheme to highlight mistakes
-  final ColoredTextEditingController coloredController;
+  final LanguageToolController controller;
 
   /// Mistake popup window
-  final MistakePopup mistakePopup;
+  final MistakePopup? mistakePopup;
 
   /// The maximum number of lines to show at one time, wrapping if necessary.
   final int? maxLines;
@@ -26,12 +27,18 @@ class LanguageToolTextField extends StatefulWidget {
   /// Whether this widget's height will be sized to fill its parent.
   final bool expands;
 
+  /// A language code like en-US, de-DE, fr, or auto to guess
+  /// the language automatically.
+  /// ```language``` = 'auto' by default.
+  final String language;
+
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
-    required this.style,
-    required this.decoration,
-    required this.coloredController,
-    required this.mistakePopup,
+    required this.controller,
+    this.style,
+    this.decoration = const InputDecoration(),
+    this.language = 'auto',
+    this.mistakePopup,
     this.maxLines = 1,
     this.minLines,
     this.expands = false,
@@ -43,33 +50,37 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
+  static const _padding = 24.0;
+
   final _focusNode = FocusNode();
   final _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    widget.coloredController.focusNode = _focusNode;
-    widget.coloredController.popupWidget = widget.mistakePopup;
-    widget.coloredController.addListener(_textControllerListener);
+    final controller = widget.controller;
+
+    controller.focusNode = _focusNode;
+    controller.language = widget.language;
+    final defaultPopup = MistakePopup(popupRenderer: PopupOverlayRenderer());
+    controller.popupWidget = widget.mistakePopup ?? defaultPopup;
+
+    controller.addListener(_textControllerListener);
   }
 
   @override
   Widget build(BuildContext context) {
-    const _padding = 24.0;
-
     return ListenableBuilder(
-      listenable: widget.coloredController,
-      builder: (context, child) {
-        final fetchError = widget.coloredController.fetchError;
+      listenable: widget.controller,
+      builder: (_, __) {
+        final fetchError = widget.controller.fetchError;
 
         // it would probably look much better if the error would be shown on a
         // dedicated panel with field options
         final httpErrorText = Text(
           '$fetchError',
           style: TextStyle(
-            color:
-                widget.coloredController.highlightStyle.misspellingMistakeColor,
+            color: widget.controller.highlightStyle.misspellingMistakeColor,
           ),
         );
 
@@ -81,14 +92,14 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           padding: const EdgeInsets.all(_padding),
           child: Center(
             child: TextField(
-              scrollController: _scrollController,
               focusNode: _focusNode,
-              controller: widget.coloredController,
-              style: widget.style,
+              controller: widget.controller,
+              scrollController: _scrollController,
               decoration: inputDecoration,
               minLines: widget.minLines,
               maxLines: widget.maxLines,
               expands: widget.expands,
+              style: widget.style,
             ),
           ),
         );
@@ -97,7 +108,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   }
 
   void _textControllerListener() =>
-      widget.coloredController.scrollOffset = _scrollController.offset;
+      widget.controller.scrollOffset = _scrollController.offset;
 
   @override
   void dispose() {

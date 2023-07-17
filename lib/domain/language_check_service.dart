@@ -7,7 +7,7 @@ abstract class LanguageCheckService {
   const LanguageCheckService();
 
   /// Returns found mistakes in the given [text].
-  Future<Result<List<Mistake>>> findMistakes(String text);
+  Future<Result<List<Mistake>>?> findMistakes(String text);
 
   /// Disposes resources of this [LanguageCheckService].
   Future<void> dispose() async {
