@@ -70,7 +70,7 @@ _controller.dispose();
 
 ## Using Debounce and Throttle in LanguageTool TextField
 
-To incorporate the debounce or throttle functionality into the `LanguageTool TextField`, follow these steps:
+To incorporate the debounce or throttle functionality into the `LanguageTool TextField`, follow these:
 
 Create a `LanguageToolController` and provide the desired debounce/throttle delay duration and delay type:
    ```dart
