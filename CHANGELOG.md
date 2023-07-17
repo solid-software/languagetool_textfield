@@ -1,3 +1,7 @@
+## 0.0.4
+
+Simpler and cleaner API. Documentation updates.
+
 ## 0.0.3
 
 Update pub.dev image links.
