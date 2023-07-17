@@ -20,7 +20,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  /// Initialize LanguageToolTextEditingController
+  /// Initialize LanguageToolController
   final LanguageToolController _controller = LanguageToolController();
 
   static const List<MainAxisAlignment> alignments = [
@@ -39,10 +39,6 @@ class _AppState extends State<App> {
           children: [
             LanguageToolTextField(
               controller: _controller,
-
-              // A language code like en-US, de-DE, fr, or auto to guess
-              // the language automatically.
-              // language = 'auto' by default.
               language: 'en-US',
             ),
             DropdownMenu(
