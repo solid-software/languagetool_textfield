@@ -1,3 +1,7 @@
+## 0.0.5
+
+Update README.md file
+
 ## 0.0.4
 
 Simpler and cleaner API. Documentation updates.
