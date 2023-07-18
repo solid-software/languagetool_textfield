@@ -1,3 +1,7 @@
+## 0.0.5
+
+Fixed a mistake found in the "Getting Started" section
+
 ## 0.0.4
 
 Simpler and cleaner API. Documentation updates.
