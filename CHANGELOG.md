@@ -1,6 +1,6 @@
 ## 0.0.5
 
-Update README.md file
+Fixed a mistake found in the "Getting Started" section
 
 ## 0.0.4
 
