@@ -34,16 +34,16 @@ It's particularly useful for apps that require precise text input, like chat or 
 
 ## Getting started
 
-1. Add dependency:
+1. Run this command:
 
 ```dart
-flutter pub add language_tool_textfield
+flutter pub add languagetool_textfield
 ```
 
 2. Import the package:
 
 ```dart
-import 'package:language_tool_textfield/language_tool_textfield.dart';
+import 'package:languagetool_textfield/languagetool_textfield.dart';
 ```
 
 
