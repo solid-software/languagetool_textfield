@@ -12,7 +12,7 @@ and the Flutter guide for
 -->
 
 # LanguageTool TextField
-[![flutter_vlc_player](https://nokycucwgzweensacwfy.supabase.co/functions/v1/get_project_badge?projectName=flutter_vlc_player)](https://www.worklog.ai)
+[![langtool](https://nokycucwgzweensacwfy.supabase.co/functions/v1/get_project_badge?projectName=LanguageTool%20TextField)](https://www.worklog.ai)
 
 Providing powerful spell-checking and grammar correction capabilities.
 
