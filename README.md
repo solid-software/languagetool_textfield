@@ -1,17 +1,5 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
-
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
 # LanguageTool TextField
+[![style: solid](https://img.shields.io/badge/style-solid-orange)](https://pub.dev/packages/solid_lints)
 [![langtool](https://nokycucwgzweensacwfy.supabase.co/functions/v1/get_project_badge?projectName=LanguageTool%20TextField)](https://www.worklog.ai)
 
 Providing powerful spell-checking and grammar correction capabilities.
