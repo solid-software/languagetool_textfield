@@ -1,6 +1,6 @@
 # LanguageTool TextField
 [![style: solid](https://img.shields.io/badge/style-solid-orange)](https://pub.dev/packages/solid_lints)
-[![langtool](https://nokycucwgzweensacwfy.supabase.co/functions/v1/get_project_badge?projectName=LanguageTool%20TextField)](https://www.worklog.ai)
+[![langtool](https://nokycucwgzweensacwfy.supabase.co/functions/v1/get_project_badge?projectId=212)](https://nokycucwgzweensacwfy.supabase.co/functions/v1/get_project_url?projectId=212)
 
 Providing powerful spell-checking and grammar correction capabilities.
 
