@@ -38,7 +38,6 @@ class LanguageToolClient {
     );
 
     final languageToolAnswer = LanguageToolRaw.fromJson(
-      //json.decode(result.body) as Map<String, dynamic>,
 			json.decode(utf8.decode(result.bodyBytes)) as Map<String, dynamic>,
     );
 
