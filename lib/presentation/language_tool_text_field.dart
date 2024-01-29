@@ -42,8 +42,8 @@ class LanguageToolTextField extends StatefulWidget {
     this.maxLines = 1,
     this.minLines,
     this.expands = false,
-		this.textAlign = TextAlign.right,
-		this.textDirection = TextDirection.rtl,
+		this.textAlign = TextAlign.start,
+		this.textDirection,
     super.key,
   });
 
