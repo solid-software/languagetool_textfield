@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/core/controllers/language_tool_controller.dart';
-import 'package:languagetool_textfield/core/langtool_images.dart';
-import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/domain/typedefs.dart';
-import 'package:languagetool_textfield/utils/extensions/string_extension.dart';
-import 'package:languagetool_textfield/utils/popup_overlay_renderer.dart';
+import 'package:languagetool_textfield/src/core/controllers/language_tool_controller.dart';
+import 'package:languagetool_textfield/src/core/langtool_images.dart';
+import 'package:languagetool_textfield/src/domain/mistake.dart';
+import 'package:languagetool_textfield/src/domain/typedefs.dart';
+import 'package:languagetool_textfield/src/utils/extensions/string_extension.dart';
+import 'package:languagetool_textfield/src/utils/popup_overlay_renderer.dart';
 
 /// Builder class that uses specified [popupRenderer] and [mistakeBuilder]
 /// to create mistake popup

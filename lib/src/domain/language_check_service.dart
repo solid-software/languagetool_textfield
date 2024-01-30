@@ -1,5 +1,5 @@
-import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/utils/result.dart';
+import 'package:languagetool_textfield/src/domain/mistake.dart';
+import 'package:languagetool_textfield/src/utils/result.dart';
 
 /// A base language check service.
 abstract class LanguageCheckService {

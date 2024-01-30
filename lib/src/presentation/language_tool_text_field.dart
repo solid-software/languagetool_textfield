@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/core/controllers/language_tool_controller.dart';
-import 'package:languagetool_textfield/utils/mistake_popup.dart';
-import 'package:languagetool_textfield/utils/popup_overlay_renderer.dart';
+import 'package:languagetool_textfield/src/core/controllers/language_tool_controller.dart';
+import 'package:languagetool_textfield/src/utils/mistake_popup.dart';
+import 'package:languagetool_textfield/src/utils/popup_overlay_renderer.dart';
 
 /// A TextField widget that checks the grammar using the given
 /// [LanguageToolController]

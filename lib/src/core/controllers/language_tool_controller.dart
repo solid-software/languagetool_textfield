@@ -3,18 +3,18 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/client/language_tool_client.dart';
-import 'package:languagetool_textfield/core/enums/delay_type.dart';
-import 'package:languagetool_textfield/core/enums/mistake_type.dart';
-import 'package:languagetool_textfield/domain/highlight_style.dart';
-import 'package:languagetool_textfield/domain/language_check_service.dart';
-import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/implementations/debounce_lang_tool_service.dart';
-import 'package:languagetool_textfield/implementations/lang_tool_service.dart';
-import 'package:languagetool_textfield/implementations/throttling_lang_tool_service.dart';
-import 'package:languagetool_textfield/utils/closed_range.dart';
-import 'package:languagetool_textfield/utils/keep_latest_response_service.dart';
-import 'package:languagetool_textfield/utils/mistake_popup.dart';
+import 'package:languagetool_textfield/src/client/language_tool_client.dart';
+import 'package:languagetool_textfield/src/core/enums/delay_type.dart';
+import 'package:languagetool_textfield/src/core/enums/mistake_type.dart';
+import 'package:languagetool_textfield/src/domain/highlight_style.dart';
+import 'package:languagetool_textfield/src/domain/language_check_service.dart';
+import 'package:languagetool_textfield/src/domain/mistake.dart';
+import 'package:languagetool_textfield/src/implementations/debounce_lang_tool_service.dart';
+import 'package:languagetool_textfield/src/implementations/lang_tool_service.dart';
+import 'package:languagetool_textfield/src/implementations/throttling_lang_tool_service.dart';
+import 'package:languagetool_textfield/src/utils/closed_range.dart';
+import 'package:languagetool_textfield/src/utils/keep_latest_response_service.dart';
+import 'package:languagetool_textfield/src/utils/mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer

@@ -1,5 +1,5 @@
-import 'package:languagetool_textfield/core/model/replacement.dart';
-import 'package:languagetool_textfield/core/model/rule.dart';
+import 'package:languagetool_textfield/src/core/model/replacement.dart';
+import 'package:languagetool_textfield/src/core/model/rule.dart';
 
 /// Object that stores information about matched mistakes.
 class Match {

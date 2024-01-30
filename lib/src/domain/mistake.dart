@@ -1,4 +1,4 @@
-import 'package:languagetool_textfield/core/enums/mistake_type.dart';
+import 'package:languagetool_textfield/src/core/enums/mistake_type.dart';
 
 /// A data model class that stores information about a single writing mistake.
 class Mistake {
