@@ -165,10 +165,10 @@ class LanguageToolController extends TextEditingController {
     final mistakesWrapper = await _latestResponseService.processLatestOperation(
       () => _languageCheckService?.findMistakes(newText) ?? Future(() => null),
     );
-    final mistakes = mistakesWrapper?.result();
-    _fetchError = mistakesWrapper?.error;
+    if (mistakesWrapper == null || !mistakesWrapper.hasResult) return;
 
-    if (mistakes == null) return;
+    final mistakes = mistakesWrapper.result();
+    _fetchError = mistakesWrapper.error;
 
     _mistakes = mistakes;
     notifyListeners();
