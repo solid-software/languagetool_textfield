@@ -9,7 +9,7 @@ class DebounceLangToolService extends LanguageCheckService {
   final LanguageCheckService baseService;
 
   /// A debouncing used to debounce the API calls.
-  final Debouncing debouncing;
+  final Debouncing<Future<Result<List<Mistake>>?>> debouncing;
 
   /// Creates a new instance of the [DebounceLangToolService] class.
   DebounceLangToolService(
@@ -20,7 +20,7 @@ class DebounceLangToolService extends LanguageCheckService {
   @override
   Future<Result<List<Mistake>>> findMistakes(String text) async {
     final value =
-        await debouncing.debounce(() => baseService.findMistakes(text))
+        (await debouncing.debounce(() => baseService.findMistakes(text)) ?? [])
             as Result<List<Mistake>>;
 
     return value;
@@ -28,7 +28,7 @@ class DebounceLangToolService extends LanguageCheckService {
 
   @override
   Future<void> dispose() async {
-    await debouncing.close();
+    debouncing.close();
     await baseService.dispose();
   }
 }
