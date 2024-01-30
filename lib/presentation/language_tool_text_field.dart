@@ -32,6 +32,13 @@ class LanguageToolTextField extends StatefulWidget {
   /// ```language``` = 'auto' by default.
   final String language;
 
+  /// Determine text alignment
+  /// textAlign = [TextAlign.start] by default.
+  final TextAlign textAlign;
+
+  /// Determine text Direction
+  final TextDirection? textDirection;
+
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
     required this.controller,
@@ -42,8 +49,8 @@ class LanguageToolTextField extends StatefulWidget {
     this.maxLines = 1,
     this.minLines,
     this.expands = false,
-		this.textAlign = TextAlign.start,
-		this.textDirection,
+    this.textAlign = TextAlign.start,
+    this.textDirection,
     super.key,
   });
 
@@ -94,8 +101,8 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           padding: const EdgeInsets.all(_padding),
           child: Center(
             child: TextField(
-							 textAlign: widget.textAlign,
-							textDirection: widget.textDirection,
+              textAlign: widget.textAlign,
+              textDirection: widget.textDirection,
               focusNode: _focusNode,
               controller: widget.controller,
               scrollController: _scrollController,
