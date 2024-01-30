@@ -21,6 +21,7 @@ class DebounceLangToolService extends LanguageCheckService {
   Future<Result<List<Mistake>>?> findMistakes(String text) async =>
       await debouncing.debounce(() => baseService.findMistakes(text));
 
+  // ignore: proper_super_calls
   @override
   Future<void> dispose() async {
     debouncing.close();
