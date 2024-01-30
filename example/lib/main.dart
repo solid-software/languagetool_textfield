@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_match_file_name
-
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
 
@@ -12,7 +10,7 @@ void main() {
 }
 
 /// Example App main page
-// ignore: prefer-match-file-name
+// ignore: prefer_match_file_name
 class App extends StatefulWidget {
   /// Example app constructor
   const App({super.key});
