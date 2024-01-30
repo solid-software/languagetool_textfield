@@ -23,14 +23,9 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Dart Code Metrics
-        uses: solid-software/dart-code-metrics-action@bb6c6b9b92f6adbd2b77fd83747a85f1f1be17ca
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          fatal_warnings: true
-          fatal_style: true
-          folders: "lib"
-
+      - name: Custom lint
+        run: dart run custom_lint
+        
       - name: Check formatting
         run: dart format . --set-exit-if-changed
 
