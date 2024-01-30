@@ -1,3 +1,8 @@
+## 0.0.7
+
+- Moved implementation into the `src` directory
+- Updated dependencies
+
 ## 0.0.6
 
 - Add textAlign and textDirection arguments to LanguageToolTextField constructor
