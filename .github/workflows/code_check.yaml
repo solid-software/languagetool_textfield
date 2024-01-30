@@ -23,24 +23,14 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Setup Dart Code Metrics
-        run: dart pub get dart_code_metrics
+      - name: Dart Code Metrics
+        uses: solid-software/dart-code-metrics-action@bb6c6b9b92f6adbd2b77fd83747a85f1f1be17ca
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fatal_warnings: true
+          fatal_style: true
+          folders: "lib"
 
-      - name: Run Dart Code Metrics
-        run: |
-          dirs_to_analyze=""
-          if [ -d lib ]; then dirs_to_analyze+=" lib"; fi
-          if [ -d test ]; then dirs_to_analyze+=" test"; fi
-          if [ -d example ]; then dirs_to_analyze+=" example"; fi
-          if [ dirs_to_analyze != "" ]
-          then
-            dart run dart_code_metrics:metrics \
-              analyze \
-              $dirs_to_analyze \
-              --fatal-warnings \
-              --fatal-performance \
-              --fatal-style
-          fi
       - name: Check formatting
         run: dart format . --set-exit-if-changed
 
