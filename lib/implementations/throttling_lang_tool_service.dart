@@ -10,7 +10,7 @@ class ThrottlingLangToolService extends LanguageCheckService {
   final LanguageCheckService baseService;
 
   /// A throttling used to throttle the API calls.
-  final Throttling throttling;
+  final Throttling<Future<Result<List<Mistake>>?>> throttling;
 
   /// Creates a new instance of the [ThrottlingLangToolService] class.
   ThrottlingLangToolService(
@@ -19,18 +19,12 @@ class ThrottlingLangToolService extends LanguageCheckService {
   ) : throttling = Throttling(duration: throttlingDuration);
 
   @override
-  Future<Result<List<Mistake>>?> findMistakes(String text) async {
-    final future = throttling.throttle(() => baseService.findMistakes(text))
-        as Future<Result<List<Mistake>>?>?;
-
-    if (future == null) return null;
-
-    return future.then((res) => res ?? Result.success(<Mistake>[].toList()));
-  }
+  Future<Result<List<Mistake>>?> findMistakes(String text) async =>
+      throttling.throttle(() => baseService.findMistakes(text));
 
   @override
   Future<void> dispose() async {
-    await throttling.close();
+    throttling.close();
     await baseService.dispose();
   }
 }
