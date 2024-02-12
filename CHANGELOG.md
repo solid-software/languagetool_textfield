@@ -1,4 +1,4 @@
-## 0.0.7
+## 0.1.0
 
 - Moved implementation into the `src` directory
 - Updated dependencies
