@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:languagetool_textfield/core/model/language_tool_raw.dart';
-import 'package:languagetool_textfield/domain/writing_mistake.dart';
+import 'package:languagetool_textfield/src/core/model/language_tool_raw.dart';
+import 'package:languagetool_textfield/src/domain/writing_mistake.dart';
 
 /// Class to interact with the LanguageTool API.
 ///

@@ -10,7 +10,7 @@ void main() {
 }
 
 /// Example App main page
-// ignore: prefer-match-file-name
+// ignore: prefer_match_file_name
 class App extends StatefulWidget {
   /// Example app constructor
   const App({super.key});

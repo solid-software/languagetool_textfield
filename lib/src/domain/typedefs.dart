@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:languagetool_textfield/core/controllers/language_tool_controller.dart';
-import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/utils/popup_overlay_renderer.dart';
+import 'package:languagetool_textfield/src/core/controllers/language_tool_controller.dart';
+import 'package:languagetool_textfield/src/domain/mistake.dart';
+import 'package:languagetool_textfield/src/utils/popup_overlay_renderer.dart';
 
 /// Callback used to build popup body
 typedef MistakeBuilderCallback = Widget Function({

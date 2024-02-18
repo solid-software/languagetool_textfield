@@ -1,8 +1,8 @@
-import 'package:languagetool_textfield/client/language_tool_client.dart';
-import 'package:languagetool_textfield/domain/language_check_service.dart';
-import 'package:languagetool_textfield/domain/mistake.dart';
-import 'package:languagetool_textfield/domain/writing_mistake.dart';
-import 'package:languagetool_textfield/utils/result.dart';
+import 'package:languagetool_textfield/src/client/language_tool_client.dart';
+import 'package:languagetool_textfield/src/domain/language_check_service.dart';
+import 'package:languagetool_textfield/src/domain/mistake.dart';
+import 'package:languagetool_textfield/src/domain/writing_mistake.dart';
+import 'package:languagetool_textfield/src/utils/result.dart';
 
 /// An implementation of language check service with language tool service.
 class LangToolService extends LanguageCheckService {
