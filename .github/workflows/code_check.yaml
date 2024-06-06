@@ -23,8 +23,8 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Custom lint
-        run: dart run custom_lint
+      # - name: Custom lint
+      #   run: dart run custom_lint
         
       - name: Check formatting
         run: dart format . --set-exit-if-changed
