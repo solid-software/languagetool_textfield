@@ -63,7 +63,7 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-  static const _padding = 8.0;
+  static const _padding = 24.0;
 
   final _focusNode = FocusNode();
   final _scrollController = ScrollController();
