@@ -8,6 +8,7 @@ import 'package:languagetool_textfield/src/domain/mistake.dart';
 import 'package:languagetool_textfield/src/domain/typedefs.dart';
 import 'package:languagetool_textfield/src/utils/extensions/string_extension.dart';
 import 'package:languagetool_textfield/src/utils/popup_overlay_renderer.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 /// Builder class that uses specified [popupRenderer] and [mistakeBuilder]
 /// to create mistake popup
@@ -112,129 +113,131 @@ class LanguageToolMistakePopup extends StatelessWidget {
 
     final availableSpace = _calculateAvailableSpace(context);
 
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxWidth: maxWidth,
-        maxHeight: availableSpace,
-      ),
-      child: Container(
-        margin: EdgeInsets.symmetric(
-          horizontal: horizontalMargin,
-          vertical: verticalMargin,
+    return PointerInterceptor(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: maxWidth,
+          maxHeight: availableSpace,
         ),
-        decoration: BoxDecoration(
-          color: const Color.fromRGBO(241, 243, 248, 1.0),
-          borderRadius: BorderRadius.circular(_borderRadius),
-          boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 8)],
-        ),
-        padding: const EdgeInsets.only(
-          top: 8,
-          bottom: 4,
-          left: 4,
-          right: 4,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            child: Image.asset(
-                              LangToolImages.logo,
-                              width: _iconSize,
-                              height: _iconSize,
-                              package: 'languagetool_textfield',
-                            ),
-                          ),
-                          const Text('Correct'),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        size: 12,
-                      ),
-                      constraints: const BoxConstraints(),
-                      padding: EdgeInsets.zero,
-                      splashRadius: _dismissSplashRadius,
-                      onPressed: () {
-                        _dismissDialog();
-                        controller.onClosePopup();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 8),
-                padding: const EdgeInsets.all(padding),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(_borderRadius),
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Container(
+          margin: EdgeInsets.symmetric(
+            horizontal: horizontalMargin,
+            vertical: verticalMargin,
+          ),
+          decoration: BoxDecoration(
+            color: const Color.fromRGBO(241, 243, 248, 1.0),
+            borderRadius: BorderRadius.circular(_borderRadius),
+            boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 8)],
+          ),
+          padding: const EdgeInsets.only(
+            top: 8,
+            bottom: 4,
+            left: 4,
+            right: 4,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: _paddingBetweenTitle,
-                        ),
-                        child: Text(
-                          mistake.type.name.capitalize(),
-                          style: TextStyle(
-                            color: Colors.grey.shade700,
-                            fontSize: _mistakeNameFontSize,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: _titleLetterSpacing,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: padding),
-                        child: Text(
-                          mistake.message,
-                          style: const TextStyle(
-                            fontSize: _mistakeMessageFontSize,
-                          ),
-                        ),
-                      ),
-                      Wrap(
-                        spacing: _replacementButtonsSpacing,
-                        runSpacing: kIsWeb
-                            ? _replacementButtonsSpacing
-                            : _replacementButtonsSpacingMobile,
-                        children: mistake.replacements
-                            .map(
-                              (replacement) => ElevatedButton(
-                                onPressed: () => _fixTheMistake(replacement),
-                                style: mistakeStyle ??
-                                    ElevatedButton.styleFrom(
-                                      elevation: 0,
-                                      minimumSize: const Size(40, 36),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                      ),
-                                    ),
-                                child: Text(replacement),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5.0),
+                              child: Image.asset(
+                                LangToolImages.logo,
+                                width: _iconSize,
+                                height: _iconSize,
+                                package: 'languagetool_textfield',
                               ),
-                            )
-                            .toList(),
+                            ),
+                            const Text('Correct'),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.close,
+                          size: 12,
+                        ),
+                        constraints: const BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                        splashRadius: _dismissSplashRadius,
+                        onPressed: () {
+                          _dismissDialog();
+                          controller.onClosePopup();
+                        },
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.all(padding),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(_borderRadius),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: _paddingBetweenTitle,
+                          ),
+                          child: Text(
+                            mistake.type.name.capitalize(),
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontSize: _mistakeNameFontSize,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: _titleLetterSpacing,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: padding),
+                          child: Text(
+                            mistake.message,
+                            style: const TextStyle(
+                              fontSize: _mistakeMessageFontSize,
+                            ),
+                          ),
+                        ),
+                        Wrap(
+                          spacing: _replacementButtonsSpacing,
+                          runSpacing: kIsWeb
+                              ? _replacementButtonsSpacing
+                              : _replacementButtonsSpacingMobile,
+                          children: mistake.replacements
+                              .map(
+                                (replacement) => ElevatedButton(
+                                  onPressed: () => _fixTheMistake(replacement),
+                                  style: mistakeStyle ??
+                                      ElevatedButton.styleFrom(
+                                        elevation: 0,
+                                        minimumSize: const Size(40, 36),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                      ),
+                                  child: Text(replacement),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
