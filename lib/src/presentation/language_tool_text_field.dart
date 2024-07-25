@@ -131,7 +131,6 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           suffix: fetchError != null ? httpErrorText : null,
         );
 
-
         Widget childWidget = TextField(
           textAlign: widget.textAlign,
           textDirection: widget.textDirection,
@@ -164,7 +163,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
 
         if (widget.padding != null) {
           childWidget = Padding(
-            padding: widget.padding!,
+            padding: widget.padding ?? EdgeInsets.zero,
             child: childWidget,
           );
         }
