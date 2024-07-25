@@ -25,7 +25,7 @@ jobs:
 
       - name: Custom lint
         run: dart run custom_lint
-        
+
       - name: Check formatting
         run: dart format . --set-exit-if-changed
 
@@ -38,3 +38,4 @@ jobs:
           else
               echo "Tests not found."
           fi
+

@@ -36,7 +36,7 @@ class MistakePopup {
       context,
       position: popupPosition,
       onClose: onClose,
-      popupBuilder: (context) => builder.call(
+      popupBuilder: (_) => builder.call(
         popupRenderer: popupRenderer,
         mistake: mistake,
         controller: controller,

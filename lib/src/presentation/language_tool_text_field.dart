@@ -18,6 +18,9 @@ class LanguageToolTextField extends StatefulWidget {
   /// Mistake popup window
   final MistakePopup? mistakePopup;
 
+  /// Padding for the text field
+  final EdgeInsetsGeometry? padding;
+
   /// The maximum number of lines to show at one time, wrapping if necessary.
   final int? maxLines;
 
@@ -46,6 +49,7 @@ class LanguageToolTextField extends StatefulWidget {
     this.decoration = const InputDecoration(),
     this.language = 'auto',
     this.mistakePopup,
+    this.padding,
     this.maxLines = 1,
     this.minLines,
     this.expands = false,
@@ -98,7 +102,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
         );
 
         return Padding(
-          padding: const EdgeInsets.all(_padding),
+          padding: widget.padding ?? const EdgeInsets.all(_padding),
           child: Center(
             child: TextField(
               textAlign: widget.textAlign,
