@@ -47,7 +47,6 @@ class LanguageToolTextField extends StatefulWidget {
   final VoidCallback? onTap;
   final TapRegionCallback? onTapOutside;
   final TextInputAction? textInputAction;
-  final bool obscureText;
   final TextInputType? keyboardType;
   final Color? cursorColor;
   final bool autoFocus;
@@ -73,7 +72,6 @@ class LanguageToolTextField extends StatefulWidget {
     this.textDirection,
     this.cursorColor,
     this.autocorrect = true,
-    this.obscureText = false,
     this.autoFocus = false,
     this.readOnly = false,
     this.textInputAction,
@@ -146,7 +144,6 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           autocorrect: widget.autocorrect,
           textInputAction: widget.textInputAction,
           keyboardAppearance: widget.keyboardAppearance,
-          obscureText: widget.obscureText,
           keyboardType: widget.keyboardType,
           autofocus: widget.autoFocus,
           readOnly: widget.readOnly,
