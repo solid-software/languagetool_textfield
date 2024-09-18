@@ -233,7 +233,7 @@ class LanguageToolController extends TextEditingController {
               mistake.offset,
               min(mistake.endOffset, text.length),
             ),
-            mouseCursor: MaterialStateMouseCursor.textable,
+            mouseCursor: WidgetStateMouseCursor.textable,
             style: style?.copyWith(
               backgroundColor: mistakeColor.withOpacity(
                 highlightStyle.backgroundOpacity,

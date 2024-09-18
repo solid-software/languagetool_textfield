@@ -1,3 +1,8 @@
+## 0.1.1
+- Add some properties (cursorColor, onTextChange, focusNode, onTextSubmitted, ...) for TextField
+  Credits: @dab246
+- Replace deprecated MaterialStateMouseCursor
+
 ## 0.1.0
 
 - Moved implementation into the `src` directory
