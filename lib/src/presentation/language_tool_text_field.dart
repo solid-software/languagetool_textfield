@@ -18,9 +18,6 @@ class LanguageToolTextField extends StatefulWidget {
   /// Mistake popup window
   final MistakePopup? mistakePopup;
 
-  /// Padding for the text field
-  final EdgeInsetsGeometry? padding;
-
   /// The maximum number of lines to show at one time, wrapping if necessary.
   final int? maxLines;
 
@@ -42,6 +39,21 @@ class LanguageToolTextField extends StatefulWidget {
   /// Determine text Direction
   final TextDirection? textDirection;
 
+  final ValueChanged<String>? onTextChange;
+  final ValueChanged<String>? onTextSubmitted;
+  final VoidCallback? onTap;
+  final TapRegionCallback? onTapOutside;
+  final TextInputAction? textInputAction;
+  final TextInputType? keyboardType;
+  final Color? cursorColor;
+  final bool autoFocus;
+  final FocusNode? focusNode;
+  final Brightness? keyboardAppearance;
+  final bool autocorrect;
+  final bool readOnly;
+  final MouseCursor? mouseCursor;
+  final bool alignCenter;
+
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
     required this.controller,
@@ -49,12 +61,25 @@ class LanguageToolTextField extends StatefulWidget {
     this.decoration = const InputDecoration(),
     this.language = 'auto',
     this.mistakePopup,
-    this.padding,
     this.maxLines = 1,
     this.minLines,
     this.expands = false,
     this.textAlign = TextAlign.start,
     this.textDirection,
+    this.cursorColor,
+    this.autocorrect = true,
+    this.autoFocus = false,
+    this.readOnly = false,
+    this.textInputAction,
+    this.keyboardType,
+    this.focusNode,
+    this.keyboardAppearance,
+    this.mouseCursor,
+    this.onTap,
+    this.onTapOutside,
+    this.onTextChange,
+    this.onTextSubmitted,
+    this.alignCenter = true,
     super.key,
   });
 
@@ -63,9 +88,7 @@ class LanguageToolTextField extends StatefulWidget {
 }
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
-  static const _padding = 24.0;
-
-  final _focusNode = FocusNode();
+  FocusNode? _focusNode;
   final _scrollController = ScrollController();
 
   @override
@@ -73,6 +96,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
     super.initState();
     final controller = widget.controller;
 
+    _focusNode = widget.focusNode ?? FocusNode();
     controller.focusNode = _focusNode;
     controller.language = widget.language;
     final defaultPopup = MistakePopup(popupRenderer: PopupOverlayRenderer());
@@ -101,23 +125,36 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           suffix: fetchError != null ? httpErrorText : null,
         );
 
-        return Padding(
-          padding: widget.padding ?? const EdgeInsets.all(_padding),
-          child: Center(
-            child: TextField(
-              textAlign: widget.textAlign,
-              textDirection: widget.textDirection,
-              focusNode: _focusNode,
-              controller: widget.controller,
-              scrollController: _scrollController,
-              decoration: inputDecoration,
-              minLines: widget.minLines,
-              maxLines: widget.maxLines,
-              expands: widget.expands,
-              style: widget.style,
-            ),
-          ),
+        Widget childWidget = TextField(
+          textAlign: widget.textAlign,
+          textDirection: widget.textDirection,
+          focusNode: _focusNode,
+          controller: widget.controller,
+          scrollController: _scrollController,
+          decoration: inputDecoration,
+          minLines: widget.minLines,
+          maxLines: widget.maxLines,
+          expands: widget.expands,
+          style: widget.style,
+          cursorColor: widget.cursorColor,
+          autocorrect: widget.autocorrect,
+          textInputAction: widget.textInputAction,
+          keyboardAppearance: widget.keyboardAppearance,
+          keyboardType: widget.keyboardType,
+          autofocus: widget.autoFocus,
+          readOnly: widget.readOnly,
+          mouseCursor: widget.mouseCursor,
+          onChanged: widget.onTextChange,
+          onSubmitted: widget.onTextSubmitted,
+          onTap: widget.onTap,
+          onTapOutside: widget.onTapOutside,
         );
+
+        if (widget.alignCenter) {
+          childWidget = Center(child: childWidget);
+        }
+
+        return childWidget;
       },
     );
   }
@@ -127,7 +164,9 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    if (widget.focusNode == null) {
+      _focusNode?.dispose();
+    }
     _scrollController.dispose();
     super.dispose();
   }
