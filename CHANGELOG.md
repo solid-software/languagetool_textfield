@@ -1,3 +1,7 @@
+## 0.1.1
+
+- Fix changelog
+
 ## 0.1.0
 
 - Moved implementation into the `src` directory
