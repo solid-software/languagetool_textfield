@@ -43,6 +43,9 @@ class LanguageToolTextField extends StatefulWidget {
   final ValueChanged<String>? onTextSubmitted;
   final VoidCallback? onTap;
   final TapRegionCallback? onTapOutside;
+  final TextCapitalization? textCapitalization;
+  final int? maxLength;
+  final Object? groupId;
   final TextInputAction? textInputAction;
   final TextInputType? keyboardType;
   final Color? cursorColor;
@@ -53,6 +56,9 @@ class LanguageToolTextField extends StatefulWidget {
   final bool readOnly;
   final MouseCursor? mouseCursor;
   final bool alignCenter;
+  final ScrollController? scrollController;
+  final bool? enabled;
+  final Widget? Function(BuildContext, { required int currentLength, required bool isFocused, required int? maxLength})? buildCounter;
 
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
@@ -63,6 +69,7 @@ class LanguageToolTextField extends StatefulWidget {
     this.mistakePopup,
     this.maxLines = 1,
     this.minLines,
+    this.maxLength,
     this.expands = false,
     this.textAlign = TextAlign.start,
     this.textDirection,
@@ -71,6 +78,11 @@ class LanguageToolTextField extends StatefulWidget {
     this.autoFocus = false,
     this.readOnly = false,
     this.textInputAction,
+    this.groupId,
+    this.enabled,
+    this.buildCounter,
+    this.scrollController,
+    this.textCapitalization,
     this.keyboardType,
     this.focusNode,
     this.keyboardAppearance,
@@ -89,7 +101,7 @@ class LanguageToolTextField extends StatefulWidget {
 
 class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
   FocusNode? _focusNode;
-  final _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -148,6 +160,11 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           onSubmitted: widget.onTextSubmitted,
           onTap: widget.onTap,
           onTapOutside: widget.onTapOutside,
+          groupId: widget.groupId ?? EditableText,
+          maxLength: widget.maxLength,
+          enabled: widget.enabled,
+          textCapitalization: widget.textCapitalization ?? TextCapitalization.sentences,
+          buildCounter: widget.buildCounter,
         );
 
         if (widget.alignCenter) {
