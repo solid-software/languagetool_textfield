@@ -113,6 +113,8 @@ class LanguageToolMistakePopup extends StatelessWidget {
 
     final availableSpace = _calculateAvailableSpace(context);
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return PointerInterceptor(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -125,9 +127,14 @@ class LanguageToolMistakePopup extends StatelessWidget {
             vertical: verticalMargin,
           ),
           decoration: BoxDecoration(
-            color: const Color.fromRGBO(241, 243, 248, 1.0),
+            color: colorScheme.surface.withValues(alpha: 0.9),
             borderRadius: BorderRadius.circular(_borderRadius),
-            boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 8)],
+            boxShadow: [
+              BoxShadow(
+                color: colorScheme.onSurface.withValues(alpha: 0.5),
+                blurRadius: 8,
+              ),
+            ],
           ),
           padding: const EdgeInsets.only(
             top: 8,
@@ -180,7 +187,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
                   margin: const EdgeInsets.only(top: 8),
                   padding: const EdgeInsets.all(padding),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colorScheme.surface,
                     borderRadius: BorderRadius.circular(_borderRadius),
                   ),
                   child: SingleChildScrollView(
@@ -194,7 +201,8 @@ class LanguageToolMistakePopup extends StatelessWidget {
                           child: Text(
                             mistake.type.name.capitalize(),
                             style: TextStyle(
-                              color: Colors.grey.shade700,
+                              color:
+                                  colorScheme.onSurface.withValues(alpha: 0.7),
                               fontSize: _mistakeNameFontSize,
                               fontWeight: FontWeight.w600,
                               letterSpacing: _titleLetterSpacing,
