@@ -1,4 +1,8 @@
+import 'dart:ui' as ui;
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:languagetool_textfield/src/core/controllers/language_tool_controller.dart';
 import 'package:languagetool_textfield/src/utils/mistake_popup.dart';
 import 'package:languagetool_textfield/src/utils/popup_overlay_renderer.dart';
@@ -53,6 +57,46 @@ class LanguageToolTextField extends StatefulWidget {
   final bool readOnly;
   final MouseCursor? mouseCursor;
   final bool alignCenter;
+  final StrutStyle? strutStyle;
+  final TextAlignVertical? textAlignVertical;
+  final TextCapitalization textCapitalization;
+  final bool? showCursor;
+  final bool obscureText;
+  final SmartDashesType? smartDashesType;
+  final SmartQuotesType? smartQuotesType;
+  final bool enableSuggestions;
+  final MaxLengthEnforcement? maxLengthEnforcement;
+  final int? maxLength;
+  final VoidCallback? onEditingComplete;
+  final List<TextInputFormatter>? inputFormatters;
+  final bool? enabled;
+  final double cursorWidth;
+  final double? cursorHeight;
+  final Radius? cursorRadius;
+  final EdgeInsets scrollPadding;
+  final ScrollPhysics? scrollPhysics;
+  final bool? enableInteractiveSelection;
+  final InputCounterWidgetBuilder? buildCounter;
+  final Iterable<String>? autofillHints;
+  final String obscuringCharacter;
+  final DragStartBehavior dragStartBehavior;
+  final AppPrivateCommandCallback? onAppPrivateCommand;
+  final String? restorationId;
+  final TextSelectionControls? selectionControls;
+  final ui.BoxHeightStyle selectionHeightStyle;
+  final ui.BoxWidthStyle selectionWidthStyle;
+  final Clip clipBehavior;
+  final bool enableIMEPersonalizedLearning;
+  final TextMagnifierConfiguration? magnifierConfiguration;
+  final bool onTapAlwaysCalled;
+  final bool? ignorePointers;
+  final bool stylusHandwritingEnabled;
+  final ContentInsertionConfiguration? contentInsertionConfiguration;
+  final bool canRequestFocus;
+  final UndoHistoryController? undoController;
+  final Color? cursorErrorColor;
+  final WidgetStatesController? statesController;
+  final bool? cursorOpacityAnimates;
 
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
@@ -80,6 +124,46 @@ class LanguageToolTextField extends StatefulWidget {
     this.onTextChange,
     this.onTextSubmitted,
     this.alignCenter = true,
+    this.strutStyle,
+    this.textAlignVertical,
+    this.textCapitalization = TextCapitalization.none,
+    this.showCursor,
+    this.obscureText = false,
+    this.smartDashesType,
+    this.smartQuotesType,
+    this.enableSuggestions = true,
+    this.maxLengthEnforcement,
+    this.maxLength,
+    this.onEditingComplete,
+    this.inputFormatters,
+    this.enabled,
+    this.cursorWidth = 2.0,
+    this.cursorHeight,
+    this.cursorRadius,
+    this.scrollPadding = const EdgeInsets.all(20.0),
+    this.scrollPhysics,
+    this.enableInteractiveSelection,
+    this.buildCounter,
+    this.autofillHints,
+    this.obscuringCharacter = '•',
+    this.dragStartBehavior = DragStartBehavior.start,
+    this.onAppPrivateCommand,
+    this.restorationId,
+    this.selectionControls,
+    this.selectionHeightStyle = ui.BoxHeightStyle.tight,
+    this.selectionWidthStyle = ui.BoxWidthStyle.tight,
+    this.clipBehavior = Clip.hardEdge,
+    this.enableIMEPersonalizedLearning = true,
+    this.magnifierConfiguration,
+    this.onTapAlwaysCalled = false,
+    this.ignorePointers,
+    this.stylusHandwritingEnabled = true,
+    this.contentInsertionConfiguration,
+    this.canRequestFocus = true,
+    this.undoController,
+    this.cursorErrorColor,
+    this.statesController,
+    this.cursorOpacityAnimates,
     super.key,
   });
 
@@ -148,6 +232,46 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           onSubmitted: widget.onTextSubmitted,
           onTap: widget.onTap,
           onTapOutside: widget.onTapOutside,
+          strutStyle: widget.strutStyle,
+          textAlignVertical: widget.textAlignVertical,
+          textCapitalization: widget.textCapitalization,
+          showCursor: widget.showCursor,
+          smartDashesType: widget.smartDashesType,
+          smartQuotesType: widget.smartQuotesType,
+          enableSuggestions: widget.enableSuggestions,
+          obscureText: widget.obscureText,
+          maxLength: widget.maxLength,
+          maxLengthEnforcement: widget.maxLengthEnforcement,
+          onEditingComplete: widget.onEditingComplete,
+          inputFormatters: widget.inputFormatters,
+          enabled: widget.enabled,
+          cursorWidth: widget.cursorWidth,
+          cursorHeight: widget.cursorHeight,
+          cursorRadius: widget.cursorRadius,
+          scrollPadding: widget.scrollPadding,
+          scrollPhysics: widget.scrollPhysics,
+          enableInteractiveSelection: widget.enableInteractiveSelection,
+          buildCounter: widget.buildCounter,
+          autofillHints: widget.autofillHints,
+          obscuringCharacter: widget.obscuringCharacter,
+          dragStartBehavior: widget.dragStartBehavior,
+          onAppPrivateCommand: widget.onAppPrivateCommand,
+          restorationId: widget.restorationId,
+          selectionControls: widget.selectionControls,
+          selectionHeightStyle: widget.selectionHeightStyle,
+          selectionWidthStyle: widget.selectionWidthStyle,
+          clipBehavior: widget.clipBehavior,
+          enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
+          magnifierConfiguration: widget.magnifierConfiguration,
+          onTapAlwaysCalled: widget.onTapAlwaysCalled,
+          ignorePointers: widget.ignorePointers,
+          stylusHandwritingEnabled: widget.stylusHandwritingEnabled,
+          contentInsertionConfiguration: widget.contentInsertionConfiguration,
+          canRequestFocus: widget.canRequestFocus,
+          undoController: widget.undoController,
+          cursorErrorColor: widget.cursorErrorColor,
+          statesController: widget.statesController,
+          cursorOpacityAnimates: widget.cursorOpacityAnimates,
         );
 
         if (widget.alignCenter) {
