@@ -19,12 +19,6 @@ class LanguageToolTextField extends TextField {
   /// ```language``` = 'auto' by default.
   final String language;
 
-  /// {@macro flutter.widgets.editableText.onChanged}
-  final ValueChanged<String>? onTextChange;
-
-  /// {@macro flutter.widgets.editableText.onSubmitted}
-  final ValueChanged<String>? onTextSubmitted;
-
   /// Whether to center align the text field widget.
   final bool alignCenter;
 
@@ -33,9 +27,9 @@ class LanguageToolTextField extends TextField {
     required LanguageToolController super.controller,
     this.mistakePopup,
     this.language = 'auto',
-    this.onTextChange,
-    this.onTextSubmitted,
     this.alignCenter = true,
+    super.onChanged,
+    super.onSubmitted,
     super.focusNode,
     super.undoController,
     super.decoration,
@@ -169,13 +163,13 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           minLines: widget.minLines,
           expands: widget.expands,
           maxLength: widget.maxLength,
-          onChanged: widget.onTextChange,
+          onChanged: widget.onChanged,
           onTap: widget.onTap,
           onTapAlwaysCalled: widget.onTapAlwaysCalled,
           onTapOutside: widget.onTapOutside,
           onTapUpOutside: widget.onTapUpOutside,
           onEditingComplete: widget.onEditingComplete,
-          onSubmitted: widget.onTextSubmitted,
+          onSubmitted: widget.onSubmitted,
           inputFormatters: widget.inputFormatters,
           enabled: widget.enabled,
           ignorePointers: widget.ignorePointers,
