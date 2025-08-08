@@ -1,3 +1,6 @@
+import 'dart:ui' as ui;
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/src/core/controllers/language_tool_controller.dart';
 import 'package:languagetool_textfield/src/utils/mistake_popup.dart';
@@ -5,81 +8,97 @@ import 'package:languagetool_textfield/src/utils/popup_overlay_renderer.dart';
 
 /// A TextField widget that checks the grammar using the given
 /// [LanguageToolController]
-class LanguageToolTextField extends StatefulWidget {
-  /// A style to use for the text being edited.
-  final TextStyle? style;
-
-  /// A decoration of this [TextField].
-  final InputDecoration decoration;
-
-  /// Color scheme to highlight mistakes
-  final LanguageToolController controller;
+class LanguageToolTextField extends TextField {
+  /// LanguageToolController to highlight mistakes
+  @override
+  LanguageToolController get controller =>
+      super.controller as LanguageToolController? ?? LanguageToolController();
 
   /// Mistake popup window
   final MistakePopup? mistakePopup;
-
-  /// The maximum number of lines to show at one time, wrapping if necessary.
-  final int? maxLines;
-
-  /// The minimum number of lines to occupy when the content spans fewer lines.
-  final int? minLines;
-
-  /// Whether this widget's height will be sized to fill its parent.
-  final bool expands;
 
   /// A language code like en-US, de-DE, fr, or auto to guess
   /// the language automatically.
   /// ```language``` = 'auto' by default.
   final String language;
 
-  /// Determine text alignment
-  /// textAlign = [TextAlign.start] by default.
-  final TextAlign textAlign;
-
-  /// Determine text Direction
-  final TextDirection? textDirection;
-
+  /// {@macro flutter.widgets.editableText.onChanged}
   final ValueChanged<String>? onTextChange;
+
+  /// {@macro flutter.widgets.editableText.onSubmitted}
   final ValueChanged<String>? onTextSubmitted;
-  final VoidCallback? onTap;
-  final TapRegionCallback? onTapOutside;
-  final TextInputAction? textInputAction;
-  final TextInputType? keyboardType;
-  final Color? cursorColor;
-  final bool autoFocus;
-  final FocusNode? focusNode;
-  final Brightness? keyboardAppearance;
-  final bool autocorrect;
-  final bool readOnly;
-  final MouseCursor? mouseCursor;
+
+  /// Whether to center align the text field widget.
   final bool alignCenter;
 
   /// Creates a widget that checks grammar errors.
   const LanguageToolTextField({
-    required this.controller,
-    this.style,
-    this.decoration = const InputDecoration(),
-    this.language = 'auto',
+    required LanguageToolController super.controller,
     this.mistakePopup,
-    this.maxLines = 1,
-    this.minLines,
-    this.expands = false,
-    this.textAlign = TextAlign.start,
-    this.textDirection,
-    this.cursorColor,
-    this.autocorrect = true,
-    this.autoFocus = false,
-    this.readOnly = false,
-    this.textInputAction,
-    this.keyboardType,
-    this.focusNode,
-    this.keyboardAppearance,
-    this.mouseCursor,
-    this.onTap,
-    this.onTapOutside,
+    this.language = 'auto',
     this.onTextChange,
     this.onTextSubmitted,
     this.alignCenter = true,
+    super.focusNode,
+    super.undoController,
+    super.decoration = const InputDecoration(),
+    super.keyboardType,
+    super.textInputAction,
+    super.textCapitalization = TextCapitalization.none,
+    super.style,
+    super.strutStyle,
+    super.textAlign = TextAlign.start,
+    super.textAlignVertical,
+    super.textDirection,
+    super.readOnly = false,
+    super.showCursor,
+    super.autofocus = false,
+    super.statesController,
+    super.obscuringCharacter = '•',
+    super.obscureText = false,
+    super.autocorrect = true,
+    super.smartDashesType,
+    super.smartQuotesType,
+    super.enableSuggestions = true,
+    super.maxLines = 1,
+    super.minLines,
+    super.expands = false,
+    super.maxLength,
+    super.maxLengthEnforcement,
+    super.inputFormatters,
+    super.enabled,
+    super.ignorePointers,
+    super.cursorWidth = 2.0,
+    super.cursorHeight,
+    super.cursorRadius,
+    super.cursorOpacityAnimates,
+    super.cursorColor,
+    super.cursorErrorColor,
+    super.selectionHeightStyle = ui.BoxHeightStyle.tight,
+    super.selectionWidthStyle = ui.BoxWidthStyle.tight,
+    super.keyboardAppearance,
+    super.scrollPadding = const EdgeInsets.all(20.0),
+    super.dragStartBehavior = DragStartBehavior.start,
+    super.enableInteractiveSelection,
+    super.selectionControls,
+    super.onTap,
+    super.onTapAlwaysCalled = false,
+    super.onTapOutside,
+    super.onTapUpOutside,
+    super.mouseCursor,
+    super.buildCounter,
+    super.scrollController,
+    super.scrollPhysics,
+    super.autofillHints,
+    super.contentInsertionConfiguration,
+    super.clipBehavior = Clip.hardEdge,
+    super.restorationId,
+    super.stylusHandwritingEnabled = true,
+    super.enableIMEPersonalizedLearning = true,
+    super.contextMenuBuilder,
+    super.canRequestFocus = true,
+    super.spellCheckConfiguration,
+    super.magnifierConfiguration,
     super.key,
   });
 
@@ -121,33 +140,76 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
           ),
         );
 
-        final inputDecoration = widget.decoration.copyWith(
+        final inputDecoration = widget.decoration?.copyWith(
           suffix: fetchError != null ? httpErrorText : null,
         );
 
         Widget childWidget = TextField(
-          textAlign: widget.textAlign,
-          textDirection: widget.textDirection,
-          focusNode: _focusNode,
           controller: widget.controller,
+          focusNode: _focusNode,
           scrollController: _scrollController,
           decoration: inputDecoration,
-          minLines: widget.minLines,
-          maxLines: widget.maxLines,
-          expands: widget.expands,
-          style: widget.style,
-          cursorColor: widget.cursorColor,
-          autocorrect: widget.autocorrect,
-          textInputAction: widget.textInputAction,
-          keyboardAppearance: widget.keyboardAppearance,
           keyboardType: widget.keyboardType,
-          autofocus: widget.autoFocus,
+          textInputAction: widget.textInputAction,
+          textCapitalization: widget.textCapitalization,
+          style: widget.style,
+          strutStyle: widget.strutStyle,
+          textAlign: widget.textAlign,
+          textAlignVertical: widget.textAlignVertical,
+          textDirection: widget.textDirection,
+          autofocus: widget.autofocus,
+          statesController: widget.statesController,
           readOnly: widget.readOnly,
-          mouseCursor: widget.mouseCursor,
+          showCursor: widget.showCursor,
+          obscuringCharacter: widget.obscuringCharacter,
+          obscureText: widget.obscureText,
+          autocorrect: widget.autocorrect,
+          smartDashesType: widget.smartDashesType,
+          smartQuotesType: widget.smartQuotesType,
+          enableSuggestions: widget.enableSuggestions,
+          maxLengthEnforcement: widget.maxLengthEnforcement,
+          maxLines: widget.maxLines,
+          minLines: widget.minLines,
+          expands: widget.expands,
+          maxLength: widget.maxLength,
           onChanged: widget.onTextChange,
-          onSubmitted: widget.onTextSubmitted,
           onTap: widget.onTap,
+          onTapAlwaysCalled: widget.onTapAlwaysCalled,
           onTapOutside: widget.onTapOutside,
+          onTapUpOutside: widget.onTapUpOutside,
+          onEditingComplete: widget.onEditingComplete,
+          onSubmitted: widget.onTextSubmitted,
+          inputFormatters: widget.inputFormatters,
+          enabled: widget.enabled,
+          ignorePointers: widget.ignorePointers,
+          cursorWidth: widget.cursorWidth,
+          cursorHeight: widget.cursorHeight,
+          cursorRadius: widget.cursorRadius,
+          cursorColor: widget.cursorColor,
+          cursorErrorColor: widget.cursorErrorColor,
+          scrollPadding: widget.scrollPadding,
+          scrollPhysics: widget.scrollPhysics,
+          keyboardAppearance: widget.keyboardAppearance,
+          enableInteractiveSelection: widget.enableInteractiveSelection,
+          selectionControls: widget.selectionControls,
+          buildCounter: widget.buildCounter,
+          autofillHints: widget.autofillHints,
+          mouseCursor: widget.mouseCursor,
+          contextMenuBuilder: widget.contextMenuBuilder,
+          spellCheckConfiguration: widget.spellCheckConfiguration,
+          magnifierConfiguration: widget.magnifierConfiguration,
+          undoController: widget.undoController,
+          onAppPrivateCommand: widget.onAppPrivateCommand,
+          cursorOpacityAnimates: widget.cursorOpacityAnimates,
+          selectionHeightStyle: widget.selectionHeightStyle,
+          selectionWidthStyle: widget.selectionWidthStyle,
+          dragStartBehavior: widget.dragStartBehavior,
+          contentInsertionConfiguration: widget.contentInsertionConfiguration,
+          clipBehavior: widget.clipBehavior,
+          stylusHandwritingEnabled: widget.stylusHandwritingEnabled,
+          canRequestFocus: widget.canRequestFocus,
+          enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
+          restorationId: widget.restorationId,
         );
 
         if (widget.alignCenter) {
