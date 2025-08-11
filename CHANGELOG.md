@@ -1,3 +1,52 @@
+## 1.0.0
+
+- BREAKING: rename autoFocus to autofocus to match `TextField`'s naming
+- Add missing properties from flutter's `TextField`
+  - autofillHints
+  - autofocus
+  - buildCounter
+  - canRequestFocus
+  - clipBehavior
+  - contentInsertionConfiguration
+  - contextMenuBuilder
+  - cursorErrorColor
+  - cursorHeight
+  - cursorOpacityAnimates
+  - cursorRadius
+  - cursorWidth
+  - dragStartBehavior
+  - enabled
+  - enableIMEPersonalizedLearning
+  - enableInteractiveSelection
+  - enableSuggestions
+  - ignorePointers
+  - inputFormatters
+  - key
+  - magnifierConfiguration
+  - maxLength
+  - maxLengthEnforcement
+  - obscureText
+  - obscuringCharacter
+  - onTapAlwaysCalled
+  - onTapUpOutside
+  - restorationId
+  - scrollController
+  - scrollPadding
+  - scrollPhysics
+  - selectionControls
+  - selectionHeightStyle
+  - selectionWidthStyle
+  - showCursor
+  - smartDashesType
+  - smartQuotesType
+  - spellCheckConfiguration
+  - statesController
+  - strutStyle
+  - stylusHandwritingEnabled
+  - textAlignVertical
+  - textCapitalization
+  - undoController
+
 ## 0.1.1
 
 - Fix changelog
@@ -13,7 +62,7 @@
 ## 0.0.6
 
 - Add textAlign and textDirection arguments to LanguageToolTextField constructor
-- Enforce utf-8 decoding format for LanguageTool API responses. 
+- Enforce utf-8 decoding format for LanguageTool API responses.
 
 Credits: @Semsem-programmer
 
