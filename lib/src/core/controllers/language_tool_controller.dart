@@ -84,7 +84,7 @@ class LanguageToolController extends TextEditingController {
     _isEnabled = value;
 
     if (_isEnabled) {
-      _handleTextChange(text, force: true);
+      _handleTextChange(text, spellCheckSameText: true);
     } else {
       _mistakes = [];
       for (final recognizer in _recognizers) {
@@ -184,33 +184,38 @@ class LanguageToolController extends TextEditingController {
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
   /// via API
-  Future<void> _handleTextChange(String newText, {bool force = false}) async {
+  Future<void> _handleTextChange(
+    String newText, {
+    bool spellCheckSameText = false,
+  }) async {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
-    if (!force && (newText == text || newText.isEmpty)) return;
+    if (spellCheckSameText || newText != text && newText.isNotEmpty) {
+      final filteredMistakes = _filterMistakesOnChanged(newText);
+      _mistakes = filteredMistakes.toList();
 
-    final filteredMistakes = _filterMistakesOnChanged(newText);
-    _mistakes = filteredMistakes.toList();
+      // If we have a text change and we have a popup on hold
+      // it will close the popup
+      _closePopup();
 
-    // If we have a text change and we have a popup on hold
-    // it will close the popup
-    _closePopup();
+      for (final recognizer in _recognizers) {
+        recognizer.dispose();
+      }
+      _recognizers.clear();
 
-    for (final recognizer in _recognizers) {
-      recognizer.dispose();
+      final mistakesWrapper =
+          await _latestResponseService.processLatestOperation(
+        () =>
+            _languageCheckService?.findMistakes(newText) ?? Future(() => null),
+      );
+      if (mistakesWrapper == null || !mistakesWrapper.hasResult) return;
+
+      final mistakes = mistakesWrapper.result();
+      _fetchError = mistakesWrapper.error;
+
+      _mistakes = mistakes;
+      notifyListeners();
     }
-    _recognizers.clear();
-
-    final mistakesWrapper = await _latestResponseService.processLatestOperation(
-      () => _languageCheckService?.findMistakes(newText) ?? Future(() => null),
-    );
-    if (mistakesWrapper == null || !mistakesWrapper.hasResult) return;
-
-    final mistakes = mistakesWrapper.result();
-    _fetchError = mistakesWrapper.error;
-
-    _mistakes = mistakes;
-    notifyListeners();
   }
 
   /// Generator function to create TextSpan instances
