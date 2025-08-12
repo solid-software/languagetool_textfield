@@ -86,7 +86,7 @@ class LanguageToolController extends TextEditingController {
     if (_isEnabled) {
       _handleTextChange(text, force: true);
     } else {
-      _mistakes.clear();
+      _mistakes = [];
       for (final recognizer in _recognizers) {
         recognizer.dispose();
       }
