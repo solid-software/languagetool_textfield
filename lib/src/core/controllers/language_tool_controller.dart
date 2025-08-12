@@ -79,11 +79,19 @@ class LanguageToolController extends TextEditingController {
   bool get isEnabled => _isEnabled;
 
   set isEnabled(bool value) {
+    if (value == _isEnabled) return;
+
     _isEnabled = value;
 
     if (_isEnabled) {
       _handleTextChange(text, force: true);
     } else {
+      _mistakes.clear();
+      for (final recognizer in _recognizers) {
+        recognizer.dispose();
+      }
+      _recognizers.clear();
+
       notifyListeners();
     }
   }
