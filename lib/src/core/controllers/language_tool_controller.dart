@@ -19,6 +19,8 @@ import 'package:languagetool_textfield/src/utils/mistake_popup.dart';
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
 class LanguageToolController extends TextEditingController {
+  bool _isEnabled;
+
   /// Color scheme to highlight mistakes
   final HighlightStyle highlightStyle;
 
@@ -73,21 +75,38 @@ class LanguageToolController extends TextEditingController {
     _languageToolClient.language = language;
   }
 
+  /// Indicates whether spell checking is enabled
+  bool get isEnabled => _isEnabled;
+
+  set isEnabled(bool value) {
+    _isEnabled = value;
+
+    if (_isEnabled) {
+      _handleTextChange(text, force: true);
+    } else {
+      notifyListeners();
+    }
+  }
+
   /// An error that may have occurred during the API fetch.
   Object? get fetchError => _fetchError;
 
   @override
   set value(TextEditingValue newValue) {
-    _handleTextChange(newValue.text);
+    if (_isEnabled) {
+      _handleTextChange(newValue.text);
+    }
+
     super.value = newValue;
   }
 
   /// Controller constructor
   LanguageToolController({
+    bool isEnabled = true,
     this.highlightStyle = const HighlightStyle(),
     this.delay = Duration.zero,
     this.delayType = DelayType.debouncing,
-  }) {
+  }) : _isEnabled = isEnabled {
     _languageCheckService = _getLanguageCheckService();
   }
 
@@ -111,9 +130,17 @@ class LanguageToolController extends TextEditingController {
   @override
   TextSpan buildTextSpan({
     required BuildContext context,
-    TextStyle? style,
     required bool withComposing,
+    TextStyle? style,
   }) {
+    if (!_isEnabled) {
+      return super.buildTextSpan(
+        context: context,
+        withComposing: withComposing,
+        style: style,
+      );
+    }
+
     final formattedTextSpans = _generateSpans(
       context,
       style: style,
@@ -132,6 +159,10 @@ class LanguageToolController extends TextEditingController {
 
   /// Replaces mistake with given replacement
   void replaceMistake(Mistake mistake, String replacement) {
+    if (!_isEnabled) {
+      throw Exception('LanguageToolController is not enabled');
+    }
+
     final mistakes = List<Mistake>.from(_mistakes);
     mistakes.remove(mistake);
     _mistakes = mistakes;
@@ -145,10 +176,10 @@ class LanguageToolController extends TextEditingController {
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
   /// via API
-  Future<void> _handleTextChange(String newText) async {
+  Future<void> _handleTextChange(String newText, {bool force = false}) async {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
-    if (newText == text || newText.isEmpty) return;
+    if (!force && (newText == text || newText.isEmpty)) return;
 
     final filteredMistakes = _filterMistakesOnChanged(newText);
     _mistakes = filteredMistakes.toList();
@@ -200,7 +231,7 @@ class LanguageToolController extends TextEditingController {
       final Color mistakeColor = _getMistakeColor(mistake.type);
 
       /// Create a gesture recognizer for mistake
-      final _onTap = TapGestureRecognizer()
+      final onTap = TapGestureRecognizer()
         ..onTapDown = (details) {
           popupWidget?.show(
             context,
@@ -223,7 +254,7 @@ class LanguageToolController extends TextEditingController {
         };
 
       /// Adding recognizer to the list for future disposing
-      _recognizers.add(_onTap);
+      _recognizers.add(onTap);
 
       /// Mistake highlighted TextSpan
       yield TextSpan(
@@ -242,7 +273,7 @@ class LanguageToolController extends TextEditingController {
               decorationColor: mistakeColor,
               decorationThickness: highlightStyle.mistakeLineThickness,
             ),
-            recognizer: _onTap,
+            recognizer: onTap,
           ),
         ],
       );
