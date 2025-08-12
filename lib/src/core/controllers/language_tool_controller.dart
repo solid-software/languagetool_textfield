@@ -168,7 +168,7 @@ class LanguageToolController extends TextEditingController {
   /// Replaces mistake with given replacement
   void replaceMistake(Mistake mistake, String replacement) {
     if (!_isEnabled) {
-      throw Exception('LanguageToolController is not enabled');
+      throw StateError('LanguageToolController is not enabled');
     }
 
     final mistakes = List<Mistake>.from(_mistakes);
