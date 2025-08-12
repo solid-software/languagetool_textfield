@@ -235,8 +235,8 @@ class LanguageToolController extends TextEditingController {
             ),
             mouseCursor: WidgetStateMouseCursor.textable,
             style: style?.copyWith(
-              backgroundColor: mistakeColor.withOpacity(
-                highlightStyle.backgroundOpacity,
+              backgroundColor: mistakeColor.withValues(
+                alpha: highlightStyle.backgroundOpacity,
               ),
               decoration: highlightStyle.decoration,
               decorationColor: mistakeColor,
