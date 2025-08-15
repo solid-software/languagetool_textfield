@@ -41,6 +41,14 @@ class _AppState extends State<App> {
               controller: _controller,
               language: 'en-US',
             ),
+            ValueListenableBuilder(
+              valueListenable: _controller,
+              builder: (_, __, ___) => CheckboxListTile(
+                title: const Text("Enable spell checking"),
+                value: _controller.isEnabled,
+                onChanged: (value) => _controller.isEnabled = value ?? false,
+              ),
+            ),
             DropdownMenu(
               hintText: "Select alignment...",
               onSelected: (value) => setState(() {

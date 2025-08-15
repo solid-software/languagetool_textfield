@@ -1,3 +1,7 @@
+## 1.1.0
+
+- Add `isEnabled` to toggle spell check
+
 ## 1.0.0
 
 - BREAKING: require flutter 3.27.0 or higher
