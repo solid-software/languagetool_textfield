@@ -22,9 +22,6 @@ class LanguageToolController extends TextEditingController {
   /// Color scheme to highlight mistakes
   final HighlightStyle highlightStyle;
 
-  /// Create an instance of [LanguageToolClient] instance
-  final _languageToolClient = LanguageToolClient();
-
   /// Create an instance of [KeepLatestResponseService]
   /// to handle asynchronous operations
   final _latestResponseService = KeepLatestResponseService();
@@ -53,10 +50,10 @@ class LanguageToolController extends TextEditingController {
   ///
   /// A language code like en-US, de-DE, fr, or auto to guess
   /// the language automatically.
-  String get language => _languageToolClient.language;
+  String get language => _languageCheckService?.language ?? 'auto';
 
   set language(String language) {
-    _languageToolClient.language = language;
+    _languageCheckService?.language = language;
   }
 
   /// An error that may have occurred during the API fetch.
@@ -89,7 +86,7 @@ class LanguageToolController extends TextEditingController {
     _languageCheckService = _getLanguageCheckService(
       delayType: delayType,
       delay: delay,
-      languageToolClient: _languageToolClient,
+      languageToolClient: LanguageToolClient(),
     );
   }
 

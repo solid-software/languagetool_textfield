@@ -9,6 +9,14 @@ class LangToolService extends LanguageCheckService {
   /// An instance of this class that is used to interact with LanguageTool API.
   final LanguageToolClient languageTool;
 
+  @override
+  String get language => languageTool.language;
+
+  @override
+  set language(String language) {
+    languageTool.language = language;
+  }
+
   /// Creates a new instance of the [LangToolService].
   LangToolService(this.languageTool);
 
