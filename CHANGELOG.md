@@ -1,3 +1,7 @@
+## 1.1.0
+
+- Allow overriding `languageCheckService`
+
 ## 1.0.0
 
 - BREAKING: require flutter 3.27.0 or higher
