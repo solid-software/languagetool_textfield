@@ -22,20 +22,6 @@ class LanguageToolController extends TextEditingController {
   /// Color scheme to highlight mistakes
   final HighlightStyle highlightStyle;
 
-  /// Represents the type of delay for language checking.
-  ///
-  /// [DelayType.debouncing] - Calls a function when a user hasn't carried out
-  /// the event in a specific amount of time.
-  ///
-  /// [DelayType.throttling] - Calls a function at intervals of a specified
-  /// amount of time while the user is carrying out the event.
-  final DelayType delayType;
-
-  /// Represents the duration of the delay for language checking.
-  ///
-  /// If the delay is [Duration.zero], no delaying is applied.
-  final Duration delay;
-
   /// Create an instance of [LanguageToolClient] instance
   final _languageToolClient = LanguageToolClient();
 
@@ -83,16 +69,51 @@ class LanguageToolController extends TextEditingController {
   }
 
   /// Controller constructor
+  ///
+  /// [highlightStyle] - Color scheme to highlight mistakes
+  /// [delayType] - Represents the type of delay for language checking.
+  ///
+  /// [DelayType.debouncing] - Calls a function when a user hasn't carried out
+  /// the event in a specific amount of time.
+  ///
+  /// [DelayType.throttling] - Calls a function at intervals of a specified
+  /// amount of time while the user is carrying out the event.
+  /// [delay] - Represents the duration of the delay for language checking.
+  ///
+  /// If the delay is [Duration.zero], no delaying is applied.
   LanguageToolController({
     this.highlightStyle = const HighlightStyle(),
-    this.delay = Duration.zero,
-    this.delayType = DelayType.debouncing,
+    DelayType delayType = DelayType.debouncing,
+    Duration delay = Duration.zero,
   }) {
-    _languageCheckService = _getLanguageCheckService();
+    _languageCheckService = _getLanguageCheckService(
+      delayType: delayType,
+      delay: delay,
+      languageToolClient: _languageToolClient,
+    );
   }
 
-  LanguageCheckService _getLanguageCheckService() {
-    final languageToolService = LangToolService(_languageToolClient);
+  /// Creates a [LanguageToolController] with a custom [LanguageCheckService].
+  ///
+  /// This constructor allows you to provide your own implementation of the
+  /// language checking service, giving you full control over how text is
+  /// analyzed and processed.
+  ///
+  /// Parameters:
+  /// * [languageCheckService] - The service responsible for performing language
+  ///   checks and grammar validation. This parameter is required.
+  /// * [highlightStyle] - Color scheme to highlight mistakes
+  LanguageToolController.withService({
+    required LanguageCheckService languageCheckService,
+    this.highlightStyle = const HighlightStyle(),
+  }) : _languageCheckService = languageCheckService;
+
+  static LanguageCheckService _getLanguageCheckService({
+    required DelayType delayType,
+    required Duration delay,
+    required LanguageToolClient languageToolClient,
+  }) {
+    final languageToolService = LangToolService(languageToolClient);
 
     if (delay == Duration.zero) return languageToolService;
 
@@ -111,8 +132,8 @@ class LanguageToolController extends TextEditingController {
   @override
   TextSpan buildTextSpan({
     required BuildContext context,
-    TextStyle? style,
     required bool withComposing,
+    TextStyle? style,
   }) {
     final formattedTextSpans = _generateSpans(
       context,
@@ -200,7 +221,7 @@ class LanguageToolController extends TextEditingController {
       final Color mistakeColor = _getMistakeColor(mistake.type);
 
       /// Create a gesture recognizer for mistake
-      final _onTap = TapGestureRecognizer()
+      final onTap = TapGestureRecognizer()
         ..onTapDown = (details) {
           popupWidget?.show(
             context,
@@ -223,7 +244,7 @@ class LanguageToolController extends TextEditingController {
         };
 
       /// Adding recognizer to the list for future disposing
-      _recognizers.add(_onTap);
+      _recognizers.add(onTap);
 
       /// Mistake highlighted TextSpan
       yield TextSpan(
@@ -242,7 +263,7 @@ class LanguageToolController extends TextEditingController {
               decorationColor: mistakeColor,
               decorationThickness: highlightStyle.mistakeLineThickness,
             ),
-            recognizer: _onTap,
+            recognizer: onTap,
           ),
         ],
       );
