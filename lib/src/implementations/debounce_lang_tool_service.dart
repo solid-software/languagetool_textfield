@@ -11,6 +11,14 @@ class DebounceLangToolService extends LanguageCheckService {
   /// A debouncing used to debounce the API calls.
   final Debouncing<Future<Result<List<Mistake>>?>> debouncing;
 
+  @override
+  String get language => baseService.language;
+
+  @override
+  set language(String language) {
+    baseService.language = language;
+  }
+
   /// Creates a new instance of the [DebounceLangToolService] class.
   DebounceLangToolService(
     this.baseService,

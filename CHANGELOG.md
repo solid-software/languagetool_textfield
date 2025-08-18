@@ -1,6 +1,7 @@
 ## 1.1.0
 
 - Add `isEnabled` to toggle spell check
+- Allow overriding `languageCheckService`
 
 ## 1.0.0
 

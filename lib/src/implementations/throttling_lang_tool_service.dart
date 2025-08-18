@@ -12,6 +12,14 @@ class ThrottlingLangToolService extends LanguageCheckService {
   /// A throttling used to throttle the API calls.
   final Throttling<Future<Result<List<Mistake>>?>> throttling;
 
+  @override
+  String get language => baseService.language;
+
+  @override
+  set language(String language) {
+    baseService.language = language;
+  }
+
   /// Creates a new instance of the [ThrottlingLangToolService] class.
   ThrottlingLangToolService(
     this.baseService,
