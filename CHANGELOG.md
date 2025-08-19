@@ -3,6 +3,7 @@
 - BREAKING: require flutter 3.27.0 or higher
 - BREAKING: require dart 3.0.0 or higher
 - BREAKING: rename autoFocus to autofocus to match `TextField`'s naming
+- Allow overriding `languageCheckService`
 - Add `isEnabled` to toggle spell check
 - Add missing properties from flutter's `TextField`
   - autofillHints
