@@ -4,13 +4,12 @@ import 'package:languagetool_textfield/src/utils/result.dart';
 import 'package:throttling/throttling.dart';
 
 /// A language check service with debouncing.
-class ThrottlingLanguageToolService extends LanguageCheckService {
-  /// A base language check service that is used to interact
-  /// with the language check API.
+class DebounceLanguageCheckService extends LanguageCheckService {
+  /// A base language check service.
   final LanguageCheckService _languageCheckService;
 
-  /// A throttling used to throttle the API calls.
-  final Throttling<Future<Result<List<Mistake>>?>> _throttling;
+  /// A debouncing used to debounce the API calls.
+  final Debouncing<Future<Result<List<Mistake>>?>> _debouncing;
 
   @override
   String get language => _languageCheckService.language;
@@ -20,22 +19,22 @@ class ThrottlingLanguageToolService extends LanguageCheckService {
     _languageCheckService.language = language;
   }
 
-  /// Creates a new instance of the [ThrottlingLanguageToolService] class.
-  ThrottlingLanguageToolService(
+  /// Creates a new instance of the [DebounceLanguageCheckService] class.
+  DebounceLanguageCheckService(
     this._languageCheckService,
-    Duration throttlingDuration,
-  ) : _throttling = Throttling(duration: throttlingDuration);
+    Duration debouncingDuration,
+  ) : _debouncing = Debouncing(duration: debouncingDuration);
 
   @override
   Future<Result<List<Mistake>>?> findMistakes(String text) async {
-    return await _throttling
-        .throttle(() => _languageCheckService.findMistakes(text));
+    return await _debouncing
+        .debounce(() => _languageCheckService.findMistakes(text));
   }
 
   // ignore: proper_super_calls
   @override
   Future<void> dispose() async {
-    _throttling.close();
+    _debouncing.close();
     await _languageCheckService.dispose();
   }
 }

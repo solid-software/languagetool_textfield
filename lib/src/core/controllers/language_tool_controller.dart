@@ -125,9 +125,9 @@ class LanguageToolController extends TextEditingController {
 
     switch (delayType) {
       case DelayType.debouncing:
-        return DebounceLanguageToolService(languageToolService, delay);
+        return DebounceLanguageCheckService(languageToolService, delay);
       case DelayType.throttling:
-        return ThrottlingLanguageToolService(languageToolService, delay);
+        return ThrottlingLanguageCheckService(languageToolService, delay);
     }
   }
 
