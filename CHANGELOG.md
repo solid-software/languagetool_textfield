@@ -5,6 +5,8 @@
 - BREAKING: rename autoFocus to autofocus to match `TextField`'s naming
 - potentially BREAKING: remove `delayType` and `delay` fields from `LanguageToolController`
 - potentially BREAKING: hide baseService and debouncing/throttling from Debouncing and Throttling LanguageService wrappers
+- potentially BREAKING: rename `DebounceLanguageToolService` to `DebounceLanguageCheckService`
+- potentially BREAKING: rename `ThrottleLanguageToolService` to `ThrottleLanguageCheckService`
 - Allow overriding `languageCheckService`
 - Add `isEnabled` to toggle spell check
 - Add missing properties from flutter's `TextField`
