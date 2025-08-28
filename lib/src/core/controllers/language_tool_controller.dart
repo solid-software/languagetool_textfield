@@ -3,18 +3,10 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/src/client/language_tool_client.dart';
-import 'package:languagetool_textfield/src/core/enums/delay_type.dart';
+import 'package:languagetool_textfield/languagetool_textfield.dart';
 import 'package:languagetool_textfield/src/core/enums/mistake_type.dart';
-import 'package:languagetool_textfield/src/domain/highlight_style.dart';
-import 'package:languagetool_textfield/src/domain/language_check_service.dart';
-import 'package:languagetool_textfield/src/domain/mistake.dart';
-import 'package:languagetool_textfield/src/implementations/debounce_lang_tool_service.dart';
-import 'package:languagetool_textfield/src/implementations/lang_tool_service.dart';
-import 'package:languagetool_textfield/src/implementations/throttling_lang_tool_service.dart';
 import 'package:languagetool_textfield/src/utils/closed_range.dart';
 import 'package:languagetool_textfield/src/utils/keep_latest_response_service.dart';
-import 'package:languagetool_textfield/src/utils/mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -23,23 +15,6 @@ class LanguageToolController extends TextEditingController {
 
   /// Color scheme to highlight mistakes
   final HighlightStyle highlightStyle;
-
-  /// Represents the type of delay for language checking.
-  ///
-  /// [DelayType.debouncing] - Calls a function when a user hasn't carried out
-  /// the event in a specific amount of time.
-  ///
-  /// [DelayType.throttling] - Calls a function at intervals of a specified
-  /// amount of time while the user is carrying out the event.
-  final DelayType delayType;
-
-  /// Represents the duration of the delay for language checking.
-  ///
-  /// If the delay is [Duration.zero], no delaying is applied.
-  final Duration delay;
-
-  /// Create an instance of [LanguageToolClient] instance
-  final _languageToolClient = LanguageToolClient();
 
   /// Create an instance of [KeepLatestResponseService]
   /// to handle asynchronous operations
@@ -69,10 +44,10 @@ class LanguageToolController extends TextEditingController {
   ///
   /// A language code like en-US, de-DE, fr, or auto to guess
   /// the language automatically.
-  String get language => _languageToolClient.language;
+  String get language => _languageCheckService?.language ?? 'auto';
 
   set language(String language) {
-    _languageToolClient.language = language;
+    _languageCheckService?.language = language;
   }
 
   /// Indicates whether spell checking is enabled
@@ -108,26 +83,51 @@ class LanguageToolController extends TextEditingController {
     super.value = newValue;
   }
 
-  /// Controller constructor
+  /// Controller constructor.
+  ///
+  /// [highlightStyle] - Color scheme to highlight mistakes.
+  ///
+  /// [delayType] - Represents the type of delay for language checking.
+  /// [DelayType.debouncing] - Calls a function when a user hasn't carried out
+  /// the event in a specific amount of time.
+  /// [DelayType.throttling] - Calls a function at intervals of a specified
+  /// amount of time while the user is carrying out the event.
+  ///
+  /// [delay] - Represents the duration of the delay for language checking.
+  /// If the delay is [Duration.zero], no delaying is applied.
+  ///
+  /// You can optionally provide a custom [languageCheckService] to fully control
+  /// how text is analyzed and processed. When provided, [delayType] and [delay]
+  /// are ignored.
   LanguageToolController({
     bool isEnabled = true,
     this.highlightStyle = const HighlightStyle(),
-    this.delay = Duration.zero,
-    this.delayType = DelayType.debouncing,
+    DelayType delayType = DelayType.debouncing,
+    Duration delay = Duration.zero,
+    LanguageCheckService? languageCheckService,
   }) : _isEnabled = isEnabled {
-    _languageCheckService = _getLanguageCheckService();
+    _languageCheckService = languageCheckService ??
+        _getLanguageCheckService(
+          delayType: delayType,
+          delay: delay,
+          languageToolClient: LanguageToolClient(),
+        );
   }
 
-  LanguageCheckService _getLanguageCheckService() {
-    final languageToolService = LangToolService(_languageToolClient);
+  static LanguageCheckService _getLanguageCheckService({
+    required DelayType delayType,
+    required Duration delay,
+    required LanguageToolClient languageToolClient,
+  }) {
+    final languageToolService = LanguageToolService(languageToolClient);
 
     if (delay == Duration.zero) return languageToolService;
 
     switch (delayType) {
       case DelayType.debouncing:
-        return DebounceLangToolService(languageToolService, delay);
+        return DebounceLanguageCheckService(languageToolService, delay);
       case DelayType.throttling:
-        return ThrottlingLangToolService(languageToolService, delay);
+        return ThrottlingLanguageCheckService(languageToolService, delay);
     }
   }
 
