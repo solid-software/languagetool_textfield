@@ -91,48 +91,36 @@ class LanguageToolController extends TextEditingController {
     super.value = newValue;
   }
 
-  /// Controller constructor
+  /// Controller constructor.
   ///
-  /// [highlightStyle] - Color scheme to highlight mistakes
+  /// [highlightStyle] - Color scheme to highlight mistakes.
+  ///
   /// [delayType] - Represents the type of delay for language checking.
-  ///
   /// [DelayType.debouncing] - Calls a function when a user hasn't carried out
   /// the event in a specific amount of time.
-  ///
   /// [DelayType.throttling] - Calls a function at intervals of a specified
   /// amount of time while the user is carrying out the event.
-  /// [delay] - Represents the duration of the delay for language checking.
   ///
+  /// [delay] - Represents the duration of the delay for language checking.
   /// If the delay is [Duration.zero], no delaying is applied.
+  ///
+  /// You can optionally provide a custom [languageCheckService] to fully control
+  /// how text is analyzed and processed. When provided, [delayType] and [delay]
+  /// are ignored.
   LanguageToolController({
     bool isEnabled = true,
     this.highlightStyle = const HighlightStyle(),
     DelayType delayType = DelayType.debouncing,
     Duration delay = Duration.zero,
+    LanguageCheckService? languageCheckService,
   }) : _isEnabled = isEnabled {
-    _languageCheckService = _getLanguageCheckService(
-      delayType: delayType,
-      delay: delay,
-      languageToolClient: LanguageToolClient(),
-    );
+    _languageCheckService = languageCheckService ??
+        _getLanguageCheckService(
+          delayType: delayType,
+          delay: delay,
+          languageToolClient: LanguageToolClient(),
+        );
   }
-
-  /// Creates a [LanguageToolController] with a custom [LanguageCheckService].
-  ///
-  /// This constructor allows you to provide your own implementation of the
-  /// language checking service, giving you full control over how text is
-  /// analyzed and processed.
-  ///
-  /// Parameters:
-  /// * [languageCheckService] - The service responsible for performing language
-  ///   checks and grammar validation. This parameter is required.
-  /// * [highlightStyle] - Color scheme to highlight mistakes
-  LanguageToolController.withService({
-    required LanguageCheckService languageCheckService,
-    bool isEnabled = true,
-    this.highlightStyle = const HighlightStyle(),
-  })  : _languageCheckService = languageCheckService,
-        _isEnabled = isEnabled;
 
   static LanguageCheckService _getLanguageCheckService({
     required DelayType delayType,
