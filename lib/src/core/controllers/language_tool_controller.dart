@@ -3,18 +3,10 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:languagetool_textfield/src/client/language_tool_client.dart';
-import 'package:languagetool_textfield/src/core/enums/delay_type.dart';
+import 'package:languagetool_textfield/languagetool_textfield.dart';
 import 'package:languagetool_textfield/src/core/enums/mistake_type.dart';
-import 'package:languagetool_textfield/src/domain/highlight_style.dart';
-import 'package:languagetool_textfield/src/domain/language_check_service.dart';
-import 'package:languagetool_textfield/src/domain/mistake.dart';
-import 'package:languagetool_textfield/src/implementations/debounce_lang_tool_service.dart';
-import 'package:languagetool_textfield/src/implementations/lang_tool_service.dart';
-import 'package:languagetool_textfield/src/implementations/throttling_lang_tool_service.dart';
 import 'package:languagetool_textfield/src/utils/closed_range.dart';
 import 'package:languagetool_textfield/src/utils/keep_latest_response_service.dart';
-import 'package:languagetool_textfield/src/utils/mistake_popup.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -127,15 +119,15 @@ class LanguageToolController extends TextEditingController {
     required Duration delay,
     required LanguageToolClient languageToolClient,
   }) {
-    final languageToolService = LangToolService(languageToolClient);
+    final languageToolService = LanguageToolService(languageToolClient);
 
     if (delay == Duration.zero) return languageToolService;
 
     switch (delayType) {
       case DelayType.debouncing:
-        return DebounceLangToolService(languageToolService, delay);
+        return DebounceLanguageToolService(languageToolService, delay);
       case DelayType.throttling:
-        return ThrottlingLangToolService(languageToolService, delay);
+        return ThrottlingLanguageToolService(languageToolService, delay);
     }
   }
 

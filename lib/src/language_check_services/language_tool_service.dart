@@ -5,7 +5,7 @@ import 'package:languagetool_textfield/src/domain/writing_mistake.dart';
 import 'package:languagetool_textfield/src/utils/result.dart';
 
 /// An implementation of language check service with language tool service.
-class LangToolService extends LanguageCheckService {
+class LanguageToolService extends LanguageCheckService {
   /// An instance of this class that is used to interact with LanguageTool API.
   final LanguageToolClient languageTool;
 
@@ -17,8 +17,8 @@ class LangToolService extends LanguageCheckService {
     languageTool.language = language;
   }
 
-  /// Creates a new instance of the [LangToolService].
-  LangToolService(this.languageTool);
+  /// Creates a new instance of the [LanguageToolService].
+  LanguageToolService(this.languageTool);
 
   @override
   Future<Result<List<Mistake>>> findMistakes(String text) async {
