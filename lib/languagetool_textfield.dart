@@ -16,5 +16,5 @@ export 'src/language_check_services/language_tool_service.dart';
 export 'src/presentation/language_tool_text_field.dart';
 export 'src/utils/mistake_popup.dart';
 export 'src/utils/popup_overlay_renderer.dart';
-export 'src/wrappers/debounce_language_tool_service.dart';
-export 'src/wrappers/throttling_language_tool_service.dart';
+export 'src/wrappers/debounce_language_check_service.dart';
+export 'src/wrappers/throttling_language_check_service.dart';
