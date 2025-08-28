@@ -3,6 +3,8 @@
 - BREAKING: require flutter 3.27.0 or higher
 - BREAKING: require dart 3.0.0 or higher
 - BREAKING: rename autoFocus to autofocus to match `TextField`'s naming
+- potentially BREAKING: remove `delayType` and `delay` fields from `LanguageToolController`
+- potentially BREAKING: hide baseService and debouncing/throttling from Debouncing and Throttling LanguageService wrappers
 - Allow overriding `languageCheckService`
 - Add `isEnabled` to toggle spell check
 - Add missing properties from flutter's `TextField`
