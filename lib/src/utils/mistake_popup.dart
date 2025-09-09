@@ -84,18 +84,22 @@ class LanguageToolMistakePopup extends StatelessWidget {
   /// Mistake suggestion style.
   final ButtonStyle? mistakeStyle;
 
-  /// [LanguageToolMistakePopup] constructor
+  /// Optional builder that adds additional actions to the header.
+  final List<Widget> Function(BuildContext context)? actionsBuilder;
+
+  /// Creates a [LanguageToolMistakePopup].
   const LanguageToolMistakePopup({
     required this.popupRenderer,
     required this.mistake,
     required this.controller,
     required this.mistakePosition,
-    super.key,
     this.maxWidth = _defaultMaxWidth,
     this.maxHeight = double.infinity,
     this.horizontalMargin = _defaultHorizontalMargin,
     this.verticalMargin = _defaultVerticalMargin,
     this.mistakeStyle,
+    this.actionsBuilder,
+    super.key,
   });
 
   @override
@@ -149,38 +153,39 @@ class LanguageToolMistakePopup extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 4),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 5.0),
-                              child: Image.asset(
-                                LangToolImages.logo,
-                                width: _iconSize,
-                                height: _iconSize,
-                                package: 'languagetool_textfield',
+                  child: IconTheme(
+                    data: const IconThemeData(size: 12),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: Image.asset(
+                                  LangToolImages.logo,
+                                  width: _iconSize,
+                                  height: _iconSize,
+                                  package: 'languagetool_textfield',
+                                ),
                               ),
-                            ),
-                            const Text('Correct'),
-                          ],
+                              const Text('Correct'),
+                            ],
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.close,
-                          size: 12,
+                        ...?actionsBuilder?.call(context),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          constraints: const BoxConstraints(),
+                          padding: EdgeInsets.zero,
+                          splashRadius: dismissSplashRadius,
+                          onPressed: () {
+                            _dismissDialog();
+                            controller.onClosePopup();
+                          },
                         ),
-                        constraints: const BoxConstraints(),
-                        padding: EdgeInsets.zero,
-                        splashRadius: dismissSplashRadius,
-                        onPressed: () {
-                          _dismissDialog();
-                          controller.onClosePopup();
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Container(
