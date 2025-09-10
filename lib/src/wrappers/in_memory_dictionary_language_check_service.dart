@@ -27,10 +27,13 @@ class InMemoryDictionaryLanguageCheckService
   /// The [getDictionary] callback is required and will be called for every check operation.
   /// The service delegates checking to an internal LanguageToolService and then filters
   /// the results based on the returned dictionary.
-  InMemoryDictionaryLanguageCheckService({required this.getDictionary})
-      : super(
-          LanguageToolService(LanguageToolClient()),
-          const Duration(milliseconds: 250),
+  InMemoryDictionaryLanguageCheckService({
+    required this.getDictionary,
+    LanguageCheckService? languageToolService,
+    Duration? throttlingDuration,
+  }) : super(
+          languageToolService ?? LanguageToolService(LanguageToolClient()),
+          throttlingDuration ?? const Duration(milliseconds: 250),
         );
 
   @override
