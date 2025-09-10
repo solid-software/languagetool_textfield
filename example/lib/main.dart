@@ -47,7 +47,22 @@ class _AppState extends State<App> {
                 language: 'en-US',
                 mistakePopup: MistakePopup(
                   popupRenderer: PopupOverlayRenderer(),
-                  mistakeBuilder: _mistakeBuilder,
+                  mistakeBuilder: ({
+                    required LanguageToolController controller,
+                    required Mistake mistake,
+                    required Offset mistakePosition,
+                    required PopupOverlayRenderer popupRenderer,
+                  }) {
+                    return LanguageToolMistakePopup(
+                      popupRenderer: popupRenderer,
+                      mistake: mistake,
+                      mistakePosition: mistakePosition,
+                      controller: controller,
+                      addWordToDictionary: (word) async {
+                        setState(() => _dictionary = {..._dictionary, word});
+                      },
+                    );
+                  },
                 ),
               ),
               ValueListenableBuilder(
@@ -162,23 +177,6 @@ class _AppState extends State<App> {
       _dictionary = {};
       _spellCheckController?.recheckText();
     });
-  }
-
-  Widget _mistakeBuilder({
-    required LanguageToolController controller,
-    required Mistake mistake,
-    required Offset mistakePosition,
-    required PopupOverlayRenderer popupRenderer,
-  }) {
-    return LanguageToolMistakePopup(
-      popupRenderer: popupRenderer,
-      mistake: mistake,
-      mistakePosition: mistakePosition,
-      controller: controller,
-      addWordToDictionary: (word) async {
-        setState(() => _dictionary = {..._dictionary, word});
-      },
-    );
   }
 
   @override
