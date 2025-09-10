@@ -96,7 +96,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
   final ButtonStyle? mistakeStyle;
 
   /// Optional builder that adds additional actions to the header.
-  final List<Widget> Function(BuildContext context)? actionsBuilder;
+  final Future<void> Function(String)? addWordToDictionary;
 
   /// Creates a [LanguageToolMistakePopup].
   const LanguageToolMistakePopup({
@@ -109,7 +109,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
     this.horizontalMargin = _defaultHorizontalMargin,
     this.verticalMargin = _defaultVerticalMargin,
     this.mistakeStyle,
-    this.actionsBuilder,
+    this.addWordToDictionary,
     super.key,
   });
 
@@ -173,11 +173,25 @@ class LanguageToolMistakePopup extends StatelessWidget {
                             ],
                           ),
                         ),
-                        ...?actionsBuilder?.call(context),
+                        if (addWordToDictionary case final addWordToDictionary?)
+                          IconButton(
+                            icon: const Icon(Icons.menu_book),
+                            constraints: const BoxConstraints(),
+                            splashRadius: _dismissSplashRadius,
+                            onPressed: () async {
+                              final word = controller.text.substring(
+                                mistake.offset,
+                                mistake.endOffset,
+                              );
+
+                              await addWordToDictionary(word);
+
+                              _fixTheMistake(word);
+                            },
+                          ),
                         IconButton(
                           icon: const Icon(Icons.close),
                           constraints: const BoxConstraints(),
-                          padding: EdgeInsets.zero,
                           splashRadius: _dismissSplashRadius,
                           onPressed: () {
                             _dismissDialog();
