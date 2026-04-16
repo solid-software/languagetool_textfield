@@ -48,6 +48,7 @@ class LanguageToolController extends TextEditingController {
 
   set language(String language) {
     _languageCheckService?.language = language;
+    _handleTextChange(text, spellCheckSameText: true);
   }
 
   /// Indicates whether spell checking is enabled
