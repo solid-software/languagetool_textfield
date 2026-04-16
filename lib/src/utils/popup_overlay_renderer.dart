@@ -12,17 +12,16 @@ class PopupOverlayRenderer {
   /// Render overlay entry on the screen with dismiss logic
   OverlayEntry render(
     BuildContext context, {
-    ValueChanged<TapDownDetails>? onClose,
     required Offset position,
     required WidgetBuilder popupBuilder,
+    ValueChanged<TapDownDetails>? onClose,
   }) {
-    final _createdEntry = OverlayEntry(
+    final createdEntry = OverlayEntry(
       builder: (context) => GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapDown: onClose,
         child: Material(
           color: Colors.transparent,
-          type: MaterialType.canvas,
           child: Stack(
             children: [
               CustomSingleChildLayout(
@@ -38,10 +37,10 @@ class PopupOverlayRenderer {
       ),
     );
 
-    Overlay.of(context).insert(_createdEntry);
-    _overlayEntry = _createdEntry;
+    Overlay.of(context).insert(createdEntry);
+    _overlayEntry = createdEntry;
 
-    return _createdEntry;
+    return createdEntry;
   }
 
   /// Remove popup
@@ -65,12 +64,12 @@ class PopupOverlayLayoutDelegate extends SingleChildLayoutDelegate {
   }
 
   Offset _calculatePosition(Size size, Offset position, Size childSize) {
-    final _popupRect = Rect.fromCenter(
+    final popupRect = Rect.fromCenter(
       center: position,
       width: childSize.width,
       height: childSize.height,
     );
-    double dx = _popupRect.left;
+    double dx = popupRect.left;
     // limiting X offset
     dx = max(0, dx);
     final rightBorderPosition = dx + childSize.width;

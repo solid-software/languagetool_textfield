@@ -10,7 +10,8 @@ abstract class LanguageCheckService {
 
   /// Sets the language code to be used for language checking.
   ///
-  /// [language] A string representing the language code (e.g., 'en-US', 'de-DE').
+  /// [language] A string representing the language code
+  /// (e.g., 'en-US', 'de-DE').
   /// This determines which language rules will be applied during text analysis.
   set language(String language);
 

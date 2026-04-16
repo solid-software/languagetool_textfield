@@ -27,7 +27,7 @@ class LanguageToolService extends LanguageCheckService {
         .then(Result.success)
         .catchError(Result<List<WritingMistake>>.error);
 
-    final mistakesWrapper = writingMistakesWrapper.map(
+    return writingMistakesWrapper.map(
       (mistakes) {
         return mistakes.map(
           (m) {
@@ -42,7 +42,5 @@ class LanguageToolService extends LanguageCheckService {
         ).toList(growable: false);
       },
     );
-
-    return mistakesWrapper;
   }
 }
