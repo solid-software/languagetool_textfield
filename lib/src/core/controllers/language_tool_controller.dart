@@ -200,7 +200,7 @@ class LanguageToolController extends TextEditingController {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
     if (spellCheckSameText || newText != text && newText.isNotEmpty) {
-      _mistakes = _filterMistakesOnChanged(_mistakes, newText).toList();
+      _mistakes = _filterMistakesOnChanged(_mistakes, newText);
 
       // If we have a text change and we have a popup on hold
       // it will close the popup
