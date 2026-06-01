@@ -126,9 +126,11 @@ class LanguageToolController extends TextEditingController {
   }) {
     final languageToolService = LanguageToolService(languageToolClient);
 
-    // false positive, the same variable is used beyond the return statement
-    // ignore: avoid_unnecessary_return_variable
-    if (delay == Duration.zero) return languageToolService;
+    if (delay == Duration.zero) {
+      // false positive, the variable might be used after the if statement
+      // ignore: avoid_unnecessary_return_variable
+      return languageToolService;
+    }
 
     switch (delayType) {
       case DelayType.debouncing:

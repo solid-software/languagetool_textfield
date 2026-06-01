@@ -55,16 +55,6 @@ class LanguageToolMistakePopup extends StatelessWidget {
   static const double _logoSize = 25;
   static const double _headerIconSize = 12;
 
-  static const double _borderRadius = 10.0;
-  static const double _mistakeNameFontSize = 11.0;
-  static const double _mistakeMessageFontSize = 13.0;
-  static const double _replacementButtonsSpacing = 4.0;
-  static const double _replacementButtonsSpacingMobile = -6.0;
-  static const double _paddingBetweenTitle = 14.0;
-  static const double _titleLetterSpacing = 0.56;
-  static const double _dismissSplashRadius = 2.0;
-  static const double _padding = 10.0;
-
   /// Renderer used to display this window.
   final PopupOverlayRenderer popupRenderer;
 
@@ -115,6 +105,17 @@ class LanguageToolMistakePopup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const borderRadius = 10.0;
+    const mistakeNameFontSize = 11.0;
+    const mistakeMessageFontSize = 13.0;
+    const replacementButtonsSpacing = 4.0;
+    const replacementButtonsSpacingMobile = -6.0;
+    const paddingBetweenTitle = 14.0;
+    const titleLetterSpacing = 0.56;
+    const dismissSplashRadius = 2.0;
+
+    const padding = 10.0;
+
     final availableSpace = _calculateAvailableSpace(context);
 
     final colorScheme = Theme.of(context).colorScheme;
@@ -132,7 +133,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: colorScheme.surface.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(_borderRadius),
+            borderRadius: BorderRadius.circular(borderRadius),
             boxShadow: [
               BoxShadow(
                 color: colorScheme.onSurface.withValues(alpha: 0.5),
@@ -177,14 +178,14 @@ class LanguageToolMistakePopup extends StatelessWidget {
                           IconButton(
                             icon: const Icon(Icons.menu_book),
                             constraints: const BoxConstraints(),
-                            splashRadius: _dismissSplashRadius,
+                            splashRadius: dismissSplashRadius,
                             onPressed: () =>
                                 _addWordToDictionaryAndFix(mistake),
                           ),
                         IconButton(
                           icon: const Icon(Icons.close),
                           constraints: const BoxConstraints(),
-                          splashRadius: _dismissSplashRadius,
+                          splashRadius: dismissSplashRadius,
                           onPressed: () {
                             _dismissDialog();
                             controller.onClosePopup();
@@ -196,10 +197,10 @@ class LanguageToolMistakePopup extends StatelessWidget {
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 8),
-                  padding: const EdgeInsets.all(_padding),
+                  padding: const EdgeInsets.all(padding),
                   decoration: BoxDecoration(
                     color: colorScheme.surface,
-                    borderRadius: BorderRadius.circular(_borderRadius),
+                    borderRadius: BorderRadius.circular(borderRadius),
                   ),
                   child: SingleChildScrollView(
                     child: Column(
@@ -207,33 +208,33 @@ class LanguageToolMistakePopup extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(
-                            bottom: _paddingBetweenTitle,
+                            bottom: paddingBetweenTitle,
                           ),
                           child: Text(
                             mistake.type.name.capitalize(),
                             style: TextStyle(
                               color:
                                   colorScheme.onSurface.withValues(alpha: 0.7),
-                              fontSize: _mistakeNameFontSize,
+                              fontSize: mistakeNameFontSize,
                               fontWeight: FontWeight.w600,
-                              letterSpacing: _titleLetterSpacing,
+                              letterSpacing: titleLetterSpacing,
                             ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: _padding),
+                          padding: const EdgeInsets.only(bottom: padding),
                           child: Text(
                             mistake.message,
                             style: const TextStyle(
-                              fontSize: _mistakeMessageFontSize,
+                              fontSize: mistakeMessageFontSize,
                             ),
                           ),
                         ),
                         Wrap(
-                          spacing: _replacementButtonsSpacing,
+                          spacing: replacementButtonsSpacing,
                           runSpacing: kIsWeb
-                              ? _replacementButtonsSpacing
-                              : _replacementButtonsSpacingMobile,
+                              ? replacementButtonsSpacing
+                              : replacementButtonsSpacingMobile,
                           children: mistake.replacements
                               .map(
                                 (replacement) => ElevatedButton(
