@@ -39,16 +39,26 @@ class InMemoryDictionaryLanguageCheckService
   @override
   Future<Result<List<Mistake>>?> findMistakes(String text) async {
     final result = await super.findMistakes(text);
-    final dictionary = getDictionary();
 
     return result?.map(
-      (mistakes) => mistakes.where(
-        (mistake) {
-          final word = text.substring(mistake.offset, mistake.endOffset);
+      (mistakes) {
+        final dictionary = getDictionary();
 
-          return !dictionary.contains(word);
-        },
-      ).toList(),
+        return mistakes.where(
+          (mistake) {
+            final mistakeHasInvalidOffset = mistake.offset < 0 ||
+                mistake.offset >= text.length ||
+                mistake.endOffset < 0 ||
+                mistake.endOffset > text.length;
+
+            if (mistakeHasInvalidOffset) return false;
+
+            final word = text.substring(mistake.offset, mistake.endOffset);
+
+            return !dictionary.contains(word);
+          },
+        ).toList();
+      },
     );
   }
 }
