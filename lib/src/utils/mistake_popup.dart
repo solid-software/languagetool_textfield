@@ -173,21 +173,13 @@ class LanguageToolMistakePopup extends StatelessWidget {
                             ],
                           ),
                         ),
-                        if (addWordToDictionary case final addWordToDictionary?)
+                        if (addWordToDictionary != null)
                           IconButton(
                             icon: const Icon(Icons.menu_book),
                             constraints: const BoxConstraints(),
                             splashRadius: _dismissSplashRadius,
-                            onPressed: () async {
-                              final word = controller.text.substring(
-                                mistake.offset,
-                                mistake.endOffset,
-                              );
-
-                              await addWordToDictionary(word);
-
-                              _fixTheMistake(word);
-                            },
+                            onPressed: () =>
+                                _addWordToDictionaryAndFix(mistake),
                           ),
                         IconButton(
                           icon: const Icon(Icons.close),
@@ -278,6 +270,17 @@ class LanguageToolMistakePopup extends StatelessWidget {
     final availableSpaceTop = mistakePosition.dy;
 
     return min(max(availableSpaceBottom, availableSpaceTop), maxHeight);
+  }
+
+  Future<void> _addWordToDictionaryAndFix(Mistake mistake) async {
+    final word = controller.text.substring(
+      mistake.offset,
+      mistake.endOffset,
+    );
+
+    await addWordToDictionary?.call(word);
+
+    _fixTheMistake(word);
   }
 
   void _dismissDialog() {
