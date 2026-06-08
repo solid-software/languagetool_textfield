@@ -47,7 +47,12 @@ class LanguageToolController extends TextEditingController {
   String get language => _languageCheckService?.language ?? 'auto';
 
   set language(String language) {
+    if (this.language == language) return;
     _languageCheckService?.language = language;
+
+    if (!_isEnabled) return;
+
+    _handleTextChange(text, spellCheckSameText: true);
   }
 
   /// Indicates whether spell checking is enabled
@@ -96,9 +101,9 @@ class LanguageToolController extends TextEditingController {
   /// [delay] - Represents the duration of the delay for language checking.
   /// If the delay is [Duration.zero], no delaying is applied.
   ///
-  /// You can optionally provide a custom [languageCheckService] to fully control
-  /// how text is analyzed and processed. When provided, [delayType] and [delay]
-  /// are ignored.
+  /// You can optionally provide a custom [languageCheckService] to
+  /// fully control how text is analyzed and processed.
+  /// When provided, [delayType] and [delay] are ignored.
   LanguageToolController({
     bool isEnabled = true,
     this.highlightStyle = const HighlightStyle(),
@@ -121,6 +126,8 @@ class LanguageToolController extends TextEditingController {
   }) {
     final languageToolService = LanguageToolService(languageToolClient);
 
+    // false positive, the same variable is used beyond the return statement
+    // ignore: avoid_unnecessary_return_variable
     if (delay == Duration.zero) return languageToolService;
 
     switch (delayType) {
