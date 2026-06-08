@@ -52,7 +52,7 @@ class LanguageToolController extends TextEditingController {
 
     if (!_isEnabled) return;
 
-    _handleTextChange(text, spellCheckSameText: true);
+    recheckText();
   }
 
   /// Indicates whether spell checking is enabled
