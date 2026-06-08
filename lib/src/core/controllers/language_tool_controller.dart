@@ -321,6 +321,12 @@ class LanguageToolController extends TextEditingController {
     List<Mistake> mistakes,
     String newText,
   ) {
+    if (!selection.isValid) {
+      return mistakes
+          .where((mistake) => mistake.endOffset <= newText.length)
+          .toList();
+    }
+
     final isSelectionRangeEmpty = selection.end == selection.start;
     final lengthDiscrepancy = newText.length - text.length;
 
