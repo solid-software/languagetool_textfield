@@ -1,6 +1,8 @@
 ## 1.0.1
 
 - Fix: recheck text on changing language
+- Fixes a bug where changing text programmatically can sometimes throw a RangeError
+- Fixes notifying listeners after async gap when disposed
 
 ## 1.0.0
 

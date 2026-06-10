@@ -12,6 +12,7 @@ import 'package:languagetool_textfield/src/utils/keep_latest_response_service.da
 /// marked TextSpans with tap recognizer
 class LanguageToolController extends TextEditingController {
   bool _isEnabled;
+  bool _isDisposed = false;
 
   /// Color scheme to highlight mistakes
   final HighlightStyle highlightStyle;
@@ -59,7 +60,7 @@ class LanguageToolController extends TextEditingController {
   bool get isEnabled => _isEnabled;
 
   set isEnabled(bool value) {
-    if (value == _isEnabled) return;
+    if (value == _isEnabled || _isDisposed) return;
 
     _isEnabled = value;
 
@@ -126,9 +127,11 @@ class LanguageToolController extends TextEditingController {
   }) {
     final languageToolService = LanguageToolService(languageToolClient);
 
-    // false positive, the same variable is used beyond the return statement
-    // ignore: avoid_unnecessary_return_variable
-    if (delay == Duration.zero) return languageToolService;
+    if (delay == Duration.zero) {
+      // false positive, the variable might be used after the if statement
+      // ignore: avoid_unnecessary_return_variable
+      return languageToolService;
+    }
 
     switch (delayType) {
       case DelayType.debouncing:
@@ -168,6 +171,7 @@ class LanguageToolController extends TextEditingController {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _languageCheckService?.dispose();
     super.dispose();
   }
@@ -198,8 +202,7 @@ class LanguageToolController extends TextEditingController {
     ///set value triggers each time, even when cursor changes its location
     ///so this check avoid cleaning Mistake list when text wasn't really changed
     if (spellCheckSameText || newText != text && newText.isNotEmpty) {
-      final filteredMistakes = _filterMistakesOnChanged(newText);
-      _mistakes = filteredMistakes.toList();
+      _mistakes = _filterMistakesOnChanged(_mistakes, newText);
 
       // If we have a text change and we have a popup on hold
       // it will close the popup
@@ -215,7 +218,11 @@ class LanguageToolController extends TextEditingController {
         () =>
             _languageCheckService?.findMistakes(newText) ?? Future(() => null),
       );
-      if (mistakesWrapper == null || !mistakesWrapper.hasResult) return;
+      if (mistakesWrapper == null ||
+          !mistakesWrapper.hasResult ||
+          _isDisposed) {
+        return;
+      }
 
       final mistakes = mistakesWrapper.result();
       _fetchError = mistakesWrapper.error;
@@ -310,27 +317,37 @@ class LanguageToolController extends TextEditingController {
     );
   }
 
-  /// Filters the list of mistakes based on the changes
-  /// in the text when it is changed.
-  Iterable<Mistake> _filterMistakesOnChanged(String newText) sync* {
+  List<Mistake> _filterMistakesOnChanged(
+    List<Mistake> mistakes,
+    String newText,
+  ) {
+    if (!selection.isValid) {
+      return mistakes
+          .where((mistake) => mistake.endOffset <= newText.length)
+          .toList();
+    }
+
     final isSelectionRangeEmpty = selection.end == selection.start;
     final lengthDiscrepancy = newText.length - text.length;
 
-    for (final mistake in _mistakes) {
-      Mistake? newMistake;
-
-      newMistake = isSelectionRangeEmpty
-          ? _adjustMistakeOffsetWithCaretCursor(
-              mistake: mistake,
-              lengthDiscrepancy: lengthDiscrepancy,
-            )
-          : _adjustMistakeOffsetWithSelectionRange(
-              mistake: mistake,
-              lengthDiscrepancy: lengthDiscrepancy,
-            );
-
-      if (newMistake != null) yield newMistake;
-    }
+    return mistakes
+        .map(
+          (mistake) => isSelectionRangeEmpty
+              ? _adjustMistakeOffsetWithCaretCursor(
+                  mistake: mistake,
+                  lengthDiscrepancy: lengthDiscrepancy,
+                )
+              : _adjustMistakeOffsetWithSelectionRange(
+                  mistake: mistake,
+                  lengthDiscrepancy: lengthDiscrepancy,
+                ),
+        )
+        .nonNulls
+        .where(
+          (mistake) =>
+              mistake.offset >= 0 && mistake.endOffset <= newText.length,
+        )
+        .toList();
   }
 
   /// Adjusts the mistake offset when the selection is a caret cursor.
