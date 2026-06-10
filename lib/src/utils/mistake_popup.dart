@@ -52,7 +52,8 @@ class LanguageToolMistakePopup extends StatelessWidget {
   static const double _defaultVerticalMargin = 25.0;
   static const double _defaultHorizontalMargin = 10.0;
   static const double _defaultMaxWidth = 250.0;
-  static const _iconSize = 25.0;
+  static const double _logoSize = 25;
+  static const double _headerIconSize = 12;
 
   /// Renderer used to display this window.
   final PopupOverlayRenderer popupRenderer;
@@ -84,7 +85,10 @@ class LanguageToolMistakePopup extends StatelessWidget {
   /// Mistake suggestion style.
   final ButtonStyle? mistakeStyle;
 
-  /// [LanguageToolMistakePopup] constructor
+  /// Optional builder that adds additional actions to the header.
+  final Future<void> Function(String)? addWordToDictionary;
+
+  /// Creates a [LanguageToolMistakePopup].
   const LanguageToolMistakePopup({
     required this.popupRenderer,
     required this.mistake,
@@ -96,6 +100,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
     this.horizontalMargin = _defaultHorizontalMargin,
     this.verticalMargin = _defaultVerticalMargin,
     this.mistakeStyle,
+    this.addWordToDictionary,
     super.key,
   });
 
@@ -150,38 +155,45 @@ class LanguageToolMistakePopup extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 4),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 5.0),
-                              child: Image.asset(
-                                LangToolImages.logo,
-                                width: _iconSize,
-                                height: _iconSize,
-                                package: 'languagetool_textfield',
+                  child: IconTheme(
+                    data: const IconThemeData(size: _headerIconSize),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: Image.asset(
+                                  LangToolImages.logo,
+                                  width: _logoSize,
+                                  height: _logoSize,
+                                  package: 'languagetool_textfield',
+                                ),
                               ),
-                            ),
-                            const Text('Correct'),
-                          ],
+                              const Text('Correct'),
+                            ],
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.close,
-                          size: 12,
+                        if (addWordToDictionary != null)
+                          IconButton(
+                            icon: const Icon(Icons.menu_book),
+                            constraints: const BoxConstraints(),
+                            splashRadius: dismissSplashRadius,
+                            onPressed: () =>
+                                _addWordToDictionaryAndFix(mistake),
+                          ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          constraints: const BoxConstraints(),
+                          splashRadius: dismissSplashRadius,
+                          onPressed: () {
+                            _dismissDialog();
+                            controller.onClosePopup();
+                          },
                         ),
-                        constraints: const BoxConstraints(),
-                        padding: EdgeInsets.zero,
-                        splashRadius: dismissSplashRadius,
-                        onPressed: () {
-                          _dismissDialog();
-                          controller.onClosePopup();
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Container(
@@ -260,6 +272,17 @@ class LanguageToolMistakePopup extends StatelessWidget {
     final availableSpaceTop = mistakePosition.dy;
 
     return min(max(availableSpaceBottom, availableSpaceTop), maxHeight);
+  }
+
+  Future<void> _addWordToDictionaryAndFix(Mistake mistake) async {
+    final word = controller.text.substring(
+      mistake.offset,
+      mistake.endOffset,
+    );
+
+    await addWordToDictionary?.call(word);
+
+    _fixTheMistake(word);
   }
 
   void _dismissDialog() {

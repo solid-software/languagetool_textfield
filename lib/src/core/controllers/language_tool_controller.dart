@@ -53,7 +53,7 @@ class LanguageToolController extends TextEditingController {
 
     if (!_isEnabled) return;
 
-    _handleTextChange(text, spellCheckSameText: true);
+    recheckText();
   }
 
   /// Indicates whether spell checking is enabled
@@ -65,7 +65,7 @@ class LanguageToolController extends TextEditingController {
     _isEnabled = value;
 
     if (_isEnabled) {
-      _handleTextChange(text, spellCheckSameText: true);
+      recheckText();
     } else {
       _mistakes = [];
       for (final recognizer in _recognizers) {
@@ -191,6 +191,16 @@ class LanguageToolController extends TextEditingController {
       final newOffset = mistake.offset + replacement.length;
       selection = TextSelection.fromPosition(TextPosition(offset: newOffset));
     });
+  }
+
+  /// Rechecks the current text for spelling and grammar errors.
+  ///
+  /// This method forces a recheck of the existing text
+  /// This is useful when you want to re-evaluate the text without any actual
+  /// text changes, such as after changing language settings or updating
+  /// spell check configurations.
+  void recheckText() {
+    _handleTextChange(text, spellCheckSameText: true);
   }
 
   /// Clear mistakes list when text mas modified and get a new list of mistakes
