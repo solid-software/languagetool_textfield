@@ -28,8 +28,21 @@ class ThrottlingLanguageCheckService extends LanguageCheckService {
 
   @override
   Future<Result<List<Mistake>>?> findMistakes(String text) async {
-    return await _throttling
+    final result = await _throttling
         .throttle(() => _languageCheckService.findMistakes(text));
+
+    return result?.map(
+      (mistakes) => mistakes.where(
+        (mistake) {
+          final mistakeHasInvalidOffset = mistake.offset < 0 ||
+              mistake.offset >= text.length ||
+              mistake.endOffset < 0 ||
+              mistake.endOffset > text.length;
+
+          return !mistakeHasInvalidOffset;
+        },
+      ).toList(growable: false),
+    );
   }
 
   // ignore: proper_super_calls

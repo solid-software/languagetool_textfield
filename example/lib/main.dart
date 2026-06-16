@@ -28,7 +28,15 @@ class _AppState extends State<App> {
   LanguageToolController _nonNullController() {
     return _spellCheckController ??= LanguageToolController(
       languageCheckService: InMemoryDictionaryLanguageCheckService(
-        getDictionary: () => _dictionary,
+        languageCheckService: ThrottlingLanguageCheckService(
+          LanguageToolService(LanguageToolClient()),
+          const Duration(milliseconds: 250),
+        ),
+        shouldIgnoreMistake: (mistake, text) {
+          final word = text.substring(mistake.offset, mistake.endOffset);
+
+          return _dictionary.contains(word);
+        },
       ),
     );
   }
