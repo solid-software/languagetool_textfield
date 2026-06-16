@@ -238,7 +238,8 @@ class LanguageToolMistakePopup extends StatelessWidget {
                           children: mistake.replacements
                               .map(
                                 (replacement) => ElevatedButton(
-                                  onPressed: () => _fixTheMistake(replacement),
+                                  onPressed: () =>
+                                      _fixTheMistake(mistake, replacement),
                                   style: mistakeStyle ??
                                       ElevatedButton.styleFrom(
                                         elevation: 0,
@@ -281,14 +282,20 @@ class LanguageToolMistakePopup extends StatelessWidget {
 
     await addWordToDictionary?.call(word);
 
-    _fixTheMistake(word);
+    final mistakeStillExists =
+        controller.text.substring(mistake.offset, mistake.endOffset) == word;
+    if (mistakeStillExists) {
+      _fixTheMistake(mistake, word);
+    } else {
+      _dismissDialog();
+    }
   }
 
   void _dismissDialog() {
     popupRenderer.dismiss();
   }
 
-  void _fixTheMistake(String replacement) {
+  void _fixTheMistake(Mistake mistake, String replacement) {
     controller.replaceMistake(mistake, replacement);
     _dismissDialog();
   }
