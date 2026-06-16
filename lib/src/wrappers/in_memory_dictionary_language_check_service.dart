@@ -12,8 +12,8 @@ import 'package:languagetool_textfield/languagetool_textfield.dart';
 class InMemoryDictionaryLanguageCheckService extends LanguageCheckService {
   /// Predicate applied to each mistake returned by LanguageTool.
   ///
-  /// Invoked once per [Mistake]. Only mistakes for which this returns `true`
-  /// are included in the final result.
+  /// Invoked once per [Mistake]. Mistakes for which this returns `true`
+  /// are ignored and excluded from the final result.
   final bool Function(Mistake, String) _shouldIgnoreMistake;
 
   /// The underlying language check service that is used to find mistakes.
