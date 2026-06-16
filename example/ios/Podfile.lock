@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - pointer_interceptor_ios (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - pointer_interceptor_ios (from `.symlinks/plugins/pointer_interceptor_ios/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  pointer_interceptor_ios:
+    :path: ".symlinks/plugins/pointer_interceptor_ios/ios"
+
+SPEC CHECKSUMS:
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  pointer_interceptor_ios: da06a662d5bfd329602b45b2ab41bc0fb5fdb0f0
+
+PODFILE CHECKSUM: 5c8eb167e48255b7544ab290f70b4d6a1076ca06
+
+COCOAPODS: 1.16.2
