@@ -68,6 +68,7 @@ class _AppState extends State<App> {
                       controller: controller,
                       addWordToDictionary: (word) async {
                         setState(() => _dictionary = {..._dictionary, word});
+                        spellCheckController.recheckText();
                       },
                     );
                   },
