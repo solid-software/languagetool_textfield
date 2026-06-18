@@ -27,7 +27,7 @@ class _AppState extends State<App> {
 
   LanguageToolController _nonNullController() {
     return _spellCheckController ??= LanguageToolController(
-      languageCheckService: InMemoryDictionaryLanguageCheckService(
+      languageCheckService: FilteredLanguageCheckService(
         languageCheckService: ThrottlingLanguageCheckService(
           LanguageToolService(LanguageToolClient()),
           const Duration(milliseconds: 250),
