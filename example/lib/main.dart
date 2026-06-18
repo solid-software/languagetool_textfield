@@ -23,35 +23,31 @@ class _AppState extends State<App> {
   Set<String> _dictionary = {};
   final _addWordController = TextEditingController();
 
-  LanguageToolController? _spellCheckController;
-
-  LanguageToolController _nonNullController() {
-    return _spellCheckController ??= LanguageToolController(
-      languageCheckService: FilteredLanguageCheckService(
-        languageCheckService: ThrottlingLanguageCheckService(
-          LanguageToolService(LanguageToolClient()),
-          const Duration(milliseconds: 250),
-        ),
-        shouldIgnoreMistake: (mistake, text) {
-          final word = text.substring(mistake.offset, mistake.endOffset);
-
-          return _dictionary.contains(word);
-        },
+  // ignore: avoid-late-keyword
+  late final LanguageToolController _spellCheckController =
+      LanguageToolController(
+    languageCheckService: FilteredLanguageCheckService(
+      languageCheckService: ThrottlingLanguageCheckService(
+        LanguageToolService(LanguageToolClient()),
+        const Duration(milliseconds: 250),
       ),
-    );
-  }
+      shouldIgnoreMistake: (mistake, text) {
+        final word = text.substring(mistake.offset, mistake.endOffset);
+
+        return _dictionary.contains(word);
+      },
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
-    final spellCheckController = _nonNullController();
-
     return Material(
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
             children: [
               LanguageToolTextField(
-                controller: spellCheckController,
+                controller: _spellCheckController,
                 language: 'en-US',
                 mistakePopup: MistakePopup(
                   popupRenderer: PopupOverlayRenderer(),
@@ -68,19 +64,19 @@ class _AppState extends State<App> {
                       controller: controller,
                       addWordToDictionary: (word) async {
                         setState(() => _dictionary = {..._dictionary, word});
-                        spellCheckController.recheckText();
+                        _spellCheckController.recheckText();
                       },
                     );
                   },
                 ),
               ),
               ValueListenableBuilder(
-                valueListenable: spellCheckController,
+                valueListenable: _spellCheckController,
                 builder: (_, __, ___) => CheckboxListTile(
                   title: const Text("Enable spell checking"),
-                  value: spellCheckController.isEnabled,
+                  value: _spellCheckController.isEnabled,
                   onChanged: (value) =>
-                      spellCheckController.isEnabled = value ?? false,
+                      _spellCheckController.isEnabled = value ?? false,
                 ),
               ),
               const SizedBox(height: 20),
@@ -169,7 +165,7 @@ class _AppState extends State<App> {
       setState(() {
         _dictionary = {..._dictionary, word};
         _addWordController.clear();
-        _spellCheckController?.recheckText();
+        _spellCheckController.recheckText();
       });
     }
   }
@@ -177,20 +173,20 @@ class _AppState extends State<App> {
   void _removeWord(String word) {
     setState(() {
       _dictionary = _dictionary.difference({word});
-      _spellCheckController?.recheckText();
+      _spellCheckController.recheckText();
     });
   }
 
   void _clearAllWords() {
     setState(() {
       _dictionary = {};
-      _spellCheckController?.recheckText();
+      _spellCheckController.recheckText();
     });
   }
 
   @override
   void dispose() {
-    _spellCheckController?.dispose();
+    _spellCheckController.dispose();
     _addWordController.dispose();
     super.dispose();
   }
