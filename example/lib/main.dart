@@ -23,7 +23,6 @@ class _AppState extends State<App> {
   Set<String> _dictionary = {};
   final _addWordController = TextEditingController();
 
-  // ignore: avoid-late-keyword
   late final LanguageToolController _spellCheckController =
       LanguageToolController(
     languageCheckService: FilteredLanguageCheckService(
