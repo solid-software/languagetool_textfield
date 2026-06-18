@@ -285,6 +285,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
     final mistakeStillExists =
         controller.text.substring(mistake.offset, mistake.endOffset) == word;
     if (mistakeStillExists) {
+      // Clear the mistake without actually changing the text
       _fixTheMistake(mistake, word);
     } else {
       _dismissDialog();
