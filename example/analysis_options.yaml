@@ -1,1 +1,6 @@
 include: package:solid_lints/analysis_options.yaml
+
+custom_lint:
+  rules:
+    - avoid_late_keyword:
+      allow_initialized: true

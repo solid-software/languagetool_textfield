@@ -13,8 +13,10 @@
 - potentially BREAKING: hide baseService and debouncing/throttling from Debouncing and Throttling LanguageService wrappers
 - potentially BREAKING: rename `DebounceLanguageToolService` to `DebounceLanguageCheckService`
 - potentially BREAKING: rename `ThrottleLanguageToolService` to `ThrottleLanguageCheckService`
+- Support adding words to dictionary through `addWordToDictionary` callback in `LanguageToolMistakePopup`
 - Allow overriding `languageCheckService`
 - Add `isEnabled` to toggle spell check
+- Use default IconButton padding for mistake popup
 - Add missing properties from flutter's `TextField`
   - autofillHints
   - autofocus
