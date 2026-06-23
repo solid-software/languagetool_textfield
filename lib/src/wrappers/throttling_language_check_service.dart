@@ -32,16 +32,15 @@ class ThrottlingLanguageCheckService extends LanguageCheckService {
         .throttle(() => _languageCheckService.findMistakes(text));
 
     return result?.map(
-      (mistakes) => mistakes.where(
-        (mistake) {
-          final mistakeHasInvalidOffset = mistake.offset < 0 ||
-              mistake.offset >= text.length ||
-              mistake.endOffset < 0 ||
-              mistake.endOffset > text.length;
-
-          return !mistakeHasInvalidOffset;
-        },
-      ).toList(growable: false),
+      (mistakes) => mistakes
+          .where(
+            (mistake) =>
+                mistake.offset >= 0 &&
+                mistake.offset < text.length &&
+                mistake.endOffset >= 0 &&
+                mistake.endOffset <= text.length,
+          )
+          .toList(growable: false),
     );
   }
 
