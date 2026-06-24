@@ -94,7 +94,6 @@ class LanguageToolMistakePopup extends StatelessWidget {
     required this.mistake,
     required this.controller,
     required this.mistakePosition,
-    super.key,
     this.maxWidth = _defaultMaxWidth,
     this.maxHeight = double.infinity,
     this.horizontalMargin = _defaultHorizontalMargin,
