@@ -212,8 +212,9 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
     );
   }
 
-  void _textControllerListener() =>
-      widget.controller.scrollOffset = _scrollController.offset;
+  void _textControllerListener() => _scrollController.hasClients
+      ? widget.controller.scrollOffset = _scrollController.offset
+      : null;
 
   @override
   void dispose() {
