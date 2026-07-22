@@ -3,18 +3,18 @@
 ### BREAKING CHANGES
 
 - `build!`: require Flutter 3.27.0 or higher and Dart 3.0.0 or higher ([#91](https://github.com/solid-software/languagetool_textfield/pull/91))
-- `refactor!`: `LanguageToolTextField` now extends Flutter's `TextField` instead of `StatefulWidget` ([#90](https://github.com/solid-software/languagetool_textfield/pull/90))
-- `refactor!`: rename `LanguageToolTextField` parameters to match `TextField`'s naming ([#90](https://github.com/solid-software/languagetool_textfield/pull/90))
+- `LanguageToolTextField` now extends Flutter's `TextField` instead of `StatefulWidget` ([#90](https://github.com/solid-software/languagetool_textfield/pull/90))
+- rename `LanguageToolTextField` parameters to match `TextField`'s naming ([#90](https://github.com/solid-software/languagetool_textfield/pull/90))
   - `autoFocus` -> `autofocus`
   - `onTextChange` -> `onChanged`
   - `onTextSubmitted` -> `onSubmitted`
-- `refactor!`: rename language check services and move them to `wrappers/` ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [9157f8c](https://github.com/solid-software/languagetool_textfield/commit/9157f8c39b0defe6c3dda6d6e2945980fad67594))
+- rename language check services and move them to `wrappers/` ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [9157f8c](https://github.com/solid-software/languagetool_textfield/commit/9157f8c39b0defe6c3dda6d6e2945980fad67594))
   - `LangToolService` -> `LanguageToolService`
   - `DebounceLangToolService` -> `DebounceLanguageCheckService`
   - `ThrottlingLangToolService` -> `ThrottlingLanguageCheckService`
-- `refactor!`: hide `baseService`, `debouncing` and `throttling` fields from the debouncing and throttling wrappers ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [9157f8c](https://github.com/solid-software/languagetool_textfield/commit/9157f8c39b0defe6c3dda6d6e2945980fad67594))
-- `refactor!`: remove `delayType` and `delay` fields from `LanguageToolController`; they remain constructor parameters ([#93](https://github.com/solid-software/languagetool_textfield/pull/93))
-- `feat!`: `LanguageCheckService` implementations must now provide a `language` getter and setter ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [8f2b230](https://github.com/solid-software/languagetool_textfield/commit/8f2b230cadf60f2886fc009c396528bbdf1c99ba))
+- hide `baseService`, `debouncing` and `throttling` fields from the debouncing and throttling wrappers ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [9157f8c](https://github.com/solid-software/languagetool_textfield/commit/9157f8c39b0defe6c3dda6d6e2945980fad67594))
+- remove `delayType` and `delay` fields from `LanguageToolController`; they remain constructor parameters ([#93](https://github.com/solid-software/languagetool_textfield/pull/93))
+- `LanguageCheckService` implementations must now provide a `language` getter and setter ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [8f2b230](https://github.com/solid-software/languagetool_textfield/commit/8f2b230cadf60f2886fc009c396528bbdf1c99ba))
 
 ### New Features
 
