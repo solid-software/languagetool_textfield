@@ -1,25 +1,31 @@
-## 1.0.1
-
-- Fix: recheck text on changing language
-- Fixes a bug where changing text programmatically can sometimes throw a RangeError
-- Fixes notifying listeners after async gap when disposed
-
 ## 1.0.0
 
-- BREAKING: require flutter 3.27.0 or higher
-- BREAKING: require dart 3.0.0 or higher
-- BREAKING: rename autoFocus to autofocus to match `TextField`'s naming
-- potentially BREAKING: remove `delayType` and `delay` fields from `LanguageToolController`
-- potentially BREAKING: hide baseService and debouncing/throttling from Debouncing and Throttling LanguageService wrappers
-- potentially BREAKING: rename `DebounceLanguageToolService` to `DebounceLanguageCheckService`
-- potentially BREAKING: rename `ThrottleLanguageToolService` to `ThrottleLanguageCheckService`
-- Support adding words to dictionary through `addWordToDictionary` callback in `LanguageToolMistakePopup`
-- Allow overriding `languageCheckService`
-- Add `isEnabled` to toggle spell check
-- Use default IconButton padding for mistake popup
-- Add missing properties from flutter's `TextField`
+### BREAKING CHANGES
+
+- `build!`: require Flutter 3.27.0 or higher and Dart 3.0.0 or higher ([#91](https://github.com/solid-software/languagetool_textfield/pull/91))
+- `LanguageToolTextField` now extends Flutter's `TextField` instead of `StatefulWidget` ([#90](https://github.com/solid-software/languagetool_textfield/pull/90))
+- rename `LanguageToolTextField` parameters to match `TextField`'s naming ([#90](https://github.com/solid-software/languagetool_textfield/pull/90))
+  - `autoFocus` -> `autofocus`
+  - `onTextChange` -> `onChanged`
+  - `onTextSubmitted` -> `onSubmitted`
+- rename language check services and move them to `wrappers/` ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [9157f8c](https://github.com/solid-software/languagetool_textfield/commit/9157f8c39b0defe6c3dda6d6e2945980fad67594))
+  - `LangToolService` -> `LanguageToolService`
+  - `DebounceLangToolService` -> `DebounceLanguageCheckService`
+  - `ThrottlingLangToolService` -> `ThrottlingLanguageCheckService`
+- hide `baseService`, `debouncing` and `throttling` fields from the debouncing and throttling wrappers ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [9157f8c](https://github.com/solid-software/languagetool_textfield/commit/9157f8c39b0defe6c3dda6d6e2945980fad67594))
+- remove `delayType` and `delay` fields from `LanguageToolController`; they remain constructor parameters ([#93](https://github.com/solid-software/languagetool_textfield/pull/93))
+- `LanguageCheckService` implementations must now provide a `language` getter and setter ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [8f2b230](https://github.com/solid-software/languagetool_textfield/commit/8f2b230cadf60f2886fc009c396528bbdf1c99ba))
+
+### New Features
+
+- allow overriding `languageCheckService` on `LanguageToolController` for full control over how text is analyzed ([#93](https://github.com/solid-software/languagetool_textfield/pull/93))
+- add `isEnabled` to toggle spell check ([#92](https://github.com/solid-software/languagetool_textfield/pull/92))
+- support adding words to dictionary through the `addWordToDictionary` callback in `LanguageToolMistakePopup` ([#95](https://github.com/solid-software/languagetool_textfield/pull/95), [9de4a15](https://github.com/solid-software/languagetool_textfield/commit/9de4a153a381959713ef971932afd8cef83a69cc))
+- add `FilteredLanguageCheckService` to drop mistakes matching a custom predicate ([#95](https://github.com/solid-software/languagetool_textfield/pull/95))
+- add `LanguageToolController.recheckText()` to force a recheck without changing the text ([#95](https://github.com/solid-software/languagetool_textfield/pull/95), [9de4a15](https://github.com/solid-software/languagetool_textfield/commit/9de4a153a381959713ef971932afd8cef83a69cc))
+- export `Result` to allow custom `LanguageCheckService` implementations ([#95](https://github.com/solid-software/languagetool_textfield/pull/95))
+- add missing properties from Flutter's `TextField` ([#90](https://github.com/solid-software/languagetool_textfield/pull/90))
   - autofillHints
-  - autofocus
   - buildCounter
   - canRequestFocus
   - clipBehavior
@@ -37,7 +43,6 @@
   - enableSuggestions
   - ignorePointers
   - inputFormatters
-  - key
   - magnifierConfiguration
   - maxLength
   - maxLengthEnforcement
@@ -62,6 +67,16 @@
   - textAlignVertical
   - textCapitalization
   - undoController
+
+### Fixes
+
+- mistake popup is now themed with the app's `ColorScheme`, fixing visibility in dark mode ([#88](https://github.com/solid-software/languagetool_textfield/pull/88))
+- recheck text when the language changes ([#96](https://github.com/solid-software/languagetool_textfield/pull/96), [cae2cba](https://github.com/solid-software/languagetool_textfield/commit/cae2cba337ac9c2973d534159265f072c3a050ea))
+- clear mistakes that fall out of the new text range, fixing a `RangeError` when changing text programmatically ([#97](https://github.com/solid-software/languagetool_textfield/pull/97))
+- prevent notifying listeners after an async gap when the controller is disposed ([#97](https://github.com/solid-software/languagetool_textfield/pull/97))
+- `ThrottlingLanguageCheckService` now discards mistakes with offsets outside the checked text's range ([#95](https://github.com/solid-software/languagetool_textfield/pull/95))
+- avoid setting `scrollOffset` before the scroll controller is attached ([#100](https://github.com/solid-software/languagetool_textfield/pull/100))
+- `style`: use the default `IconButton` padding in the mistake popup ([#95](https://github.com/solid-software/languagetool_textfield/pull/95), [9de4a15](https://github.com/solid-software/languagetool_textfield/commit/9de4a153a381959713ef971932afd8cef83a69cc))
 
 ## 0.1.1
 
