@@ -79,6 +79,7 @@
 - prevent notifying listeners after an async gap when the controller is disposed ([#97](https://github.com/solid-software/languagetool_textfield/pull/97))
 - `ThrottlingLanguageCheckService` now discards mistakes with offsets outside the checked text's range ([#95](https://github.com/solid-software/languagetool_textfield/pull/95))
 - avoid setting `scrollOffset` before the scroll controller is attached ([#100](https://github.com/solid-software/languagetool_textfield/pull/100))
+- select the correct mistake in a scrolled multiline field, where `scrollOffset` was applied as a horizontal shift
 - `style`: use the default `IconButton` padding in the mistake popup ([#95](https://github.com/solid-software/languagetool_textfield/pull/95), [9de4a15](https://github.com/solid-software/languagetool_textfield/commit/9de4a153a381959713ef971932afd8cef83a69cc))
 
 ## 0.1.1

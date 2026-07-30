@@ -38,6 +38,11 @@ class LanguageToolController extends TextEditingController {
   /// Represents the scroll offset value of the LanguageTool TextField.
   double? scrollOffset;
 
+  /// The axis [scrollOffset] is measured along.
+  ///
+  /// Single line text fields scroll horizontally, multiline ones vertically.
+  Axis scrollAxis = Axis.horizontal;
+
   Object? _fetchError;
 
   /// The language used for spellchecking in the text field.
@@ -484,16 +489,24 @@ class LanguageToolController extends TextEditingController {
     TextStyle? style,
   }) {
     final scrollOffset = this.scrollOffset ?? 0;
+    final isScrolledVertically = scrollAxis == Axis.vertical;
+
     final textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       textDirection: TextDirection.ltr,
     )..layout(
         minWidth: textFieldWidth,
-        maxWidth: scrollOffset == 0 ? textFieldWidth : double.infinity,
+        // Vertically scrolled text wraps, so it has to be laid out at the
+        // width it is displayed at. Only a horizontally scrolled single line
+        // needs unbounded width to also cover the part scrolled out of view.
+        maxWidth: isScrolledVertically || scrollOffset == 0
+            ? textFieldWidth
+            : double.infinity,
       );
 
-    final adjustedOffset =
-        Offset(localOffset.dx + scrollOffset, localOffset.dy);
+    final adjustedOffset = isScrolledVertically
+        ? Offset(localOffset.dx, localOffset.dy + scrollOffset)
+        : Offset(localOffset.dx + scrollOffset, localOffset.dy);
 
     return textPainter.getPositionForOffset(adjustedOffset).offset;
   }
