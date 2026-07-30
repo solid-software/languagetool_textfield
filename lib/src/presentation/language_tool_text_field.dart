@@ -115,7 +115,8 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
     final defaultPopup = MistakePopup(popupRenderer: PopupOverlayRenderer());
     controller.popupWidget = widget.mistakePopup ?? defaultPopup;
 
-    controller.addListener(_textControllerListener);
+    controller.addListener(_syncScrollPosition);
+    _scrollController.addListener(_syncScrollPosition);
   }
 
   @override
@@ -215,7 +216,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
     );
   }
 
-  void _textControllerListener() {
+  void _syncScrollPosition() {
     if (!_scrollController.hasClients) return;
     final scrollPosition = _scrollController.position;
     widget.controller.scrollOffset = scrollPosition.pixels;
@@ -224,6 +225,8 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
 
   @override
   void dispose() {
+    widget.controller.removeListener(_syncScrollPosition);
+    _scrollController.removeListener(_syncScrollPosition);
     if (widget.focusNode == null) {
       _focusNode?.dispose();
     }
