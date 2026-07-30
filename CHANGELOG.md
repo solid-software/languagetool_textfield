@@ -15,6 +15,9 @@
 - hide `baseService`, `debouncing` and `throttling` fields from the debouncing and throttling wrappers ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [9157f8c](https://github.com/solid-software/languagetool_textfield/commit/9157f8c39b0defe6c3dda6d6e2945980fad67594))
 - remove `delayType` and `delay` fields from `LanguageToolController`; they remain constructor parameters ([#93](https://github.com/solid-software/languagetool_textfield/pull/93))
 - `LanguageCheckService` implementations must now provide a `language` getter and setter ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [8f2b230](https://github.com/solid-software/languagetool_textfield/commit/8f2b230cadf60f2886fc009c396528bbdf1c99ba))
+- group `HighlightStyle`'s mistake colors into a `MistakeColors` object
+- group `Match`'s position fields (`offset`, `length`, `sentence`) into a `MatchLocation` object
+- group `LanguageToolMistakePopup`'s layout and styling fields into a `MistakePopupStyle` object
 
 ### New Features
 

@@ -23,11 +23,14 @@ class LanguageToolTextField extends TextField {
   final bool alignCenter;
 
   /// Creates a widget that checks grammar errors.
+  ///
+  /// Most parameters are inherited from Flutter's [TextField].
+  // ignore: solid_lints/number_of_parameters
   const LanguageToolTextField({
     required LanguageToolController super.controller,
-    this.mistakePopup,
     this.language = 'auto',
     this.alignCenter = true,
+    this.mistakePopup,
     super.onChanged,
     super.onSubmitted,
     super.focusNode,
@@ -127,7 +130,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
         final httpErrorText = Text(
           '$fetchError',
           style: TextStyle(
-            color: widget.controller.highlightStyle.misspellingMistakeColor,
+            color: widget.controller.highlightStyle.colors.misspelling,
           ),
         );
 

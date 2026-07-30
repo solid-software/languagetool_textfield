@@ -4,7 +4,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
-import 'package:languagetool_textfield/src/core/enums/mistake_type.dart';
 import 'package:languagetool_textfield/src/utils/closed_range.dart';
 import 'package:languagetool_textfield/src/utils/keep_latest_response_service.dart';
 
@@ -106,10 +105,10 @@ class LanguageToolController extends TextEditingController {
   /// fully control how text is analyzed and processed.
   /// When provided, [delayType] and [delay] are ignored.
   LanguageToolController({
-    bool isEnabled = true,
     this.highlightStyle = const HighlightStyle(),
     DelayType delayType = DelayType.debouncing,
     Duration delay = Duration.zero,
+    bool isEnabled = true,
     LanguageCheckService? languageCheckService,
   }) : _isEnabled = isEnabled {
     _languageCheckService = languageCheckService ??
@@ -265,7 +264,7 @@ class LanguageToolController extends TextEditingController {
       );
 
       /// Get a highlight color
-      final Color mistakeColor = _getMistakeColor(mistake.type);
+      final Color mistakeColor = highlightStyle.colors.colorOf(mistake.type);
 
       /// Create a gesture recognizer for mistake
       final onTap = TapGestureRecognizer()
@@ -400,26 +399,6 @@ class LanguageToolController extends TextEditingController {
     return mistake.copyWith(offset: newOffset);
   }
 
-  /// Returns color for mistake TextSpan style
-  Color _getMistakeColor(MistakeType type) {
-    switch (type) {
-      case MistakeType.misspelling:
-        return highlightStyle.misspellingMistakeColor;
-      case MistakeType.typographical:
-        return highlightStyle.typographicalMistakeColor;
-      case MistakeType.grammar:
-        return highlightStyle.grammarMistakeColor;
-      case MistakeType.uncategorized:
-        return highlightStyle.uncategorizedMistakeColor;
-      case MistakeType.nonConformance:
-        return highlightStyle.nonConformanceMistakeColor;
-      case MistakeType.style:
-        return highlightStyle.styleMistakeColor;
-      case MistakeType.other:
-        return highlightStyle.otherMistakeColor;
-    }
-  }
-
   /// Sets the cursor position on a mistake within the text field based
   /// on the provided [globalPosition].
   ///
@@ -479,29 +458,39 @@ class LanguageToolController extends TextEditingController {
     TextStyle? style,
   }) {
     final textFieldRenderBox = context.findRenderObject() as RenderBox?;
-    final localOffset = textFieldRenderBox?.globalToLocal(globalPosition);
+    if (textFieldRenderBox == null) return null;
 
-    if (localOffset == null) return null;
-
-    final textBoxHeight = textFieldRenderBox?.size.height ?? 0;
+    final textFieldSize = textFieldRenderBox.size;
+    final localOffset = textFieldRenderBox.globalToLocal(globalPosition);
 
     // If local offset is outside the vertical bounds of the text field,
     // return null
     final isOffsetOutsideTextBox =
-        localOffset.dy < 0 || textBoxHeight < localOffset.dy;
+        localOffset.dy < 0 || textFieldSize.height < localOffset.dy;
     if (isOffsetOutsideTextBox) return null;
 
+    return _textOffsetAt(
+      localOffset,
+      textFieldWidth: textFieldSize.width,
+      style: style,
+    );
+  }
+
+  /// Resolves the offset within [text] that corresponds to [localOffset],
+  /// a position relative to the top left corner of the text field.
+  int _textOffsetAt(
+    Offset localOffset, {
+    required double textFieldWidth,
+    TextStyle? style,
+  }) {
+    final scrollOffset = this.scrollOffset ?? 0;
     final textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       textDirection: TextDirection.ltr,
-    );
-    final textFieldWidth = textFieldRenderBox?.size.width ?? 0;
-    final scrollOffset = this.scrollOffset ?? 0;
-
-    double maxWidth = double.infinity;
-    if (scrollOffset == 0) maxWidth = textFieldWidth;
-
-    textPainter.layout(minWidth: textFieldWidth, maxWidth: maxWidth);
+    )..layout(
+        minWidth: textFieldWidth,
+        maxWidth: scrollOffset == 0 ? textFieldWidth : double.infinity,
+      );
 
     final adjustedOffset =
         Offset(localOffset.dx + scrollOffset, localOffset.dy);
