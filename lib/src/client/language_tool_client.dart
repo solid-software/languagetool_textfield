@@ -59,8 +59,8 @@ class LanguageToolClient {
         WritingMistake(
           issueDescription: match.rule.description,
           issueType: match.rule.issueType,
-          length: match.length,
-          offset: match.offset,
+          length: match.location.length,
+          offset: match.location.offset,
           replacements: replacements,
           message: match.message,
           shortMessage: match.shortMessage,

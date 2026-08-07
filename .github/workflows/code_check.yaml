@@ -23,11 +23,11 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Custom lint
-        run: dart run custom_lint
-
       - name: Check formatting
         run: dart format . --set-exit-if-changed
+
+      - name: Check lints
+        run: dart analyze --fatal-infos
 
       - name: Run tests
         run: |
@@ -38,4 +38,3 @@ jobs:
           else
               echo "Tests not found."
           fi
-

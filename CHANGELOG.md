@@ -1,4 +1,4 @@
-## 1.0.0
+## 1.0.0-dev.1
 
 ### BREAKING CHANGES
 
@@ -15,6 +15,9 @@
 - hide `baseService`, `debouncing` and `throttling` fields from the debouncing and throttling wrappers ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [9157f8c](https://github.com/solid-software/languagetool_textfield/commit/9157f8c39b0defe6c3dda6d6e2945980fad67594))
 - remove `delayType` and `delay` fields from `LanguageToolController`; they remain constructor parameters ([#93](https://github.com/solid-software/languagetool_textfield/pull/93))
 - `LanguageCheckService` implementations must now provide a `language` getter and setter ([#93](https://github.com/solid-software/languagetool_textfield/pull/93), [8f2b230](https://github.com/solid-software/languagetool_textfield/commit/8f2b230cadf60f2886fc009c396528bbdf1c99ba))
+- group `HighlightStyle`'s mistake colors into a `MistakeColors` object
+- group `Match`'s position fields (`offset`, `length`, `sentence`) into a `MatchLocation` object
+- group `LanguageToolMistakePopup`'s layout and styling fields into a `MistakePopupStyle` object
 
 ### New Features
 
@@ -76,6 +79,7 @@
 - prevent notifying listeners after an async gap when the controller is disposed ([#97](https://github.com/solid-software/languagetool_textfield/pull/97))
 - `ThrottlingLanguageCheckService` now discards mistakes with offsets outside the checked text's range ([#95](https://github.com/solid-software/languagetool_textfield/pull/95))
 - avoid setting `scrollOffset` before the scroll controller is attached ([#100](https://github.com/solid-software/languagetool_textfield/pull/100))
+- select the correct mistake in a scrolled multiline field, where `scrollOffset` was applied as a horizontal shift
 - `style`: use the default `IconButton` padding in the mistake popup ([#95](https://github.com/solid-software/languagetool_textfield/pull/95), [9de4a15](https://github.com/solid-software/languagetool_textfield/commit/9de4a153a381959713ef971932afd8cef83a69cc))
 
 ## 0.1.1

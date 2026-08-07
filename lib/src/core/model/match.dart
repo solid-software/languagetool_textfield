@@ -1,3 +1,4 @@
+import 'package:languagetool_textfield/src/core/model/match_location.dart';
 import 'package:languagetool_textfield/src/core/model/replacement.dart';
 import 'package:languagetool_textfield/src/core/model/rule.dart';
 
@@ -12,14 +13,8 @@ class Match {
   /// List of possible replacements
   final List<Replacement> replacements;
 
-  /// Offset to the word.
-  final int offset;
-
-  /// Length of the word.
-  final int length;
-
-  /// The whole sentence.
-  final String sentence;
+  /// Position of the mistake and the sentence containing it.
+  final MatchLocation location;
 
   /// The mistake's rule.
   final Rule rule;
@@ -35,9 +30,7 @@ class Match {
     required this.message,
     required this.shortMessage,
     required this.replacements,
-    required this.offset,
-    required this.length,
-    required this.sentence,
+    required this.location,
     required this.rule,
     required this.ignoreForIncompleteSentence,
     required this.contextForSureMatch,
@@ -52,9 +45,7 @@ class Match {
               (e) => Replacement.fromJson(e as Map<String, dynamic>),
             )
             .toList(),
-        offset: json['offset'] as int,
-        length: json['length'] as int,
-        sentence: json['sentence'] as String,
+        location: MatchLocation.fromJson(json),
         rule: Rule.fromJson(json['rule'] as Map<String, dynamic>),
         ignoreForIncompleteSentence:
             json['ignoreForIncompleteSentence'] as bool,

@@ -23,11 +23,14 @@ class LanguageToolTextField extends TextField {
   final bool alignCenter;
 
   /// Creates a widget that checks grammar errors.
+  ///
+  /// Most parameters are inherited from Flutter's [TextField].
+  // ignore: solid_lints/number_of_parameters
   const LanguageToolTextField({
     required LanguageToolController super.controller,
-    this.mistakePopup,
     this.language = 'auto',
     this.alignCenter = true,
+    this.mistakePopup,
     super.onChanged,
     super.onSubmitted,
     super.focusNode,
@@ -112,7 +115,8 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
     final defaultPopup = MistakePopup(popupRenderer: PopupOverlayRenderer());
     controller.popupWidget = widget.mistakePopup ?? defaultPopup;
 
-    controller.addListener(_textControllerListener);
+    controller.addListener(_syncScrollPosition);
+    _scrollController.addListener(_syncScrollPosition);
   }
 
   @override
@@ -127,7 +131,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
         final httpErrorText = Text(
           '$fetchError',
           style: TextStyle(
-            color: widget.controller.highlightStyle.misspellingMistakeColor,
+            color: widget.controller.highlightStyle.colors.misspelling,
           ),
         );
 
@@ -212,13 +216,17 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
     );
   }
 
-  void _textControllerListener() {
+  void _syncScrollPosition() {
     if (!_scrollController.hasClients) return;
-    widget.controller.scrollOffset = _scrollController.offset;
+    final scrollPosition = _scrollController.position;
+    widget.controller.scrollOffset = scrollPosition.pixels;
+    widget.controller.scrollAxis = scrollPosition.axis;
   }
 
   @override
   void dispose() {
+    widget.controller.removeListener(_syncScrollPosition);
+    _scrollController.removeListener(_syncScrollPosition);
     if (widget.focusNode == null) {
       _focusNode?.dispose();
     }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/src/core/controllers/language_tool_controller.dart';
 import 'package:languagetool_textfield/src/core/langtool_images.dart';
 import 'package:languagetool_textfield/src/domain/mistake.dart';
+import 'package:languagetool_textfield/src/domain/mistake_popup_style.dart';
 import 'package:languagetool_textfield/src/domain/typedefs.dart';
 import 'package:languagetool_textfield/src/utils/extensions/string_extension.dart';
 import 'package:languagetool_textfield/src/utils/popup_overlay_renderer.dart';
@@ -49,9 +50,6 @@ class MistakePopup {
 
 /// Default mistake window that looks similar to LanguageTool popup
 class LanguageToolMistakePopup extends StatelessWidget {
-  static const double _defaultVerticalMargin = 25.0;
-  static const double _defaultHorizontalMargin = 10.0;
-  static const double _defaultMaxWidth = 250.0;
   static const double _logoSize = 25;
   static const double _headerIconSize = 12;
 
@@ -67,23 +65,8 @@ class LanguageToolMistakePopup extends StatelessWidget {
   /// An on-screen position of the mistake
   final Offset mistakePosition;
 
-  /// A maximum width of the popup.
-  /// If infinity, the popup will use all the available horizontal space.
-  final double maxWidth;
-
-  /// A maximum height of the popup.
-  /// If infinity, the popup will use all the available height between the
-  /// [mistakePosition] and the furthest border of the layout constraints.
-  final double maxHeight;
-
-  /// Horizontal popup margin.
-  final double horizontalMargin;
-
-  /// Vertical popup margin.
-  final double verticalMargin;
-
-  /// Mistake suggestion style.
-  final ButtonStyle? mistakeStyle;
+  /// Layout and styling options of this popup.
+  final MistakePopupStyle style;
 
   /// Optional builder that adds additional actions to the header.
   final Future<void> Function(String)? addWordToDictionary;
@@ -94,11 +77,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
     required this.mistake,
     required this.controller,
     required this.mistakePosition,
-    this.maxWidth = _defaultMaxWidth,
-    this.maxHeight = double.infinity,
-    this.horizontalMargin = _defaultHorizontalMargin,
-    this.verticalMargin = _defaultVerticalMargin,
-    this.mistakeStyle,
+    this.style = const MistakePopupStyle(),
     this.addWordToDictionary,
     super.key,
   });
@@ -116,20 +95,20 @@ class LanguageToolMistakePopup extends StatelessWidget {
 
     const padding = 10.0;
 
-    final availableSpace = _calculateAvailableSpace(context);
+    final availableHeight = _calculateAvailableHeight(context);
 
     final colorScheme = Theme.of(context).colorScheme;
 
     return PointerInterceptor(
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: maxWidth,
-          maxHeight: availableSpace,
+          maxWidth: style.maxWidth,
+          maxHeight: availableHeight,
         ),
         child: Container(
           margin: EdgeInsets.symmetric(
-            horizontal: horizontalMargin,
-            vertical: verticalMargin,
+            horizontal: style.horizontalMargin,
+            vertical: style.verticalMargin,
           ),
           decoration: BoxDecoration(
             color: colorScheme.surface.withValues(alpha: 0.9),
@@ -240,7 +219,7 @@ class LanguageToolMistakePopup extends StatelessWidget {
                                 (replacement) => ElevatedButton(
                                   onPressed: () =>
                                       _fixTheMistake(mistake, replacement),
-                                  style: mistakeStyle ??
+                                  style: style.suggestionStyle ??
                                       ElevatedButton.styleFrom(
                                         elevation: 0,
                                         minimumSize: const Size(40, 36),
@@ -265,13 +244,13 @@ class LanguageToolMistakePopup extends StatelessWidget {
     );
   }
 
-  double _calculateAvailableSpace(BuildContext context) {
+  double _calculateAvailableHeight(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
 
     final availableSpaceBottom = mediaQuery.size.height - mistakePosition.dy;
     final availableSpaceTop = mistakePosition.dy;
 
-    return min(max(availableSpaceBottom, availableSpaceTop), maxHeight);
+    return min(max(availableSpaceBottom, availableSpaceTop), style.maxHeight);
   }
 
   Future<void> _addWordToDictionaryAndFix(Mistake mistake) async {
