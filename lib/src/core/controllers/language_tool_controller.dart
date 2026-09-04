@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:languagetool_textfield/languagetool_textfield.dart';
 import 'package:languagetool_textfield/src/utils/closed_range.dart';
 import 'package:languagetool_textfield/src/utils/keep_latest_response_service.dart';
+import 'package:meta/meta.dart';
 
 /// A TextEditingController with overrides buildTextSpan for building
 /// marked TextSpans with tap recognizer
@@ -35,7 +36,8 @@ class LanguageToolController extends TextEditingController {
   /// Reference to the popup widget
   MistakePopup? popupWidget;
 
-  /// Callback triggered when a mistake is replaced with a suggestion.
+  /// Internal callback used by [LanguageToolTextField] to trigger onChanged.
+  @internal
   ValueChanged<String>? onMistakeFixed;
 
   /// Represents the scroll offset value of the LanguageTool TextField.
@@ -189,15 +191,15 @@ class LanguageToolController extends TextEditingController {
       throw StateError('LanguageToolController is not enabled');
     }
 
-    final mistakes = List<Mistake>.from(_mistakes);
-    mistakes.remove(mistake);
-    _mistakes = mistakes;
+    _mistakes = List<Mistake>.of(_mistakes)..remove(mistake);
     text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
-    onMistakeFixed?.call(text);
     focusNode?.requestFocus();
-    Future.microtask.call(() {
-      final newOffset = mistake.offset + replacement.length;
-      selection = TextSelection.fromPosition(TextPosition(offset: newOffset));
+
+    Future.microtask(() {
+      selection = TextSelection.collapsed(
+        offset: mistake.offset + replacement.length,
+      );
+      onMistakeFixed?.call(text);
     });
   }
 
