@@ -1,7 +1,17 @@
 include: package:solid_lints/analysis_options.yaml
 
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+
 plugins:
-  solid_lints: 1.0.0-dev.1
+  solid_lints: 1.0.0
 
 solid_lints:
   diagnostics:
