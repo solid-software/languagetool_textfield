@@ -35,6 +35,9 @@ class LanguageToolController extends TextEditingController {
   /// Reference to the popup widget
   MistakePopup? popupWidget;
 
+  /// Callback triggered when a mistake is replaced with a suggestion.
+  ValueChanged<String>? onMistakeFixed;
+
   /// Represents the scroll offset value of the LanguageTool TextField.
   double? scrollOffset;
 
@@ -190,6 +193,7 @@ class LanguageToolController extends TextEditingController {
     mistakes.remove(mistake);
     _mistakes = mistakes;
     text = text.replaceRange(mistake.offset, mistake.endOffset, replacement);
+    onMistakeFixed?.call(text);
     focusNode?.requestFocus();
     Future.microtask.call(() {
       final newOffset = mistake.offset + replacement.length;
