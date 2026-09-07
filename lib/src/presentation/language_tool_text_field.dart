@@ -113,6 +113,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
     controller.language = widget.language;
     final defaultPopup = MistakePopup(popupRenderer: PopupOverlayRenderer());
     controller.popupWidget = widget.mistakePopup ?? defaultPopup;
+    controller.onMistakeFixed = (text) => widget.onChanged?.call(text);
 
     controller.addListener(_syncScrollPosition);
     _scrollController.addListener(_syncScrollPosition);
@@ -224,6 +225,7 @@ class _LanguageToolTextFieldState extends State<LanguageToolTextField> {
 
   @override
   void dispose() {
+    widget.controller.onMistakeFixed = null;
     widget.controller.removeListener(_syncScrollPosition);
     _scrollController.removeListener(_syncScrollPosition);
     if (widget.focusNode == null) {
