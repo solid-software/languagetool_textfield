@@ -6,11 +6,6 @@ import 'package:languagetool_textfield/src/utils/popup_overlay_renderer.dart';
 /// A TextField widget that checks the grammar using the given
 /// [LanguageToolController]
 class LanguageToolTextField extends TextField {
-  /// LanguageToolController to highlight mistakes
-  @override
-  LanguageToolController get controller =>
-      super.controller as LanguageToolController? ?? LanguageToolController();
-
   /// Mistake popup window
   final MistakePopup? mistakePopup;
 
@@ -22,10 +17,14 @@ class LanguageToolTextField extends TextField {
   /// Whether to center align the text field widget.
   final bool alignCenter;
 
+  /// LanguageToolController to highlight mistakes
+  @override
+  LanguageToolController get controller =>
+      super.controller as LanguageToolController? ?? LanguageToolController();
+
   /// Creates a widget that checks grammar errors.
   ///
   /// Most parameters are inherited from Flutter's [TextField].
-  // ignore: solid_lints/number_of_parameters
   const LanguageToolTextField({
     required LanguageToolController super.controller,
     this.language = 'auto',
