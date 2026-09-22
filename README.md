@@ -88,6 +88,16 @@ Found a bug? [Open the issue](https://github.com/solid-software/languagetool_tex
 
 ## Maintained by Solid Software
 
+<div align="center">
+  <a href="https://solid.software">
+    <img
+      src="https://cdn.prod.website-files.com/5d2846ce4f9c9d7eaa10af6f/6ab224b7413668876044fe2b_b2a4a0df6b23cbc8297c7581e979fb22_solid_software_logo_dark.png"
+      alt="Solid Software"
+      height="100"
+    />
+  </a>
+</div>
+
 Developed and maintained by **[Solid Software](https://solid.software)** – a top Flutter agency and official Flutter consultants focused on high-standard software engineering.
 
 As a team focused on Flutter engineering, we build tools for cross-platform applications every day and aim to share them with the community.
