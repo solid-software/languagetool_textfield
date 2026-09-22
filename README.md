@@ -98,21 +98,17 @@ Found a bug? [Open the issue](https://github.com/solid-software/languagetool_tex
   </a>
 </div>
 
-Developed and maintained by **[Solid Software](https://solid.software)** – a top Flutter agency and official Flutter consultants focused on high-standard software engineering.
-
-As a team focused on Flutter engineering, we build tools for cross-platform applications every day and aim to share them with the community.
+Developed and maintained by **[Solid Software](https://solid.software)** - a top Flutter agency and official Flutter consultants focused on high-quality software engineering.
 
 ### Why Solid Software?
 
-- **Cross-Platform Engineering**: high-performance mobile, web, and desktop applications built with Flutter & Dart for seamless user experiences across all devices.
-- **AI-Augmented Development**: modern AI-driven development workflows that accelerate time-to-market while ensuring clean, reliable code.
-- **Full-Cycle Delivery & Team Augmentation**: flexible engagement models, from turnkey product development to dedicated Flutter engineering teams.
+- Working with Flutter since 2018 - early adopters and experts.
+- AI Development and Integration: modern AI-driven development workflows that accelerate time-to-market while ensuring clean, reliable code.
+- Full-cycle delivery & team augmentation.
 
 <div align="center">
   <br />
 
-  **Planning to launch a startup with Flutter?**
-
-  [🚀 Hire our Flutter team](https://solid.software/#solid-footer) &nbsp;&nbsp;•&nbsp;&nbsp; [Check our other packages](https://pub.dev/publishers/solid.software/packages)
+  [💬 Hire Us](https://solid.software/#solid-footer) &nbsp;&nbsp;•&nbsp;&nbsp; [Other packages](https://pub.dev/publishers/solid.software/packages)
 
 </div>
