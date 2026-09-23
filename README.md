@@ -93,7 +93,7 @@ Found a bug? [Open the issue](https://github.com/solid-software/languagetool_tex
     <img
       src="https://cdn.prod.website-files.com/5d2846ce4f9c9d7eaa10af6f/6ab224b7413668876044fe2b_b2a4a0df6b23cbc8297c7581e979fb22_solid_software_logo_dark.png"
       alt="Solid Software"
-      height="100"
+      width="250"
     />
   </a>
 </div>
