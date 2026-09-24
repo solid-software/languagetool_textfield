@@ -13,7 +13,7 @@ enum MistakeType {
   uncategorized('uncategorized'),
 
   /// NonConformance mistake type
-  nonConformance('nonconformance'),
+  nonConformance('non-conformance'),
 
   /// Style mistake type
   style('style'),
